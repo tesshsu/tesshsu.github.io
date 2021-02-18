@@ -6,6 +6,9 @@ import * as serviceWorker from './serviceWorker';
 import TagManager from 'react-gtm-module';
 import ReactGA from 'react-ga';
 
+ReactGA.initialize('UA-32425664-1');
+ReactGA.pageview(window.location.pathname + window.location.search);
+
 const tagManagerArgs = {
     gtmId: 'GTM-NR5TNJN'
 }
