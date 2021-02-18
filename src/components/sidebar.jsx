@@ -28,17 +28,21 @@ export default class Sidebar extends Component {
                 <li><a href="https://www.facebook.com/VachaDesign/" target="_blank" rel="noopener noreferrer"><i className="icon-facebook2" /></a></li>
                 <li><a href="https://www.linkedin.com/company/43357715/" target="_blank" rel="noopener noreferrer"><i className="icon-linkedin2" /></a></li>
                 <li><a href="https://github.com/tesshsu" target="_blank" rel="noopener noreferrer"><i className="icon-github"></i></a></li>
-                <li><a href="http://blog.vacha-design.com/" target="_blank" rel="noopener noreferrer"><i className="icon-blogger2"></i></a></li>
               </ul>
             </nav>
             <div className="colorlib-footer">
               <p><small>
                   Mnade with Reactjs <i className="icon-heart" aria-hidden="true" /> & php <i className="icon-beer" aria-hidden="true" />
               </small></p>
-			  <p><small>
-                < a href='https://gandi.link/f/71016a3a' target="_blank">Offrir 6 mois d'hébergement web gratuit</a>
-              </small></p>
 			  <ul>
+                <li>
+                  <a target="_blank" href='https://vachatech.simplybook.it/v2/#book'><img alt='malt' src='images/reservation.png' /></a>
+                </li>
+                <li>
+                  Pour demander un devis ou consulter votre projet ? vous pourrez réserver un rendez-vous
+                </li>
+                <li>
+                </li>
 			    <li>
 			     <a target="_blank" href='https://www.malt.fr/profile/tesshsu'><img alt='malt' src='images/malt.png' /></a>
 				</li>

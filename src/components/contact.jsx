@@ -61,12 +61,13 @@ export default class ContactForm extends Component {
             <div className="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
                <span className="heading-meta">Contact</span>
                <h2 className="colorlib-heading animate-box">Demander pour un devis ?</h2>
+              <p>{title}</p>
+              <p className="colorlib-heading animate-box"> vous pouvez <a target="_blank" href='https://vachatech.simplybook.it/v2/#book'>réservation RDV en ligne</a> ou Remplissez le formulaire : </p>
             </div>
          </div>
 	  </div>
 	  <div className="row">
 	    <div className="ContactForm">
-		  <p>{title}</p>
         <div>
           <form action="#">
             {fieldsConfig &&
@@ -93,7 +94,11 @@ export default class ContactForm extends Component {
                   </React.Fragment>
                 );
               })}
-            <input type="submit" onClick={e => this.handleFormSubmit(e)} value="Submit" />
+            <input type="submit" onClick={e => this.handleFormSubmit(e)} value="Envoyer" />
+            <p>**vous acceptez les conditions en cliquer envoyer**</p>
+            <p>Conformément à la loi « Informatique et Libertés » du 6 janvier 1978 modifiée (art.38 et s.), vous disposez d'un droit d'accès, de modification, de rectification et de suppression des données vous concernant.
+              Pour toute demande, adressez-vous à : info@vacha-desig.com</p>
+            <small>Le site vacha-design.com est édité par la société eoechange (ci-après « eoechange » ou « nous »), sous le n°SIRET 84937554800013, APE 6201z Programmation informatique en leur qualité de responsables de traitement.La société eoechange est située au 13 allee bellevue, 06460 Saint vallier de thiey. Les coordonnées de son Délégué à la protection des données sont les suivantes : YATING CHATIRON</small>
             <div>
               {this.state.mailSent && <div className="sucsess">{successMessage}</div>}
               {this.state.error && <div className="error">{errorMessage}</div>}
@@ -103,7 +108,7 @@ export default class ContactForm extends Component {
 		</div>
 	  </div>
 	</section>
-      
+
     );
   }
 }
