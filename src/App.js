@@ -7,6 +7,17 @@ import About from './components/about'
 import Project from './components/projects'
 import Timeline from './components/timeline'
 import ContactForm from './components/contact'
+import TagManager from 'react-gtm-module'
+
+const tagManagerArgs = {
+    gtmId: 'GTM-NR5TNJN',
+    dataLayer: {
+        page: 'homepage',
+        visitorType: 'high-value'
+    }
+}
+
+TagManager.initialize(tagManagerArgs)
 
 const config = {
   api: `http://localhost:3000/api/contact/index.php`,
