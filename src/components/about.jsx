@@ -11,8 +11,8 @@ export default class About extends Component {
                 <div className="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
                 <div className="col-md-12">
                     <div className="about-desc">
-                    <span className="heading-meta">About Us</span>
-                    <h2 className="colorlib-heading">Who Am I?</h2>
+                    <span className="heading-meta">À propos de nous</span>
+                    <h2 className="colorlib-heading">Mon parcours professionnel</h2>
                     <p>Je suis Développeur FullStack et Intégrateur Web Senior a Taiwan, USA et en France avec une expérience de 8 ans.
 
 8 ans de travail expereicne m'a appris comment impliquer la partie par le côté client, et passer d'une qualité d'aspect plus profonde que client, ce qui pourrait fournir de très bons retours de la part du client.
@@ -20,8 +20,8 @@ export default class About extends Component {
 Des applications métier pour des grands comptes : HTC vive, bethesda game (par societe Digital River)
 </p>
                     <p>Récemment sur React, react-native APP </p>
-                        <p> <a target="_blank" href='https://www.superprof.fr/tableau-de-bord.html/annonces/edition/6562128'> Aussi donne cours de développement web et programmation (tous niveaux)</a>  </p>
-                        <p> <a target="_blank" href='https://ecoechange.com/'> La fondatrice de la société écologique ecoechange </a>  </p>
+                        <p> <a target="_parent" href='https://www.superprof.fr/tableau-de-bord.html/annonces/edition/6562128'> Aussi donne cours de développement web et programmation (tous niveaux)</a>  </p>
+                        <p> <a target="_parent" href='https://ecoechange.com/'> La fondatrice de la société écologique ecoechange </a>  </p>
                     </div>
                 </div>
                 </div>
@@ -33,7 +33,7 @@ Des applications métier pour des grands comptes : HTC vive, bethesda game (par 
         <div className="colorlib-narrow-content">
             <div className="row">
             <div className="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
-                <span className="heading-meta">What I do?</span>
+                <span className="heading-meta">Ce que nous faisons </span>
                 <h2 className="colorlib-heading">Voici une partie de mon expertise</h2>
             </div>
             </div>
@@ -44,7 +44,7 @@ Des applications métier pour des grands comptes : HTC vive, bethesda game (par 
                     <i className="icon-bulb" />
                 </span>
                 <div className="desc">
-                    <h3>Web Development </h3>
+                    <h3>Développement web </h3>
                     <p>création de sites Web, de commerce Marketplace et des extensions de chrome</p>
                 </div>
                 </div>
@@ -55,8 +55,8 @@ Des applications métier pour des grands comptes : HTC vive, bethesda game (par 
                     <i className="icon-phone3" />
                 </span>
                 <div className="desc">
-                    <h3>App application</h3>
-                    <p>Utilisez les applications IOS et Android native ou avec React native pour votre application APP</p>
+                    <h3>Application App IOS ANDROID </h3>
+                    <p>Utilisez des applications IOS et Android natives, ou utilisez React natif pour vos applications APP</p>
                 </div>
                 </div>
             </div>
@@ -66,8 +66,8 @@ Des applications métier pour des grands comptes : HTC vive, bethesda game (par 
                     <i className="icon-data" />
                 </span>
                 <div className="desc">
-                    <h3>Software ERP, CRM</h3>
-                    <p>travailler avec un logiciel ERP comme SAP, connexion avec le service Web API et d'autres outils tiers</p>
+                    <h3>Logiciel ERP, CRM</h3>
+                    <p>À utiliser avec un logiciel ERP tel que SAP, connectez-vous aux services API Web et à d'autres outils tiers</p>
                 </div>
                 </div>
             </div>
@@ -79,7 +79,7 @@ Des applications métier pour des grands comptes : HTC vive, bethesda game (par 
                 </span>
                 <div className="desc">
                     <h3>Dev Ops</h3>
-                    <p>use Jenkins , Docker, Nodejs for automation deployments </p>
+                    <p>Utilisez Jenkins, Docker, Nodejs pour un déploiement automatisé</p>
                 </div>
                 </div>
             </div>
@@ -89,8 +89,8 @@ Des applications métier pour des grands comptes : HTC vive, bethesda game (par 
                     <i className="icon-layers2" />
                 </span>
                 <div className="desc">
-                    <h3>Server solutions</h3>
-                    <p>Fournit des solutions pour votre serveur via AWS Cloud, VPS ou serveur dédié</p>
+                    <h3>Solution serveur</h3>
+                    <p>Fournissez des solutions pour votre serveur via AWS Cloud, VPS ou un serveur dédié</p>
                 </div>
                 </div>
             </div>
@@ -100,7 +100,7 @@ Des applications métier pour des grands comptes : HTC vive, bethesda game (par 
                     <i className="icon-phone3" />
                 </span>
                 <div className="desc">
-                    <h3>Digital Marketing</h3>
+                    <h3>Le marketing numérique</h3>
                     <p>SEO, GA Adword, intégration Trustpilot pour toutes sortes de stratèges marketing APIs</p>
                 </div>
                 </div>
@@ -114,7 +114,7 @@ Des applications métier pour des grands comptes : HTC vive, bethesda game (par 
                   <div className="row">
                       <div className="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
                           <span className="heading-meta">Envie d'etre freelance ?</span>
-                          <h2 className="colorlib-heading">Vous pouvez créé votre société avec cela</h2>
+                          <h2 className="colorlib-heading">Vous pouvez créer votre entreprise avec cela</h2>
                       </div>
                   </div>
               </div>

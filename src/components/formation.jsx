@@ -1,7 +1,15 @@
 import React, { Component } from 'react'
+import YouTube from 'react-youtube';
 
 export default class Formation extends Component {
   render() {
+	  const opts = {
+		  height: '390',
+		  width: '450',
+		  playerVars: {
+			  autoplay: 1,
+		  },
+	  };
     return (
       <div>
         <section className="colorlib-blog" data-section="blog">
@@ -69,6 +77,21 @@ export default class Formation extends Component {
 						</div>
 					</div>
 					</div>
+				</div>
+			</div>
+			<div className="row text-center">
+				<div className="col-md-6 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
+					<h3>Accompagnement, Refonte</h3>
+					<p> Formation à la configuration de votre projet informatique</p>
+					<ul>
+						<li>L'univers du web</li>
+						<li>Comprendre la structure base</li>
+						<li>L'adapter à vos besoins</li>
+						<li>Cerner les difficultés propres à chaque élève pour obtenir une progression régulière</li>
+					</ul>
+				</div>
+				<div className="col-md-6 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
+					<YouTube videoId="tvdnut0V7Dk" opts={opts} className="video" onReady={this._onReady} />
 				</div>
 			</div>
 			</section>

@@ -26,9 +26,9 @@ export default class Sidebar extends Component {
             </nav>
             <nav id="colorlib-main-menu">
               <ul>
-                <li><a href="https://www.facebook.com/VachaDesign/" target="_blank" rel="noopener noreferrer"><i className="icon-facebook2" /></a></li>
-                <li><a href="https://www.linkedin.com/company/43357715/" target="_blank" rel="noopener noreferrer"><i className="icon-linkedin2" /></a></li>
-                <li><a href="https://github.com/tesshsu" target="_blank" rel="noopener noreferrer"><i className="icon-github"></i></a></li>
+                <li><a href="https://www.facebook.com/VachaDesign/" target="_parent" rel="noopener noreferrer"><i className="icon-facebook2" /></a></li>
+                <li><a href="https://www.linkedin.com/company/43357715/" target="_parent" rel="noopener noreferrer"><i className="icon-linkedin2" /></a></li>
+                <li><a href="https://github.com/tesshsu" target="_parent" rel="noopener noreferrer"><i className="icon-github"></i></a></li>
               </ul>
             </nav>
             <div className="colorlib-footer">
@@ -37,7 +37,7 @@ export default class Sidebar extends Component {
               </small></p>
 			  <ul>
                 <li>
-                  <a target="_blank" href='https://vachatech.simplybook.it/v2/#book'><img alt='malt' src='images/reservation.png' /></a>
+                  <a target="_parent" href='https://vachatech.simplybook.it/v2/#book'><img alt='malt' src='images/reservation.png' /></a>
                 </li>
                 <li>
                   Pour demander un devis ou consulter votre projet ? vous pourrez réserver un rendez-vous
@@ -45,10 +45,10 @@ export default class Sidebar extends Component {
                 <li>
                 </li>
 			    <li>
-			     <a target="_blank" href='https://www.malt.fr/profile/tesshsu'><img alt='malt' src='images/malt.png' /></a>
+			     <a target="_parent" href='https://www.malt.fr/profile/tesshsu'><img alt='malt' src='images/malt.png' /></a>
 				</li>
                 <li>
-                  <a target="_blank" href='https://www.superprof.fr/tableau-de-bord.html/annonces/edition/6562128'><img alt='malt' src='images/superprof.png' /></a>
+                  <a target="_parent" href='https://www.superprof.fr/tableau-de-bord.html/annonces/edition/6562128'><img alt='malt' src='images/superprof.png' /></a>
                 </li>
 	          </ul>
             </div>

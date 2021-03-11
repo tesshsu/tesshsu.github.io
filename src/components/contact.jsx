@@ -62,7 +62,7 @@ export default class ContactForm extends Component {
                <span className="heading-meta">Contact</span>
                <h2 className="colorlib-heading animate-box">Demander pour un devis ?</h2>
               <p>{title}</p>
-              <p className="colorlib-heading animate-box"> vous pouvez <a target="_blank" href='https://vachatech.simplybook.it/v2/#book'>réservation RDV en ligne</a> ou Remplissez le formulaire : </p>
+              <p className="colorlib-heading animate-box"> vous pouvez <a target="_parentnpm r" href='https://vachatech.simplybook.it/v2/#book'>réservation RDV en ligne</a> ou Remplissez le formulaire : </p>
             </div>
          </div>
 	  </div>
@@ -98,7 +98,7 @@ export default class ContactForm extends Component {
             <p>**vous acceptez les conditions en cliquer envoyer**</p>
             <p>Conformément à la loi « Informatique et Libertés » du 6 janvier 1978 modifiée (art.38 et s.), vous disposez d'un droit d'accès, de modification, de rectification et de suppression des données vous concernant.
               Pour toute demande, adressez-vous à : info@vacha-desig.com</p>
-            <small>Le site vacha-design.com est édité par la société eoechange (ci-après « eoechange » ou « nous »), sous le n°SIRET 84937554800013, APE 6201z Programmation informatique en leur qualité de responsables de traitement.La société eoechange est située au 13 allee bellevue, 06460 Saint vallier de thiey. Les coordonnées de son Délégué à la protection des données sont les suivantes : YATING CHATIRON</small>
+            <small>Le site vacha-design.com est édité par la société eoechange (ci-après « eoechange » ou « nous »), sous le n°SIRET 84937554800013, APE 6201z Programmation informatique en leur qualité de responsables de traitement.</small>
             <div>
               {this.state.mailSent && <div className="sucsess">{successMessage}</div>}
               {this.state.error && <div className="error">{errorMessage}</div>}
