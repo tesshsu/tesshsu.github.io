@@ -14,6 +14,20 @@ export default class Projects extends Component {
 						</div>
 						<div className="row">
 							<div className="col-md-4 animate-box" data-animate-effect="fadeInLeft">
+								<div className="project" style={{backgroundImage: 'url(images/img-10.png)'}}>
+									<div className="desc">
+										<div className="con">
+											<h3><a href="https://01car.fr/">ecoechange.com</a></h3>
+											<span> une plateforme solidaire</span>
+											<p className="icon">
+												<span><a href="https://ecoechange.com/"><i className="icon-link" />go</a></span>
+												<span><i className="icon-eye" />React js, Laravel, mysql, serveur Cloud OVH</span>
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div className="col-md-4 animate-box" data-animate-effect="fadeInLeft">
 								<div className="project" style={{backgroundImage: 'url(images/img-11.jpg)'}}>
 									<div className="desc">
 										<div className="con">
