@@ -97,3 +97,21 @@ input[type=submit]:hover {
   top: 20px;
   bottom: 20px;
   margin-left: 29px; }
+
+  #booking-widget-container .simplybook-widget-button {
+    display: inline-block;
+    background-color: #ff6600;
+    color: white;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 6px;
+    margin-top: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  #booking-widget-container .simplybook-widget-button:hover {
+    background-color: #e65c00;
+  }
+  

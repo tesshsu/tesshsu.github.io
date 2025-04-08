@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './App.css';
 import Sidebar from './components/sidebar'
 import Introduction from './components/introduction'
-import Formation from './components/formation'
 import About from './components/about'
 import Project from './components/projects'
 import Timeline from './components/timeline'
@@ -20,7 +19,7 @@ const tagManagerArgs = {
 TagManager.initialize(tagManagerArgs)
 
 const config = {
-  api: `http://localhost:3000/api/contact/index.php`,
+  api: `https://tesshsu.github.io/api/contact/index.php`,
   title: 'SI VOUS AVEZ BESOIN D’UN DÉVELOPPEUR EXPÉRIMENTÉ POUR VOTRE APPLICATION MOBILE, APPLICATION WEB E-COMMERCE, MARKETPLACE, UNE API OU SYSTEM ERP, CRM ETC., VOUS POUVEZ SOIT M’EMBAUCHER DIRECTEMENT EN UTILISANT LE FORMULAIRE CI-DESSOUS',
   successMessage: 'Merci de me contacter. On vous contacterai au sien de votre demande',
   errorMessage: 'Désolé, nous avons des problèmes, vous pourriez également me contacter direct par email.',
@@ -45,7 +44,6 @@ class App extends Component {
 					<About></About>
 					<Project></Project>
 					<Timeline></Timeline>
-                    <Formation></Formation>
 					<ContactForm config={config} />
           	</div>
       	</div>

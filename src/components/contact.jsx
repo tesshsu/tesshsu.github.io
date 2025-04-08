@@ -1,119 +1,106 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
+import BookingWidget from "./BookingWidget";
 
-/**
- * @component ContactForm
- * @props - { object } -  config
- */
 export default class ContactForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
       mailSent: false,
-      error: null
+      error: null,
     };
   }
-  /**
-  * @function handleFormSubmit
-  * @param e { obj } - ContactForm event
-  * @return void
-  */
-  handleFormSubmit = e => {
+
+  handleFormSubmit = (e) => {
     e.preventDefault();
     axios({
       method: "post",
-      url: `${process.env.REACT_APP_API}`,
+      url: `${process.env.REACT_APP_API}`,  // Keep your original API endpoint
       headers: { "content-type": "application/json" },
-      data: this.state
+      data: {
+        ...this.state,                     // Spread existing state data
+        to: "tess.hsu@gmail.com"          // Add the recipient email
+      },
     })
-      .then(result => {
+      .then((result) => {
         if (result.data.sent) {
-          this.setState({
-            mailSent: result.data.sent
-          });
-          this.setState({ error: false });
+          this.setState({ mailSent: result.data.sent, error: false });
         } else {
           this.setState({ error: true });
         }
       })
-      .catch(error => this.setState({ error: error.message }));
+      .catch((error) => this.setState({ error: error.message }));
   };
-  /**
-    * @function handleChange
-    * @param e { obj } - change event
-    * @param field { string } - namve of the field
-    * @return void
-    */
+
   handleChange = (e, field) => {
-    let value = e.target.value;
-    let updateValue = {};
-    updateValue[field] = value;
-    this.setState(updateValue);
+    this.setState({ [field]: e.target.value });
   };
 
   render() {
     const { title, successMessage, errorMessage, fieldsConfig } = this.props.config;
+
     return (
-	<section className="colorlib-experience" data-section="contact">
-	  <div className="colorlib-narrow-content">
-	     <div className="row">
+      <section className="colorlib-experience" data-section="contact">
+        <div className="colorlib-narrow-content">
+          <div className="row">
             <div className="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
-               <span className="heading-meta">Contact</span>
-               <h2 className="colorlib-heading animate-box">Demander pour un devis ?</h2>
+              <span className="heading-meta">Contact</span>
+              <h2 className="colorlib-heading animate-box">Demander pour un devis ?</h2>
               <p>{title}</p>
-              <p className="colorlib-heading animate-box"> vous pouvez <a target="_parentnpm r" href='https://vachatech.simplybook.it/v2/#book'>réservation RDV en ligne</a> ou Remplissez le formulaire : </p>
+              <BookingWidget />
+
             </div>
-         </div>
-	  </div>
-	  <div className="row">
-	    <div className="ContactForm">
-        <div>
-          <form action="#">
-            {fieldsConfig &&
-              fieldsConfig.map(field => {
-                return (
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="ContactForm">
+            <form action="mailto:tess.hsu@gmail.com" method="get" encType="text/plain">
+              {fieldsConfig &&
+                fieldsConfig.map((field) => (
                   <React.Fragment key={field.id}>
+                    <label>{field.label}</label>
                     {field.type !== "textarea" ? (
-                      <React.Fragment>
-                        <label>{field.label}</label>
-                        <input
-                          type={field.type}
-                          className={field.klassName}
-                          placeholder={field.placeholder}
-                          value={field.name}
-                          onChange={e => this.handleChange(e, field.fieldName)}
-                        />
-                      </React.Fragment>
+                      <input
+                        type={field.type}
+                        className={field.klassName}
+                        placeholder={field.placeholder}
+                        value={this.state[field.fieldName] || ""}
+                        onChange={(e) => this.handleChange(e, field.fieldName)}
+                        name={field.fieldName} // Add name attribute to map to email fields
+                      />
                     ) : (
-                      <React.Fragment>
-                        <label>{field.label}</label>
-                        <textarea className={field.klassName} placeholder={field.placeholder} onChange={e => this.handleChange(e, field.fieldName)} value={field.name} />
-                      </React.Fragment>
+                      <textarea
+                        className={field.klassName}
+                        placeholder={field.placeholder}
+                        onChange={(e) => this.handleChange(e, field.fieldName)}
+                        value={this.state[field.fieldName] || ""}
+                        name={field.fieldName} // Add name attribute to map to email fields
+                      />
                     )}
                   </React.Fragment>
-                );
-              })}
-            <input type="submit" onClick={e => this.handleFormSubmit(e)} value="Envoyer" />
-            <p>**vous acceptez les conditions en cliquer envoyer**</p>
-            <p>Conformément à la loi « Informatique et Libertés » du 6 janvier 1978 modifiée (art.38 et s.), vous disposez d'un droit d'accès, de modification, de rectification et de suppression des données vous concernant.
-              Pour toute demande, adressez-vous à : info@vacha-desig.com</p>
-            <small>Le site vacha-design.com est édité par la société eoechange (ci-après « eoechange » ou « nous »), sous le n°SIRET 84937554800013, APE 6201z Programmation informatique en leur qualité de responsables de traitement.</small>
-            <div>
-              {this.state.mailSent && <div className="sucsess">{successMessage}</div>}
-              {this.state.error && <div className="error">{errorMessage}</div>}
-            </div>
-          </form>
-        </div>
-		</div>
-	  </div>
-	</section>
+                ))}
+              <input type="submit" value="Envoyer" />
+              <p>**vous acceptez les conditions en cliquant sur envoyer**</p>
+              <p>
+                Conformément à la loi « Informatique et Libertés » du 6 janvier 1978 modifiée (art.38 et s.), vous disposez d'un droit d'accès, de modification, de rectification et de suppression des données vous concernant.
+                Pour toute demande, adressez-vous à : info@vacha-desig.com
+              </p>
+              <small>Le site vacha-design.com est édité par la société eoechange...</small>
 
+              <div>
+                {this.state.mailSent && <div className="sucsess">{successMessage}</div>}
+                {this.state.error && <div className="error">{errorMessage}</div>}
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
     );
   }
 }
 
-//propTypes for the component
 ContactForm.propTypes = {
-  config: PropTypes.object.isRequired
+  config: PropTypes.object.isRequired,
 };

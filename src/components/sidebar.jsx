@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-
+import BookingWidget from "./BookingWidget";
 export default class Sidebar extends Component {
   render() {
     return (
@@ -19,8 +19,7 @@ export default class Sidebar extends Component {
                   <li><a href="#about" data-nav-section="about">About</a></li>
                   <li><a href="#projects" data-nav-section="projects">Projects</a></li>
                   <li><a href="#timeline" data-nav-section="timeline">Timeline</a></li>
-                  <li><a href="#formation" data-nav-section="formation">Formation</a></li>
-				  <li><a href="#contact" data-nav-section="contact">Contact</a></li>
+				          <li><a href="#contact" data-nav-section="contact">Contact</a></li>
                 </ul>
               </div>
             </nav>
@@ -35,10 +34,7 @@ export default class Sidebar extends Component {
               <p><small>
                   Mnade with Reactjs <i className="icon-heart" aria-hidden="true" /> & php <i className="icon-beer" aria-hidden="true" />
               </small></p>
-			  <ul>
-                <li>
-                  <a target="_parent" href='https://vachatech.simplybook.it/v2/#book'><img alt='malt' src='images/reservation.png' /></a>
-                </li>
+			        <ul>
                 <li>
                   Pour demander un devis ou consulter votre projet ? vous pourrez réserver un rendez-vous
                 </li>
