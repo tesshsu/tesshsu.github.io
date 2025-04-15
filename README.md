@@ -1,11 +1,31 @@
-# PORTFOLIO-APP 
-[![Build Status](https://travis-ci.org/dbarochiya/me.svg?branch=master)](https://travis-ci.org/dbarochiya/me)
+Yating Chatiron Portfolio
+This is a simple portfolio site for Yating Chatiron, hosted on GitHub Pages at tesshsu.github.io.
+Site Structure
 
-This is the implementaion code for the blog I have written '[How to create your portfolio website using React.js](https://medium.freecodecamp.org/portfolio-app-using-react-618814e35843)'
-- To run this project follow these steps , 
-  - clone the repo using `git clone`
-  - navigate to folder `portfolio-app`
-  - run `npm install` to instal node modules
-  - run `npm start` to start the service on `localhost:3000`
-    
-##### deployed app : https://dbarochiya.github.io/me/
+index.html: The main page with sections for About, Experience, Certificates, and Skills.
+img/: Folder for certificate images.
+cs50-certificate.jpg
+react-certificate.jpg
+node-certificate.jpg
+
+
+css/: (Optional) For additional custom styles if needed.
+js/: (Optional) For additional JavaScript files if needed.
+
+Setup
+
+Clone the repository: git clone https://github.com/tesshsu/tesshsu.github.io.git
+Ensure the gh-pages branch is set up for GitHub Pages (already enabled).
+Add certificate images to the img/ folder.
+Push changes to the gh-pages branch to deploy updates.
+
+Technologies Used
+
+HTML
+Tailwind CSS (via CDN)
+Vanilla JavaScript
+
+Future Plans
+
+Add a blog section to index.html for articles.
+

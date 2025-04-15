@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yating Chatiron - Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-white text-black flex">
+    <!-- Left Sidebar -->
+    <aside class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white flex flex-col items-center py-4">
+        <div class="mb-8">
+            <i class="fas fa-user text-2xl"></i>
+        </div>
+        <nav class="flex flex-col space-y-4">
+            <a href="#about" class="hover:text-gray-400"><i class="fas fa-info-circle text-xl"></i></a>
+            <a href="#experience" class="hover:text-gray-400"><i class="fas fa-briefcase text-xl"></i></a>
+            <a href="#certificates" class="hover:text-gray-400"><i class="fas fa-certificate text-xl"></i></a>
+            <a href="#skills" class="hover:text-gray-400"><i class="fas fa-tools text-xl"></i></a>
+        </nav>
+        <div class="mt-auto">
+            <select id="language-switcher" class="bg-gray-800 text-white border-none outline-none">
+                <option value="en" selected>EN</option>
+                <option value="fr">FR</option>
+            </select>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-16 flex-1">
+        <!-- Navbar -->
+        <nav class="fixed top-0 w-full bg-white shadow-md p-4 z-10">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-xl font-bold">Yating Chatiron</h1>
+                <div class="space-x-4">
+                    <a href="#about" class="hover:text-gray-600">About</a>
+                    <a href="#experience" class="hover:text-gray-600">Experience</a>
+                    <a href="#certificates" class="hover:text-gray-600">Certificates</a>
+                    <a href="#skills" class="hover:text-gray-600">Skills</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- About Section -->
+        <section id="about" class="pt-20 pb-10">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-4">About Me</h2>
+                <p class="text-lg">
+                    Hi, I'm Yating Chatiron, a Senior Software Engineer over 15 years of experience in full-stack development, DevOps, and cloud technologies. I specialize in e-commerce, performance optimization, security, blockchain, and AI. I’m passionate about building scalable solutions and integrating security into the DevOps lifecycle.
+                </p>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="py-10 bg-gray-100">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-4">Experience</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold">Senior Software Engineer - Budhapp</h3>
+                        <p class="text-gray-600">September 2024 - Present</p>
+                        <ul class="list-disc ml-5">
+                            <li>Developed Animalink, a medical platform, with scalable infrastructure on GCP.</li>
+                            <li>Integrated blockchain DeFi solutions, reducing transaction costs by 25%.</li>
+                            <li>Automated CI/CD pipelines on GKE, cutting deployment time by 35%.</li>
+                            <li>Used LLM AI (Claude Sonnet 3.5 & ChatGPT) for project automation.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">R&D Engineer - Groupe Itekcom</h3>
+                        <p class="text-gray-600">June 2023 - May 2024</p>
+                        <ul class="list-disc ml-5">
+                            <li>Built medical prescription modules for e-commerce platforms in healthcare.</li>
+                            <li>Managed HDS servers on AWS with 99.9% uptime.</li>
+                            <li>Optimized Prestashop, increasing sales by 20%.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">Full Stack Engineer - Livmed's</h3>
+                        <p class="text-gray-600">June 2022 - March 2023</p>
+                        <ul class="list-disc ml-5">
+                            <li>Developed a WebSocket-based service for real-time communication in a medicine delivery app.</li>
+                            <li>Optimized Google Maps API requests, reducing costs by 25%.</li>
+                            <li>Mentored interns and established coding best practices.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certificates Section -->
+        <section id="certificates" class="py-10">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-4">Certificates</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <img src="img/cs50.png" alt="CS50 Certificate" class="w-full h-80 object-cover mb-2">
+                        <p class="font-semibold">CS50 Computer Science - Harvard University</p>
+                        <p class="text-gray-600">April 30, 2012</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="img/java.png" alt="Java Certificate" class="w-full h-80 object-cover mb-2">
+                        <p class="font-semibold">Java certificates - Ecole Polytechnique federale de lausanne</p>
+                        <p class="text-gray-600">June 30, 2012</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="img/python.png" alt="Python Certificate" class="w-full h-80 object-cover mb-2">
+                        <p class="font-semibold">Python certificates - Greate Learning</p>
+                        <p class="text-gray-600">April 30, 2024</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="img/ISC2.png" alt="ISC2 Certificate" class="w-full h-80 object-cover mb-2">
+                        <p class="font-semibold">ISC2 Certification</p>
+                        <p class="text-gray-600">April 12, 2025</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="img/cybernin.png" alt="cybernin Certificate" class="w-full h-80 object-cover mb-2">
+                        <p class="font-semibold">Cybernin Certification</p>
+                        <p class="text-gray-600">Mars 27, 2025</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-10 bg-gray-100">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-4">Skills</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="text-lg font-semibold">Languages</h3>
+                        <p>PHP, Python, JavaScript, Java, HTML, Golang</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold">Frameworks</h3>
+                        <p>Symfony, Laravel, React, Angular, ASP.NET</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold">DevOps & Cloud</h3>
+                        <p>Docker, Kubernetes, Terraform, AWS, GCP, OVH</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold">Databases</h3>
+                        <p>SQL, MySQL, PostgreSQL, MongoDB, Firebase, GraphQL</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-4 bg-black text-white text-center">
+            <p>© 2025 Yating Chatiron. All rights reserved.</p>
+        </footer>
+    </main>
+
+    <!-- Language Switcher Script -->
+    <script>
+        document.getElementById('language-switcher').addEventListener('change', function() {
+            const lang = this.value;
+            if (lang === 'fr') {
+                window.location.href = 'fr.html';
+            }
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
