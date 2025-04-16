@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yating Chatiron - Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-white text-black flex">
+    <!-- Left Sidebar -->
+    <aside class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white flex flex-col items-center py-4">
+        <div class="mb-8">
+            <i class="fas fa-user text-2xl"></i>
+        </div>
+        <nav class="flex flex-col space-y-4">
+            <a href="fr.html#about" class="hover:text-gray-400"><i class="fas fa-info-circle text-xl"></i></a>
+            <a href="fr.html#experience" class="hover:text-gray-400"><i class="fas fa-briefcase text-xl"></i></a>
+            <a href="fr.html#certificates" class="hover:text-gray-400"><i class="fas fa-certificate text-xl"></i></a>
+            <a href="fr.html#skills" class="hover:text-gray-400"><i class="fas fa-tools text-xl"></i></a>
+            <a href="blog.html" class="hover:text-gray-400"><i class="fas fa-blog text-xl"></i></a>
+        </nav>
+        <!-- Social Media Links -->
+        <div class="flex flex-col space-y-4 mt-4">
+            <a href="https://github.com/tesshsu" target="_blank" class="hover:text-gray-400"><i class="fab fa-github text-xl"></i></a>
+            <a href="https://www.linkedin.com/in/yating-hsu-a9b1a221/" target="_blank" class="hover:text-gray-400"><i class="fab fa-linkedin text-xl"></i></a>
+        </div>
+        <div class="mt-auto">
+            <select id="language-switcher" class="bg-gray-800 text-white border-none outline-none">
+                <option value="en">EN</option>
+                <option value="fr" selected>FR</option>
+            </select>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-16 flex-1">
+        <!-- Navbar -->
+        <nav class="fixed top-0 w-full bg-white shadow-md p-4 z-10">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-xl font-bold">Yating Chatiron</h1>
+                <div class="hidden md:flex space-x-4">
+                    <a href="fr.html#about" class="hover:text-gray-600">À propos</a>
+                    <a href="fr.html#experience" class="hover:text-gray-600">Expérience</a>
+                    <a href="fr.html#certificates" class="hover:text-gray-600">Certificats</a>
+                    <a href="fr.html#skills" class="hover:text-gray-600">Compétences</a>
+                    <a href="blog.html" class="hover:text-gray-600">Blog</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Blog Section -->
+        <section id="blog" class="pt-20 pb-10 mt-4">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-4">Blog</h2>
+                <div class="space-y-6">
+                    <div class="border-b pb-6">
+                        <h3 class="text-2xl font-semibold mb-2">🚨 Un problème majeur de cybersécurité que vous pourriez négliger :</h3>
+                        <p class="text-gray-600 mb-2">16 Avril 2025</p>
+                        <img src="img/blog.jpeg" alt="Cybersécurité" class="w-25 h-full object-cover mb-4">
+                        <p class="text-lg">
+                            Ce ne sont pas les comptes humains, mais les <strong>identités non humaines (NHI)</strong> qui sont au cœur d’une crise de fuite de données.
+                        </p>
+                        <p class="text-lg font-semibold mt-4">Rapport 2025 :</p>
+                        <ul class="list-disc ml-5">
+                            <li>🔓 En 2024, <strong>23,77 millions</strong> de nouveaux secrets ont été divulgués sur GitHub.</li>
+                            <li>🧬 Les identités non humaines possèdent <strong>45 fois plus de certificats</strong> que les comptes humains.</li>
+                            <li>⚠️ Les risques de fuite dans les dépôts augmentent de <strong>40 %</strong> avec l’aide de Copilot.</li>
+                            <li>💥 Docker Hub a exposé <strong>100 000 clés valides</strong>.</li>
+                            <li>📎 Les secrets dans Slack/Jira sont plus critiques et difficiles à détecter.</li>
+                        </ul>
+                        <p class="text-lg mt-4">
+                            Nous sommes déjà entrés dans une ère où <strong>les risques de sécurité sont dominés par les machines</strong>, mais la plupart des systèmes de gestion des secrets restent centrés sur les modèles humains.
+                        </p>
+                        <p class="text-lg mt-4">
+                            👉 C’est un fossé dans la gouvernance de la cybersécurité.<br>
+                            👉 Nous devons maîtriser pleinement les risques liés aux API, aux comptes de service et aux secrets générés par l’IA.
+                        </p>
+                        <p class="text-lg mt-4">
+                            Encore en train de penser qu’« cacher suffit pour être en sécurité » face aux identités non humaines ? Il est temps de se réveiller.
+                        </p>
+                        <p class="text-lg mt-4">
+                            <strong>Hashtags :</strong><br>
+                            <a href="https://www.linkedin.com/feed/hashtag/nhi" target="_blank" class="text-blue-600 hover:underline">#NHI</a>
+                            <a href="https://www.linkedin.com/feed/hashtag/identit%C3%A9nonhumaine" target="_blank" class="text-blue-600 hover:underline">#IdentitéNonHumaine</a>
+                            <a href="https://www.linkedin.com/feed/hashtag/devsecops" target="_blank" class="text-blue-600 hover:underline">#DevSecOps</a>
+                            <a href="https://www.linkedin.com/feed/hashtag/fuitedesecrets" target="_blank" class="text-blue-600 hover:underline">#FuiteDeSecrets</a>
+                            <a href="https://www.linkedin.com/feed/hashtag/risquesapi" target="_blank" class="text-blue-600 hover:underline">#RisquesAPI</a>
+                            <a href="https://www.linkedin.com/feed/hashtag/s%C3%A9curit%C3%A9ia" target="_blank" class="text-blue-600 hover:underline">#SécuritéIA</a>
+                            <a href="https://www.linkedin.com/feed/hashtag/tendancescybers%C3%A9curit%C3%A9" target="_blank" class="text-blue-600 hover:underline">#TendancesCybersécurité</a>
+                        </p>
+                        <p class="text-lg mt-4">
+                            <strong>Citations :</strong>
+                        </p>
+                        <ol class="list-decimal ml-5">
+                            <li><a href="https://lnkd.in/dyx-KrKZ" target="_blank" class="text-blue-600 hover:underline">Qu’est-ce qu’une identité non humaine ? | Silverfort Glossaire</a></li>
+                            <li><a href="https://lnkd.in/dRNRYVn8" target="_blank" class="text-blue-600 hover:underline">Explosive Growth of Non-Human Identities Creating Massive ...</a></li>
+                            <li><a href="https://lnkd.in/d5kJCRGX" target="_blank" class="text-blue-600 hover:underline">abdullahkhawer/find-and-report-secrets-in-code - GitHub</a></li>
+                            <li><a href="https://lnkd.in/dZSsgUYR" target="_blank" class="text-blue-600 hover:underline">Docker Hub | DevSecOps - Stephane Robert</a></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-4 bg-black text-white text-center">
+            <p>© 2025 Yating Chatiron. Tous droits réservés.</p>
+        </footer>
+    </main>
+
+    <!-- Language Switcher Script -->
+    <script>
+        document.getElementById('language-switcher').addEventListener('change', function() {
+            const lang = this.value;
+            if (lang === 'en') {
+                window.location.href = 'index.html';
+            } else if (lang === 'fr') {
+                window.location.href = 'fr.html';
+            }
+        });
+    </script>
+</body>
+</html>
