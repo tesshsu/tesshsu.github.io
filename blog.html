@@ -6,11 +6,7 @@
     <title>Yating Chatiron - Blog</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body class="bg-white text-black flex">
     <!-- Left Sidebar -->
@@ -29,10 +25,6 @@
         <div class="flex flex-col space-y-4 mt-4">
             <a href="https://github.com/tesshsu" target="_blank" class="hover:text-gray-400"><i class="fab fa-github text-xl"></i></a>
             <a href="https://www.linkedin.com/in/yating-hsu-a9b1a221/" target="_blank" class="hover:text-gray-400  <div class="mt-auto">
-            <select id="language-switcher" class="bg-gray-800 text-white border-none outline-none">
-                <option value="en">EN</option>
-                <option value="fr" selected>FR</option>
-            </select>
         </div>
     </aside>
 
@@ -68,56 +60,6 @@
     </main>
 
     <!-- Scripts -->
-    <script>
-        // Language Switcher
-        document.getElementById('language-switcher').addEventListener('change', function() {
-            const lang = this.value;
-            if (lang === 'en') {
-                window.location.href = 'index.html';
-            } else if (lang === 'fr') {
-                window.location.href = 'fr.html';
-            }
-        });
-
-        // Load blog posts dynamically in descending order
-        async function loadBlogPosts() {
-            const blogContainer = document.getElementById('blog-posts');
-            const blogFiles = [];
-            const maxBlogs = 5; // Adjust this number based on the maximum number of blogs you expect
-
-            // Dynamically generate blog file names (blogs/blog-1.html, blogs/blog-2.html, etc.)
-            for (let i = 1; i <= maxBlogs; i++) {
-                blogFiles.push(`blogs/blog-${i}.html`);
-            }
-
-            // Sort blog files in descending order based on the numerical part of the filename
-            blogFiles.sort((a, b) => {
-                const numA = parseInt(a.match(/blog-(\d+)\.html/)[1]);
-                const numB = parseInt(b.match(/blog-(\d+)\.html/)[1]);
-                return numB - numA; // Descending order
-            });
-
-            for (const file of blogFiles) {
-                try {
-                    const response = await fetch(file);
-                    if (response.ok) {
-                        const content = await response.text();
-                        const div = document.createElement('div');
-                        div.innerHTML = content;
-                        blogContainer.appendChild(div);
-                    } else {
-                        console.log(`No more blog posts found after ${file}`);
-                        break; // Stop loading when a file is not found
-                    }
-                } catch (error) {
-                    console.error(`Error loading ${file}:`, error);
-                    break; // Stop on error
-                }
-            }
-        }
-
-        // Load blogs when the page loads
-        window.addEventListener('DOMContentLoaded', loadBlogPosts);
-    </script>
+    <script src="assets/js/script.js"></script>
 </body>
 </html>

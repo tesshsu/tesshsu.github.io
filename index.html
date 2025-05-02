@@ -7,11 +7,7 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body class="bg-white text-black flex">
     <!-- Left Sidebar -->
@@ -55,7 +51,6 @@
             </div>
         </nav>
 
-        <!-- About Section -->
         <!-- About Section -->
         <section id="about" class="pt-20 pb-10">
             <div class="container mx-auto px-4">
@@ -116,7 +111,7 @@
                     </div>
                     <div class="text-center">
                         <img src="img/java.png" alt="Java Certificate" class="w-full h-80 object-cover mb-2">
-                        <p class="font-semibold">Java certificates - Ecole Polytechnique federale de lausanne</p>
+                        <p class="font-semibold">Java certificats - Ecole Polytechnique federale de lausanne</p>
                         <p class="text-gray-600">June 30, 2012</p>
                     </div>
                     <div class="text-center">
@@ -152,13 +147,45 @@
                         <p>Symfony, Laravel, React, Angular, ASP.NET</p>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold">DevOps & Cloud</h3>
-                        <p>Docker, Kubernetes, Terraform, AZURE, AWS, GCP, OVH</p>
+                        <h3 class="text-lg font-semibold">DevOps & CI/CD</h3>
+                        <p>Docker, Kubernetes, Terraform, Azure, AWS, GCP, OVH, ArgoCD, GitOps, GitHub Actions, GitLab CI</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold">Monitoring</h3>
+                        <p>Prometheus, Grafana, Kafka, Datadog, Zabbix</p>
                     </div>
                     <div>
                         <h3 class="text-lg font-semibold">Databases</h3>
                         <p>SQL, MySQL, PostgreSQL, MongoDB, Firebase, GraphQL</p>
                     </div>
+                    <div>
+                        <h3 class="text-lg font-semibold">Cybersecurity</h3>
+                        <p>OWASP, Kali Linux, Metasploit, Burp Suite, Wireshark, Nmap, SSL/TLS, API Security, Pentesting, Cloud Security</p>
+                    </div>
+                </div>
+            </div>
+        </section>        
+
+        <!-- Slider Section -->
+        <section class="py-10">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-4">Past Projects</h2>
+                <div class="slider-container">
+                    <button class="slider-btn prev-btn">&larr;</button>
+                    <div class="slider" id="project-slider">
+                        <img src="img/img-1.jpg" alt="Project 1">
+                        <img src="img/img-2.jpg" alt="Project 2">
+                        <img src="img/img-3.jpg" alt="Project 3">
+                        <img src="img/img-4.jpg" alt="Project 4">
+                        <img src="img/img-5.jpg" alt="Project 5">
+                        <img src="img/img-6.jpg" alt="Project 6">
+                        <img src="img/img-7.jpg" alt="Project 7">
+                        <img src="img/img-8.jpg" alt="Project 8">
+                        <img src="img/img-9.png" alt="Project 9">
+                        <img src="img/img-10.jpg" alt="Project 10">
+                        <img src="img/img-11.jpg" alt="Project 11">
+                    </div>
+                    <button class="slider-btn next-btn">&rarr;</button>
                 </div>
             </div>
         </section>
@@ -169,23 +196,7 @@
         </footer>
     </main>
 
-    <!-- Language Switcher Script -->
-    <script>
-        document.getElementById('language-switcher').addEventListener('change', function() {
-            const lang = this.value;
-            if (lang === 'fr') {
-                window.location.href = 'fr.html';
-            }
-        });
-
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                target.scrollIntoView({ behavior: 'smooth' });
-            });
-        });
-    </script>
+    <!-- Include the external script -->
+    <script src="assets/js/script.js"></script>
 </body>
 </html>
