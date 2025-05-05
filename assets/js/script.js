@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Load blog posts dynamically in descending order
+    // Load blog posts dynamically in descending order on blog.html
     async function loadBlogPosts() {
         const blogContainer = document.getElementById('blog-posts');
         const blogFiles = [];
@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const blogTitle = doc.querySelector('.blog-title')?.textContent || 'Untitled Blog';
                     const blogDate = doc.querySelector('.text-gray-600')?.textContent || 'Date Unknown';
                     const blogSubtitle = doc.querySelector('.sub-title')?.innerHTML || 'No subtitle available.';
-                    const blogLink = file;
                     const blogNumber = file.match(/blog-(\d+)\.html/)[1];
                     const blogImageSrc = `../img/blog-${blogNumber}.jpeg`;
 
@@ -60,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p class="text-gray-600 mb-2">${blogDate}</p>
                         <img src="${blogImageSrc}" alt="Blog ${blogNumber} Image" class="w-25 h-auto object-cover mb-4">
                         <p class="sub-title text-lg">${blogSubtitle}</p>
-                        <a href="${blogLink}" class="blog-link text-blue-600 hover:underline">Lire la suite ....</a>
+                        <a href="${file}" class="blog-link text-blue-600 hover:underline">Lire la suite</a>
                         <!-- Share Block -->
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                             <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
@@ -118,8 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Load blogs when the page loads
-    window.addEventListener('DOMContentLoaded', loadBlogPosts);
+    // Load blogs when the page loads on blog.html
+    if (window.location.pathname.includes('blog.html')) {
+        window.addEventListener('DOMContentLoaded', loadBlogPosts);
+    }
 
     // Language Switcher
     const languageSwitcher = document.getElementById('language-switcher');
@@ -176,4 +177,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize share buttons on page load for individual blog pages
     initializeShareButtons();
+
+    // Dynamic blog navigation
+    function setupBlogNavigation() {
+        const currentPath = window.location.pathname;
+        const currentNumber = parseInt(currentPath.match(/blog-(\d+)\.html/)?.[1] || 1);
+        const navBlock = document.querySelector('.flex.justify-between');
+
+        if (navBlock) {
+            const prevLink = navBlock.querySelector('a:nth-child(1)');
+            const nextLink = navBlock.querySelector('a:nth-child(2)');
+            const maxBlogNumber = 6; // Adjust this based on the highest blog number (e.g., 6 for blog-6.html)
+
+            // Set previous link
+            if (currentNumber === 1) {
+                prevLink.href = '/blog.html';
+                prevLink.classList.add('cursor-not-allowed', 'text-gray-400');
+                prevLink.classList.remove('hover:underline');
+                prevLink.textContent = '← Précédent List blogs';
+            } else {
+                prevLink.href = `/blogs/blog-${currentNumber - 1}.html`;
+                prevLink.textContent = '← Précédent';
+            }
+
+            // Set next link
+            if (currentNumber === maxBlogNumber) {
+                nextLink.href = '#';
+                nextLink.classList.add('cursor-not-allowed', 'text-gray-400');
+                nextLink.classList.remove('hover:underline');
+                nextLink.textContent = 'next blog →';
+            } else {
+                nextLink.href = `/blogs/blog-${currentNumber + 1}.html`;
+                nextLink.textContent = 'next blog →';
+            }
+        }
+    }
+
+    // Run blog navigation setup on individual blog pages
+    if (window.location.pathname.includes('blogs/blog-')) {
+        window.addEventListener('DOMContentLoaded', setupBlogNavigation);
+    }
 });
