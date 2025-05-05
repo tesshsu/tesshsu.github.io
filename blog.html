@@ -24,7 +24,9 @@
         <!-- Social Media Links -->
         <div class="flex flex-col space-y-4 mt-4">
             <a href="https://github.com/tesshsu" target="_blank" class="hover:text-gray-400"><i class="fab fa-github text-xl"></i></a>
-            <a href="https://www.linkedin.com/in/yating-hsu-a9b1a221/" target="_blank" class="hover:text-gray-400  <div class="mt-auto">
+            <a href="https://www.linkedin.com/in/yating-hsu-a9b1a221/" target="_blank" class="hover:text-gray-400"><i class="fab fa-linkedin text-xl"></i></a>
+        </div>
+        <div class="mt-auto">
         </div>
     </aside>
 
@@ -44,11 +46,69 @@
             </div>
         </nav>
 
+        <!-- Blog Header with Search -->
+        <header class="pt-20 pb-6">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-4">Blog</h2>
+                <div class="relative mb-6">
+                    <input type="text" id="search-input" class="w-full p-2 pl-10 border rounded-lg" placeholder="Rechercher..." aria-label="Rechercher un article">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+        </header>
+
         <!-- Blog Section -->
-        <section id="blog" class="pt-20 pb-10 mt-4">
+        <section id="blog" class="pb-10 mt-4">
             <div class="container mx-auto px-4">
                 <div id="blog-posts" class="space-y-6">
                     <!-- Blog posts will be loaded here dynamically -->
+                    <div class="border-b pb-6">
+                        <h2 class="blog-title text-2xl font-semibold mb-2">🚨 Un problème majeur de cybersécurité que vous pourriez négliger :</h2>
+                        <p class="text-gray-600 mb-2">16 Avril 2025</p>
+                        <a href="blogs/blog-1.html" class="blog-link text-blue-600 hover:underline">Lire la suite</a>
+                        <!-- Share Block -->
+                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                            <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
+                            <div class="flex space-x-4 share-buttons">
+                                <a data-platform="linkedin" href="#" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                                    <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                                </a>
+                                <a data-platform="reddit" href="#" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                                    <i class="fab fa-reddit mr-2"></i> Reddit
+                                </a>
+                                <a data-platform="x" href="#" target="_blank" class="bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500 flex items-center">
+                                    <i class="fab fa-x-twitter mr-2"></i> X
+                                </a>
+                                <a data-platform="facebook" href="#" target="_blank" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 flex items-center">
+                                    <i class="fab fa-facebook-f mr-2"></i> Facebook
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-b pb-6">
+                        <h2 class="blog-title text-2xl font-semibold mb-2">Développement, infra, sécurité : une seule démarche DevSecOps</h2>
+                        <p class="text-gray-600 mb-2">10 Mars 2025</p>
+                        <a href="blogs/blog-2.html" class="blog-link text-blue-600 hover:underline">Lire la suite</a>
+                        <!-- Share Block -->
+                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                            <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
+                            <div class="flex space-x-4 share-buttons">
+                                <a data-platform="linkedin" href="#" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                                    <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                                </a>
+                                <a data-platform="reddit" href="#" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                                    <i class="fab fa-reddit mr-2"></i> Reddit
+                                </a>
+                                <a data-platform="x" href="#" target="_blank" class="bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500 flex items-center">
+                                    <i class="fab fa-x-twitter mr-2"></i> X
+                                </a>
+                                <a data-platform="facebook" href="#" target="_blank" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 flex items-center">
+                                    <i class="fab fa-facebook-f mr-2"></i> Facebook
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Add more blog post previews as needed -->
                 </div>
             </div>
         </section>
@@ -61,5 +121,60 @@
 
     <!-- Scripts -->
     <script src="assets/js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-input');
+            const blogPosts = document.querySelectorAll('#blog-posts > div');
+
+            // Function to calculate string similarity (Levenshtein Distance)
+            function levenshteinDistance(a, b) {
+                const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+                for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+                for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+                for (let j = 1; j <= b.length; j++) {
+                    for (let i = 1; i <= a.length; i++) {
+                        const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
+                        matrix[j][i] = Math.min(
+                            matrix[j][i - 1] + 1,
+                            matrix[j - 1][i] + 1,
+                            matrix[j - 1][i - 1] + indicator
+                        );
+                    }
+                }
+                return matrix[b.length][a.length];
+            }
+
+            // Search functionality
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+
+                if (searchTerm === '') {
+                    // Show all blog posts if search is empty
+                    blogPosts.forEach(post => {
+                        post.classList.remove('hidden');
+                    });
+                } else {
+                    // Calculate similarity for each blog post title and sort by closest match
+                    const postsWithDistance = Array.from(blogPosts).map(post => {
+                        const title = post.querySelector('.blog-title').textContent.toLowerCase();
+                        const distance = levenshteinDistance(searchTerm, title);
+                        return { post, distance };
+                    });
+
+                    // Sort by distance (lower distance = closer match)
+                    postsWithDistance.sort((a, b) => a.distance - b.distance);
+
+                    // Show/hide posts based on sorted order
+                    postsWithDistance.forEach(({ post }, index) => {
+                        if (index < 3) { // Show top 3 closest matches (adjust as needed)
+                            post.classList.remove('hidden');
+                        } else {
+                            post.classList.add('hidden');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -24,6 +24,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     const content = await response.text();
                     const div = document.createElement('div');
                     div.innerHTML = content;
+
+                    // Add share block to each dynamically loaded blog post
+                    const shareBlock = `
+                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                            <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
+                            <div class="flex space-x-4 share-buttons">
+                                <a data-platform="linkedin" href="#" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                                    <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                                </a>
+                                <a data-platform="reddit" href="#" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                                    <i class="fab fa-reddit mr-2"></i> Reddit
+                                </a>
+                                <a data-platform="x" href="#" target="_blank" class="bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500 flex items-center">
+                                    <i class="fab fa-x-twitter mr-2"></i> X
+                                </a>
+                                <a data-platform="facebook" href="#" target="_blank" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 flex items-center">
+                                    <i class="fab fa-facebook-f mr-2"></i> Facebook
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    div.insertAdjacentHTML('beforeend', shareBlock);
                     blogContainer.appendChild(div);
                 } else {
                     console.log(`No more blog posts found after ${file}`);
@@ -34,10 +56,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 break; // Stop on error
             }
         }
+
+        // Initialize share buttons after loading blog posts
+        initializeShareButtons();
+    }
+
+    // Function to initialize share buttons
+    function initializeShareButtons() {
+        const shareButtonsContainers = document.querySelectorAll('.share-buttons');
+        shareButtonsContainers.forEach(container => {
+            const blogPost = container.closest('.border-b');
+            const blogTitle = blogPost.querySelector('.blog-title')?.textContent || document.querySelector('.blog-title')?.textContent || 'Blog Post';
+            const blogUrl = blogPost.querySelector('.blog-link')?.href || window.location.href;
+
+            const encodedUrl = encodeURIComponent(blogUrl);
+            const encodedTitle = encodeURIComponent(blogTitle);
+
+            const shareLinks = {
+                linkedin: `https://www.linkedin.com/shareArticle?url=${encodedUrl}&title=${encodedTitle}`,
+                reddit: `https://reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
+                x: `https://x.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+                facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
+            };
+
+            container.querySelectorAll('a[data-platform]').forEach(button => {
+                const platform = button.getAttribute('data-platform');
+                if (shareLinks[platform]) {
+                    button.href = shareLinks[platform];
+                }
+            });
+        });
     }
 
     // Load blogs when the page loads
     window.addEventListener('DOMContentLoaded', loadBlogPosts);
+
     // Language Switcher
     const languageSwitcher = document.getElementById('language-switcher');
     if (languageSwitcher) {
@@ -90,4 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateSlider();
         });
     }
+
+    // Initialize share buttons on page load for individual blog pages
+    initializeShareButtons();
 });
