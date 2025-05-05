@@ -270,6 +270,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Function to load the cafe donation block dynamically
+    async function loadCafeBlock() {
+        const mainContent = document.querySelector('main');
+        if (mainContent && window.location.pathname.includes('blogs/blog-')) {
+            try {
+                const response = await fetch('/assets/partials/cafe.html');
+                if (response.ok) {
+                    const cafeContent = await response.text();
+                    const cafeDiv = document.createElement('div');
+                    cafeDiv.innerHTML = cafeContent;
+                    mainContent.insertBefore(cafeDiv, mainContent.querySelector('.flex.justify-between'));
+                } else {
+                    console.error('Failed to load cafe block:', response.status);
+                }
+            } catch (error) {
+                console.error('Error loading cafe block:', error);
+            }
+        }
+    }
+
     // Dynamic blog navigation
     function setupBlogNavigation() {
         const currentPath = window.location.pathname;
@@ -305,9 +325,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Run blog navigation and sidebar setup on individual blog pages
+    // Run blog navigation, sidebar, and cafe block setup on individual blog pages
     if (window.location.pathname.includes('blogs/blog-')) {
-        Promise.all([loadSidebar(), setupBlogNavigation()]).then(() => {
+        Promise.all([loadSidebar(), loadCafeBlock(), setupBlogNavigation()]).then(() => {
             initializeShareButtons();
         });
     }
