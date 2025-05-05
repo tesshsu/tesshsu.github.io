@@ -17,6 +17,9 @@ body {
     object-fit: cover;
     margin-right: 10px;
 }
+#blog-slider img {
+    max-width: 310px;
+}
 .slider-btn {
     position: absolute;
     top: 50%;
