@@ -160,8 +160,24 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (projectSlider && prevBtnProject && nextBtnProject) {
         let currentIndex = 0;
-        const totalImages = 11;
+        const totalImages = 15;
         const imageWidth = 310; // Image width (300px) + margin (10px)
+
+        // Shuffle project images randomly on page load
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        const projectImages = [];
+        for (let i = 1; i <= totalImages; i++) {
+            projectImages.push({ src: `img/img-${i}.jpg`, alt: `Projet ${i}` });
+        }
+        const shuffledProjects = shuffle([...projectImages]);
+        projectSlider.innerHTML = shuffledProjects.map(project => `<img src="${project.src}" alt="${project.alt}">`).join('');
 
         function updateProjectSlider() {
             const maxIndex = totalImages - 1;
@@ -179,6 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
             currentIndex--;
             updateProjectSlider();
         });
+
+        // Initial update
+        updateProjectSlider();
     }
 
     // Slider Functionality for Blogs
