@@ -34,3 +34,15 @@ body {
 .next-btn {
     right: 10px;
 }
+
+.prev-btn-blog{
+    left: 10px;
+}
+
+.next-btn-blog{
+    right: 10px;
+}
+
+#blog-slider a{
+    padding: 0  15px;
+}

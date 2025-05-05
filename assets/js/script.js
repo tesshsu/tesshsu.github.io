@@ -153,32 +153,84 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Slider Functionality
-    const slider = document.getElementById('project-slider');
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
+    // Slider Functionality for Projects
+    const projectSlider = document.getElementById('project-slider');
+    const prevBtnProject = document.querySelector('.prev-btn');
+    const nextBtnProject = document.querySelector('.next-btn');
     
-    if (slider && prevBtn && nextBtn) {
+    if (projectSlider && prevBtnProject && nextBtnProject) {
         let currentIndex = 0;
         const totalImages = 11;
         const imageWidth = 310; // Image width (300px) + margin (10px)
 
-        function updateSlider() {
+        function updateProjectSlider() {
             const maxIndex = totalImages - 1;
             if (currentIndex < 0) currentIndex = 0;
             if (currentIndex > maxIndex - 3) currentIndex = maxIndex - 3; // Show 4 images at a time
-            slider.style.transform = `translateX(-${currentIndex * imageWidth}px)`;
+            projectSlider.style.transform = `translateX(-${currentIndex * imageWidth}px)`;
         }
 
-        nextBtn.addEventListener('click', () => {
+        nextBtnProject.addEventListener('click', () => {
             currentIndex++;
-            updateSlider();
+            updateProjectSlider();
         });
 
-        prevBtn.addEventListener('click', () => {
+        prevBtnProject.addEventListener('click', () => {
             currentIndex--;
-            updateSlider();
+            updateProjectSlider();
         });
+    }
+
+    // Slider Functionality for Blogs
+    const blogSlider = document.getElementById('blog-slider');
+    const prevBtnBlog = document.querySelector('.prev-btn-blog');
+    const nextBtnBlog = document.querySelector('.next-btn-blog');
+    
+    if (blogSlider && prevBtnBlog && nextBtnBlog) {
+        let currentIndex = 0;
+        const totalBlogs = 6; // Adjust based on the number of blogs (e.g., blog-1 to blog-6)
+        const imageWidth = 310; // Image width (300px) + margin (10px)
+
+        // Shuffle blog images randomly on page load
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        const blogImages = [
+            { src: '../img/blog-1.jpeg', href: '/blogs/blog-1.html' },
+            { src: '../img/blog-2.jpeg', href: '/blogs/blog-2.html' },
+            { src: '../img/blog-3.jpeg', href: '/blogs/blog-3.html' },
+            { src: '../img/blog-4.jpeg', href: '/blogs/blog-4.html' },
+            { src: '../img/blog-5.jpeg', href: '/blogs/blog-5.html' },
+            { src: '../img/blog-6.jpeg', href: '/blogs/blog-6.html' }
+        ];
+
+        const shuffledBlogs = shuffle([...blogImages]);
+        blogSlider.innerHTML = shuffledBlogs.map(blog => `<a href="${blog.href}"><img src="${blog.src}" alt="Blog ${blog.href.match(/blog-(\d+)\.html/)[1]}"></a>`).join('');
+
+        function updateBlogSlider() {
+            const maxIndex = totalBlogs - 1;
+            if (currentIndex < 0) currentIndex = 0;
+            if (currentIndex > maxIndex - 3) currentIndex = maxIndex - 3; // Show 4 images at a time
+            blogSlider.style.transform = `translateX(-${currentIndex * imageWidth}px)`;
+        }
+
+        nextBtnBlog.addEventListener('click', () => {
+            currentIndex++;
+            updateBlogSlider();
+        });
+
+        prevBtnBlog.addEventListener('click', () => {
+            currentIndex--;
+            updateBlogSlider();
+        });
+
+        // Initial update
+        updateBlogSlider();
     }
 
     // Function to load the sidebar dynamically
