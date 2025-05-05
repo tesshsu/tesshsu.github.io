@@ -1,57 +1,90 @@
-<div class="space-y-6">
-    <div class="border-b pb-6">
-        <h1 class="blog-title text-2xl font-semibold mb-2">Un voyage concis en DevOps : GitOps sur Azure avec ArgoCD</h1>
-        <p class="text-gray-600 mb-2">29 Avril 2025</p>
-        <img src="../img/blog-4.jpeg" alt="Azure DevOps GitOps" class="w-25 h-auto object-cover mb-4">
-        <p class="text-lg">
-            🚀 J’ai récemment terminé un projet pratique DevOps utilisant Azure, ArgoCD et GitOps pour déployer une application Node.js sur un cluster AKS. Voici mon parcours !
-        </p>
-        <p class="text-lg font-semibold mt-4">Aperçu du projet</p>
-        <p class="text-lg">
-            Mon objectif était de déployer une application Node.js sur Azure Kubernetes Service (AKS), de la gérer avec ArgoCD en utilisant GitOps, et d’automatiser les déploiements via GitHub Actions. L’application a été conteneurisée, stockée dans Azure Container Registry (ACR), et déployée avec un chart Helm.
-        </p>
-        <p class="text-lg font-semibold mt-4">Étape 1 : Configuration</p>
-        <p class="text-lg">
-            J’ai créé un cluster AKS (`AiliDevAKS`) et un ACR (`ailidevacr`), mis en place un dépôt GitHub public (`tesshsu/AzureDev-AppService`), et installé ArgoCD sur AKS.
-        </p>
-        <p class="text-lg font-semibold mt-4">Étape 2 : Configuration d’ArgoCD</p>
-        <p class="text-lg">
-            J’ai utilisé le modèle App-of-Apps, définissant `root-app` et `azuredev-appservice` dans mes manifestes (voir : <a href="https://github.com/tesshsu/AzureDev-AppService/blob/dev/argocd/app-of-apps.yaml" target="_blank" class="text-blue-600 hover:underline">app-of-apps.yaml</a>). Je l’ai appliqué manuellement pour tester.
-        </p>
-        <p class="text-lg font-semibold mt-4">Défi 1 : Placeholder dans `repoURL`</p>
-        <p class="text-lg">
-            Le `repoURL` affichait un placeholder (`https://github.com/${{ github.repository }}.git`) car j’ai appliqué le fichier manuellement. Je l’ai remplacé par `https://github.com/tesshsu/AzureDev-AppService.git`, installé le CLI ArgoCD, et réappliqué le fichier après avoir supprimé les Applications.
-        </p>
-        <p class="text-lg font-semibold mt-4">Défi 2 : Problème d’accès au dépôt</p>
-        <p class="text-lg">
-            Une erreur `ComparisonError` est apparue ("échec de la liste des refs : authentification requise") car j’avais temporairement rendu le dépôt privé. Je l’ai rendu public à nouveau, actualisé dans ArgoCD, et l’erreur a disparu.
-        </p>
-        <p class="text-lg font-semibold mt-4">Vérification</p>
-        <p class="text-lg">
-            L’application était `Healthy` et `Synced`, accessible à `132.220.10.28`. J’ai corrigé un décalage de réplicas en mettant `replicaCount` à `3` dans le chart Helm.
-        </p>
-        <p class="text-lg font-semibold mt-4">GitOps en action</p>
-        <ul class="list-disc ml-5">
-            <li>J’ai mis à jour l’application avec "Hello from GitOps v13 !" et ArgoCD a synchronisé.</li>
-            <li>J’ai testé l’auto-réparation en supprimant un Pod—ArgoCD l’a recréé.</li>
-            <li>J’ai effectué un rollback vers un commit précédent via l’interface ArgoCD.</li>
-        </ul>
-        <p class="text-lg font-semibold mt-4">Leçons apprises</p>
-        <ul class="list-disc ml-5">
-            <li>GitOps avec ArgoCD est puissant pour l’automatisation.</li>
-            <li>Assurez un accès constant au dépôt—les dépôts privés nécessitent des identifiants.</li>
-            <li>L’interface et le CLI d’ArgoCD sont parfaits pour le dépannage.</li>
-        </ul>
-        <p class="text-lg mt-4">
-            Mon projet est une réussite ! J’ai acquis une base solide en GitOps et j’ai hâte de relever d’autres défis DevOps. Partagez vos expériences GitOps ci-dessous !
-        </p>
-        <p class="text-lg mt-4">
-            <strong>Hashtags :</strong><br>
-            <a href="https://www.linkedin.com/feed/hashtag/azure" target="_blank" class="text-blue-600 hover:underline">#Azure</a>
-            <a href="https://www.linkedin.com/feed/hashtag/argocd" target="_blank" class="text-blue-600 hover:underline">#ArgoCD</a>
-            <a href="https://www.linkedin.com/feed/hashtag/gitops" target="_blank" class="text-blue-600 hover:underline">#GitOps</a>
-            <a href="https://www.linkedin.com/feed/hashtag/devops" target="_blank" class="text-blue-600 hover:underline">#DevOps</a>
-            <a href="https://www.linkedin.com/feed/hashtag/cloudcomputing" target="_blank" class="text-blue-600 hover:underline">#CloudComputing</a>
-        </p>
-    </div>
-</div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yating Chatiron - Blog Post</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="bg-white text-black">
+    <main class="container mx-auto px-4 py-10">
+        <div class="space-y-6">
+            <div class="border-b pb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2">Un voyage concis en DevOps : GitOps sur Azure avec ArgoCD</h1>
+                <p class="text-gray-600 mb-2">29 Avril 2025</p>
+                <img src="../img/blog-4.jpeg" alt="Azure DevOps GitOps" class="w-25 h-auto object-cover mb-4">
+                <p class="sub-title text-lg">
+                    🚀 J’ai récemment terminé un projet pratique DevOps utilisant Azure, ArgoCD et GitOps pour déployer une application Node.js sur un cluster AKS. Voici mon parcours !
+                </p>
+                <p class="text-lg font-semibold mt-4">Aperçu du projet</p>
+                <p class="sub-title text-lg">
+                    Mon objectif était de déployer une application Node.js sur Azure Kubernetes Service (AKS), de la gérer avec ArgoCD en utilisant GitOps, et d’automatiser les déploiements via GitHub Actions. L’application a été conteneurisée, stockée dans Azure Container Registry (ACR), et déployée avec un chart Helm.
+                </p>
+                <p class="text-lg font-semibold mt-4">Étape 1 : Configuration</p>
+                <p class="text-lg">
+                    J’ai créé un cluster AKS (`AiliDevAKS`) et un ACR (`ailidevacr`), mis en place un dépôt GitHub public (`tesshsu/AzureDev-AppService`), et installé ArgoCD sur AKS.
+                </p>
+                <p class="text-lg font-semibold mt-4">Étape 2 : Configuration d’ArgoCD</p>
+                <p class="text-lg">
+                    J’ai utilisé le modèle App-of-Apps, définissant `root-app` et `azuredev-appservice` dans mes manifestes (voir : <a href="https://github.com/tesshsu/AzureDev-AppService/blob/dev/argocd/app-of-apps.yaml" target="_blank" class="text-blue-600 hover:underline">app-of-apps.yaml</a>). Je l’ai appliqué manuellement pour tester.
+                </p>
+                <p class="text-lg font-semibold mt-4">Défi 1 : Placeholder dans `repoURL`</p>
+                <p class="text-lg">
+                    Le `repoURL` affichait un placeholder (`https://github.com/${{ github.repository }}.git`) car j’ai appliqué le fichier manuellement. Je l’ai remplacé par `https://github.com/tesshsu/AzureDev-AppService.git`, installé le CLI ArgoCD, et réappliqué le fichier après avoir supprimé les Applications.
+                </p>
+                <p class="text-lg font-semibold mt-4">Défi 2 : Problème d’accès au dépôt</p>
+                <p class="text-lg">
+                    Une erreur `ComparisonError` est apparue ("échec de la liste des refs : authentification requise") car j’avais temporairement rendu le dépôt privé. Je l’ai rendu public à nouveau, actualisé dans ArgoCD, et l’erreur a disparu.
+                </p>
+                <p class="text-lg font-semibold mt-4">Vérification</p>
+                <p class="text-lg">
+                    L’application était `Healthy` et `Synced`, accessible à `132.220.10.28`. J’ai corrigé un décalage de réplicas en mettant `replicaCount` à `3` dans le chart Helm.
+                </p>
+                <p class="text-lg font-semibold mt-4">GitOps en action</p>
+                <ul class="list-disc ml-5">
+                    <li>J’ai mis à jour l’application avec "Hello from GitOps v13 !" et ArgoCD a synchronisé.</li>
+                    <li>J’ai testé l’auto-réparation en supprimant un Pod—ArgoCD l’a recréé.</li>
+                    <li>J’ai effectué un rollback vers un commit précédent via l’interface ArgoCD.</li>
+                </ul>
+                <p class="text-lg font-semibold mt-4">Leçons apprises</p>
+                <ul class="list-disc ml-5">
+                    <li>GitOps avec ArgoCD est puissant pour l’automatisation.</li>
+                    <li>Assurez un accès constant au dépôt—les dépôts privés nécessitent des identifiants.</li>
+                    <li>L’interface et le CLI d’ArgoCD sont parfaits pour le dépannage.</li>
+                </ul>
+                <p class="text-lg mt-4">
+                    Mon projet est une réussite ! J’ai acquis une base solide en GitOps et j’ai hâte de relever d’autres défis DevOps. Partagez vos expériences GitOps ci-dessous !
+                </p>
+                <p class="text-lg mt-4">
+                    <strong>Hashtags :</strong><br>
+                    <a href="https://www.linkedin.com/feed/hashtag/azure" target="_blank" class="text-blue-600 hover:underline">#Azure</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/argocd" target="_blank" class="text-blue-600 hover:underline">#ArgoCD</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/gitops" target="_blank" class="text-blue-600 hover:underline">#GitOps</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/devops" target="_blank" class="text-blue-600 hover:underline">#DevOps</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/cloudcomputing" target="_blank" class="text-blue-600 hover:underline">#CloudComputing</a>
+                </p>
+            </div>
+        </div>
+         <!-- Share Block -->
+         <div class="mt-6 p-4 bg-gray-100 rounded-lg">
+            <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
+            <div class="flex space-x-4 share-buttons">
+                <a data-platform="linkedin" href="#" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                    <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                </a>
+                <a data-platform="reddit" href="#" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fab fa-reddit mr-2"></i> Reddit
+                </a>
+                <a data-platform="x" href="#" target="_blank" class="bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500 flex items-center">
+                    <i class="fab fa-x-twitter mr-2"></i> X
+                </a>
+                <a data-platform="facebook" href="#" target="_blank" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 flex items-center">
+                    <i class="fab fa-facebook-f mr-2"></i> Facebook
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>    
