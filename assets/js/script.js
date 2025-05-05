@@ -93,33 +93,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to initialize share buttons
     function initializeShareButtons() {
         const shareButtonsContainers = document.querySelectorAll('.share-buttons');
-        shareButtonsContainers.forEach(container => {
-            const blogPost = container.closest('.border-b');
-            const blogTitle = blogPost.querySelector('.blog-title')?.textContent || document.querySelector('.blog-title')?.textContent || 'Blog Post';
-            const blogUrl = blogPost.querySelector('.blog-link')?.href || window.location.href;
+        if (shareButtonsContainers.length > 0) {
+            shareButtonsContainers.forEach(container => {
+                const blogPost = container.closest('.border-b');
+                const blogTitle = blogPost?.querySelector('.blog-title')?.textContent || document.querySelector('.blog-title')?.textContent || 'Blog Post';
+                const blogUrl = blogPost?.querySelector('.blog-link')?.href || window.location.href;
 
-            const encodedUrl = encodeURIComponent(blogUrl);
-            const encodedTitle = encodeURIComponent(blogTitle);
+                const encodedUrl = encodeURIComponent(blogUrl);
+                const encodedTitle = encodeURIComponent(blogTitle);
 
-            const shareLinks = {
-                linkedin: `https://www.linkedin.com/shareArticle?url=${encodedUrl}&title=${encodedTitle}`,
-                reddit: `https://reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
-                x: `https://x.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
-                facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
-            };
+                const shareLinks = {
+                    linkedin: `https://www.linkedin.com/shareArticle?url=${encodedUrl}&title=${encodedTitle}`,
+                    reddit: `https://reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
+                    x: `https://x.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+                    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
+                };
 
-            container.querySelectorAll('a[data-platform]').forEach(button => {
-                const platform = button.getAttribute('data-platform');
-                if (shareLinks[platform]) {
-                    button.href = shareLinks[platform];
-                }
+                container.querySelectorAll('a[data-platform]').forEach(button => {
+                    const platform = button.getAttribute('data-platform');
+                    if (shareLinks[platform]) {
+                        button.href = shareLinks[platform];
+                    }
+                });
             });
-        });
+        } else {
+            console.warn('No .share-buttons elements found in the document.');
+        }
     }
 
     // Load blogs when the page loads on blog.html
     if (window.location.pathname.includes('blog.html')) {
-        window.addEventListener('DOMContentLoaded', loadBlogPosts);
+        loadBlogPosts().then(() => {
+            initializeShareButtons();
+        });
     }
 
     // Language Switcher
@@ -175,8 +181,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Initialize share buttons on page load for individual blog pages
-    initializeShareButtons();
+    // Function to load the sidebar dynamically
+    async function loadSidebar() {
+        const sidebarContainer = document.getElementById('sidebar-container');
+        if (sidebarContainer) {
+            try {
+                const response = await fetch('/assets/partials/sidebar.html');
+                if (response.ok) {
+                    const sidebarContent = await response.text();
+                    sidebarContainer.innerHTML = sidebarContent;
+                } else {
+                    console.error('Failed to load sidebar:', response.status);
+                }
+            } catch (error) {
+                console.error('Error loading sidebar:', error);
+            }
+        }
+    }
 
     // Dynamic blog navigation
     function setupBlogNavigation() {
@@ -213,8 +234,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Run blog navigation setup on individual blog pages
+    // Run blog navigation and sidebar setup on individual blog pages
     if (window.location.pathname.includes('blogs/blog-')) {
-        window.addEventListener('DOMContentLoaded', setupBlogNavigation);
+        Promise.all([loadSidebar(), setupBlogNavigation()]).then(() => {
+            initializeShareButtons();
+        });
+    }
+
+    // Initialize share buttons on individual blog pages after DOM content is loaded
+    if (!window.location.pathname.includes('blog.html')) {
+        window.addEventListener('DOMContentLoaded', initializeShareButtons);
     }
 });
