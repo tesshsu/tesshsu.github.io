@@ -9,17 +9,50 @@
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body class="bg-white text-black">
-     <!-- Sidebar Placeholder -->
-     <div id="sidebar-container"></div>
-    <main class="container mx-auto px-4 py-10">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container"></div>
+    <main class="container mx-auto px-4 py-10 pl-20">
         <div class="space-y-6">
             <div class="border-b pb-6">
-                <h1 class="blog-title text-2xl font-semibold mb-2">Nouveau sujet sur la cybersécurité avancée</h1>
-                <p class="text-gray-600 mb-2">01 Juin 2025</p>
-                <p class="text-lg">
-                    Contenu de l'article sur un nouveau sujet de cybersécurité avancée...
+                <h1 class="blog-title text-2xl font-semibold mb-2">🚨 Alerte Sécurité Kali Linux</h1>
+                <p class="text-gray-600 mb-2">05 Mai 2025</p>
+                <img src="../img/blog-6.jpeg" alt="Azure DevOps GitOps" class="w-25 h-auto object-cover mb-4">
+                <p class="sub-title text-lg">
+                    Une erreur de clé pourrait empêcher toutes les mises à jour de fonctionner cette semaine. (Et oui, ça concerne presque tout le monde) Voici ce qu’il s’est passé 👇
                 </p>
-                <!-- Add more content as needed -->
+                <p class="text-lg mt-4">
+                    Le 18 février, Offensive Security a gelé les dépôts Kali. Pourquoi ? Ils ont perdu l’accès à la clé de signature du dépôt officiel (ED444FF07D8D0BF6). Pas volée. Pas compromise. Juste... inaccessible. ➡️ Ils ont donc généré une nouvelle clé (ED65462EC8D5E4C5), signée par les développeurs Kali via les serveurs OpenPGP d’Ubuntu. Mais tant que vous n'avez pas manuellement mis à jour votre cléring, votre système affichera cette erreur : <strong>“Missing key 827C8569F2518CC677FECA1AED65462EC8D5E4C5, which is needed to verify signature.”</strong>
+                </p>
+                <p class="text-lg mt-4">
+                    🎯 Résultat : impossible d’obtenir les dernières mises à jour. 🎯 Et si vous utilisez Kali pour vos tests de sécurité, vous êtes en terrain dangereux.
+                </p>
+                <p class="text-lg font-semibold mt-4">💡 La solution ?</p>
+                <p class="text-lg mt-2">
+                    Téléchargez et installez manuellement la nouvelle clé :
+                </p>
+                <pre class="bg-gray-100 p-2 rounded">sudo wget https://lnkd.in/d46aDT8X -O /usr/share/keyrings/kali-archive-keyring.gpg</pre>
+                <p class="text-lg mt-2">
+                    ✅ OffSec recommande aussi de vérifier le checksum de la clé téléchargée pour garantir son intégrité. ✅ Et pour les plus sceptiques : réinstaller Kali depuis une image ISO récente incluant la nouvelle clé est aussi une option.
+                </p>
+                <p class="text-lg mt-4">
+                    🔁 Ce n’est pas la première fois : en 2018, une expiration de clé avait déjà forcé une mise à jour manuelle.
+                </p>
+                <p class="text-lg mt-4">
+                    💬 OffSec l’admet : “Ce n’est pas vous. C’est nous. On a perdu la clé. Et maintenant, chaque Kali va échouer à la mise à jour.”
+                </p>
+                <p class="text-lg mt-4">
+                    Ne soyez pas pris au piège cette semaine. Mettez à jour votre clé. Et sécurisez vos tests.
+                </p>
+                <p class="text-lg mt-4">
+                    <strong>Hashtags :</strong><br>
+                    <a href="https://www.linkedin.com/feed/hashtag/kalilinux" target="_blank" class="text-blue-600 hover:underline">#KaliLinux</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/cybersecurity" target="_blank" class="text-blue-600 hover:underline">#Cybersecurity</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/linuxupdate" target="_blank" class="text-blue-600 hover:underline">#LinuxUpdate</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/failsafe" target="_blank" class="text-blue-600 hover:underline">#FailSafe</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/sysadmin" target="_blank" class="text-blue-600 hover:underline">#SysAdmin</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/infosec" target="_blank" class="text-blue-600 hover:underline">#Infosec</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/criticalupdate" target="_blank" class="text-blue-600 hover:underline">#CriticalUpdate</a>
+                </p>
             </div>
         </div>
 
@@ -41,9 +74,11 @@
                 </a>
             </div>
         </div>
+
         <!-- Navigation Block -->
         <div class="mt-6 p-4 bg-gray-100 rounded-lg flex justify-between">
-            <a href="blog.html" class="text-blue-600 hover:underline">← Précédent List blogs</a>
+            <a href="/blog.html" class="text-blue-600 hover:underline">← Précédent List blogs</a>
+            <a href="/blogs/blog-5.html" class="text-blue-600 hover:underline">next blog →</a>
         </div>
     </main>
     <script src="../assets/js/script.js"></script>
