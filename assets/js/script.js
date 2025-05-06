@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const blogFiles = [];
         let maxIndex = 1;
 
-        // Incrementally check for blog files until a 404 is encountered
         while (true) {
             const file = `blogs/blog-${maxIndex}.html`;
             try {
@@ -14,15 +13,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     blogFiles.push(file);
                     maxIndex++;
                 } else {
-                    break; // Stop when a file is not found
+                    break;
                 }
             } catch (error) {
                 console.log(`No more blog posts found after ${file}`);
-                break; // Stop on error or 404
+                break;
             }
         }
 
-        // If no blog files are found, display a message
         if (blogFiles.length === 0) {
             const div = document.createElement('div');
             div.className = 'text-center text-gray-600 py-10';
@@ -31,14 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Sort blog files in descending order based on the numerical part of the filename
         blogFiles.sort((a, b) => {
             const numA = parseInt(a.match(/blog-(\d+)\.html/)[1]);
             const numB = parseInt(b.match(/blog-(\d+)\.html/)[1]);
-            return numB - numA; // Descending order
+            return numB - numA;
         });
 
-        // Load and display each blog post
         for (const file of blogFiles) {
             try {
                 const response = await fetch(file);
@@ -86,11 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Initialize share buttons after loading blog posts
         initializeShareButtons();
     }
 
-    // Function to initialize share buttons
     function initializeShareButtons() {
         const shareButtonsContainers = document.querySelectorAll('.share-buttons');
         if (shareButtonsContainers.length > 0) {
@@ -121,14 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Load blogs when the page loads on blog.html
     if (window.location.pathname.includes('blog.html')) {
         loadBlogPosts().then(() => {
             initializeShareButtons();
         });
     }
 
-    // Language Switcher
     const languageSwitcher = document.getElementById('language-switcher');
     if (languageSwitcher) {
         languageSwitcher.addEventListener('change', function() {
@@ -142,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Smooth scrolling
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -153,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Slider Functionality for Projects
     const projectSlider = document.getElementById('project-slider');
     const prevBtnProject = document.querySelector('.prev-btn');
     const nextBtnProject = document.querySelector('.next-btn');
@@ -161,9 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (projectSlider && prevBtnProject && nextBtnProject) {
         let currentIndex = 0;
         const totalImages = 15;
-        const imageWidth = 310; // Image width (300px) + margin (10px)
+        const imageWidth = 310;
 
-        // Shuffle project images randomly on page load
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -182,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateProjectSlider() {
             const maxIndex = totalImages - 1;
             if (currentIndex < 0) currentIndex = 0;
-            if (currentIndex > maxIndex - 3) currentIndex = maxIndex - 3; // Show 4 images at a time
+            if (currentIndex > maxIndex - 3) currentIndex = maxIndex - 3;
             projectSlider.style.transform = `translateX(-${currentIndex * imageWidth}px)`;
         }
 
@@ -196,21 +185,18 @@ document.addEventListener('DOMContentLoaded', () => {
             updateProjectSlider();
         });
 
-        // Initial update
         updateProjectSlider();
     }
 
-    // Slider Functionality for Blogs
     const blogSlider = document.getElementById('blog-slider');
     const prevBtnBlog = document.querySelector('.prev-btn-blog');
     const nextBtnBlog = document.querySelector('.next-btn-blog');
     
     if (blogSlider && prevBtnBlog && nextBtnBlog) {
         let currentIndex = 0;
-        const totalBlogs = 6; // Adjust based on the number of blogs (e.g., blog-1 to blog-6)
-        const imageWidth = 310; // Image width (300px) + margin (10px)
+        const totalBlogs = 6;
+        const imageWidth = 310;
 
-        // Shuffle blog images randomly on page load
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -234,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateBlogSlider() {
             const maxIndex = totalBlogs - 1;
             if (currentIndex < 0) currentIndex = 0;
-            if (currentIndex > maxIndex - 3) currentIndex = maxIndex - 3; // Show 4 images at a time
+            if (currentIndex > maxIndex - 3) currentIndex = maxIndex - 3;
             blogSlider.style.transform = `translateX(-${currentIndex * imageWidth}px)`;
         }
 
@@ -248,11 +234,9 @@ document.addEventListener('DOMContentLoaded', () => {
             updateBlogSlider();
         });
 
-        // Initial update
         updateBlogSlider();
     }
 
-    // Function to load the sidebar dynamically
     async function loadSidebar() {
         const sidebarContainer = document.getElementById('sidebar-container');
         if (sidebarContainer) {
@@ -270,17 +254,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to load the cafe donation block dynamically
     async function loadCafeBlock() {
         const mainContent = document.querySelector('main');
-        if (mainContent && window.location.pathname.includes('blogs/blog-')) {
+        if (mainContent && (window.location.pathname.includes('blogs/blog-') || window.location.pathname.includes('index.html'))) {
             try {
                 const response = await fetch('/assets/partials/cafe.html');
                 if (response.ok) {
                     const cafeContent = await response.text();
                     const cafeDiv = document.createElement('div');
                     cafeDiv.innerHTML = cafeContent;
-                    mainContent.insertBefore(cafeDiv, mainContent.querySelector('.flex.justify-between'));
+                    mainContent.insertBefore(cafeDiv, mainContent.querySelector('.flex.justify-between') || mainContent.lastElementChild);
                 } else {
                     console.error('Failed to load cafe block:', response.status);
                 }
@@ -290,7 +273,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Dynamic blog navigation
+    async function loadVisitCounterBlock() {
+        const mainContent = document.querySelector('main');
+        if (mainContent && (window.location.pathname.includes('blogs/blog-') || window.location.pathname.includes('index.html'))) {
+            try {
+                const response = await fetch('/assets/partials/visit-counter.html');
+                if (response.ok) {
+                    const counterContent = await response.text();
+                    const counterDiv = document.createElement('div');
+                    counterDiv.innerHTML = counterContent;
+                    const visitCountElement = counterDiv.querySelector('#visit-count');
+                    if (visitCountElement) {
+                        const pageUrl = window.location.pathname;
+                        let visits = localStorage.getItem(`visitCount_${pageUrl}`);
+                        visits = visits ? parseInt(visits) + 1 : 1;
+                        localStorage.setItem(`visitCount_${pageUrl}`, visits);
+                        visitCountElement.textContent = visits;
+                    }
+                    mainContent.insertBefore(counterDiv, mainContent.querySelector('.flex.justify-between') || mainContent.lastElementChild);
+                } else {
+                    console.error('Failed to load visit counter block:', response.status);
+                }
+            } catch (error) {
+                console.error('Error loading visit counter block:', error);
+            }
+        }
+    }
+
     function setupBlogNavigation() {
         const currentPath = window.location.pathname;
         const currentNumber = parseInt(currentPath.match(/blog-(\d+)\.html/)?.[1] || 1);
@@ -299,9 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navBlock) {
             const prevLink = navBlock.querySelector('a:nth-child(1)');
             const nextLink = navBlock.querySelector('a:nth-child(2)');
-            const maxBlogNumber = 6; // Adjust this based on the highest blog number (e.g., 6 for blog-6.html)
+            const maxBlogNumber = 6;
 
-            // Set previous link
             if (currentNumber === 1) {
                 prevLink.href = '/blog.html';
                 prevLink.classList.add('cursor-not-allowed', 'text-gray-400');
@@ -312,7 +320,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 prevLink.textContent = '← Précédent';
             }
 
-            // Set next link
             if (currentNumber === maxBlogNumber) {
                 nextLink.href = '#';
                 nextLink.classList.add('cursor-not-allowed', 'text-gray-400');
@@ -325,14 +332,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Run blog navigation, sidebar, and cafe block setup on individual blog pages
-    if (window.location.pathname.includes('blogs/blog-')) {
-        Promise.all([loadSidebar(), loadCafeBlock(), setupBlogNavigation()]).then(() => {
+    if (window.location.pathname.includes('blogs/blog-') || window.location.pathname.includes('index.html')) {
+        Promise.all([loadSidebar(), loadCafeBlock(), loadVisitCounterBlock(), setupBlogNavigation()]).then(() => {
             initializeShareButtons();
         });
     }
 
-    // Initialize share buttons on individual blog pages after DOM content is loaded
     if (!window.location.pathname.includes('blog.html')) {
         window.addEventListener('DOMContentLoaded', initializeShareButtons);
     }
