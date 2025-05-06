@@ -254,25 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function loadCafeBlock() {
-        const mainContent = document.querySelector('main');
-        if (mainContent && (window.location.pathname.includes('blogs/blog-') || window.location.pathname.includes('index.html'))) {
-            try {
-                const response = await fetch('/assets/partials/cafe.html');
-                if (response.ok) {
-                    const cafeContent = await response.text();
-                    const cafeDiv = document.createElement('div');
-                    cafeDiv.innerHTML = cafeContent;
-                    mainContent.insertBefore(cafeDiv, mainContent.querySelector('.flex.justify-between') || mainContent.lastElementChild);
-                } else {
-                    console.error('Failed to load cafe block:', response.status);
-                }
-            } catch (error) {
-                console.error('Error loading cafe block:', error);
-            }
-        }
-    }
-
     async function loadVisitCounterBlock() {
         const mainContent = document.querySelector('main');
         if (mainContent && (window.location.pathname.includes('blogs/blog-') || window.location.pathname.includes('index.html'))) {
@@ -286,11 +267,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (visitCountElement) {
                         const pageUrl = window.location.pathname;
                         let visits = localStorage.getItem(`visitCount_${pageUrl}`);
-                        visits = visits ? parseInt(visits) + 1 : 1;
+                        if (!visits) {
+                            // Generate a random number between 100 and 999
+                            visits = Math.floor(Math.random() * 900) + 100;
+                        } else {
+                            visits = parseInt(visits) + 1;
+                        }
                         localStorage.setItem(`visitCount_${pageUrl}`, visits);
                         visitCountElement.textContent = visits;
                     }
-                    mainContent.insertBefore(counterDiv, mainContent.querySelector('.flex.justify-between') || mainContent.lastElementChild);
+                    const navBlock = mainContent.querySelector('.flex.justify-between');
+                    if (navBlock) {
+                        mainContent.insertBefore(counterDiv, navBlock);
+                    } else {
+                        mainContent.appendChild(counterDiv);
+                    }
                 } else {
                     console.error('Failed to load visit counter block:', response.status);
                 }
@@ -298,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error loading visit counter block:', error);
             }
         }
-    }
+    }    
 
     function setupBlogNavigation() {
         const currentPath = window.location.pathname;
@@ -333,9 +324,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (window.location.pathname.includes('blogs/blog-') || window.location.pathname.includes('index.html')) {
-        Promise.all([loadSidebar(), loadCafeBlock(), loadVisitCounterBlock(), setupBlogNavigation()]).then(() => {
-            initializeShareButtons();
-        });
+        Promise.all([loadSidebar(), loadVisitCounterBlock(), setupBlogNavigation()])
+            .then(() => {
+                initializeShareButtons();
+            })
+            .catch(error => console.error('Error in Promise.all:', error));
     }
 
     if (!window.location.pathname.includes('blog.html')) {
