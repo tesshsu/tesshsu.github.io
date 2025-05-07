@@ -49,3 +49,19 @@ body {
 #blog-slider a{
     padding: 0  15px;
 }
+@media (max-width: 768px) {
+    .slider img {
+        width: 100% !important;
+        height: auto !important;
+        margin-right: 5px;
+    }
+    #blog-slider img {
+        max-width: 100% !important;
+    }
+    .slider-container {
+        overflow-x: auto;
+    }
+    .slider-btn {
+        display: none;
+    }
+}

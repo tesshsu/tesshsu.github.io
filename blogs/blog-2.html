@@ -8,58 +8,70 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
-<body class="bg-white text-black">
+<body class="bg-white text-black flex flex-col min-h-screen">
     <!-- Sidebar Placeholder -->
-    <div id="sidebar-container">
-    <main class="container mx-auto px-4 py-10">
-        <div class="space-y-6">
-            <div class="border-b pb-6">
-                <h1 class="blog-title text-2xl font-semibold mb-2">« ChatGPT complice, des collégiens deviennent des hackers » ?</h1>
-                <p class="text-gray-600 mb-2">20 Avril 2025</p>
-                <img src="../img/blog/blog-2.jpeg" alt="Cybersécurité et Éducation" class="w-25 h-auto object-cover mb-4">
-                <p class="sub-title text-lg">
+    <div id="sidebar-container" class="hidden sm:block fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 sm:ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="text-2xl font-semibold mb-2">« ChatGPT complice, des collégiens deviennent des hackers » ?</h1>
+                <p class="text-gray-600 mb-4">20 Avril 2025</p>
+                <img src="../img/blog/blog-2.jpeg" alt="Cybersécurité et Éducation" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow">
+                <p class="text-lg">
                     Ce n’est pas un problème d’IA, mais un échec de cybersécurité… et d’éducation.
                 </p>
-                <p class="text-lg font-semibold mt-4">Un incident récemment survenu au Japon :</p>
-                <ul class="list-disc ml-5">
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <h2 class="font-semibold">Un incident récemment survenu au Japon :</h2>
+                <ul class="list-disc ml-6 space-y-2">
                     <li>🗾 Trois adolescents ont piraté le système de Rakuten Mobile, utilisant des identifiants volés pour générer plus de 1000 cartes eSIM.</li>
                 </ul>
-                <p class="text-lg font-semibold mt-4">Les médias pointent du doigt ChatGPT :</p>
-                <p class="text-lg">
+
+                <h2 class="font-semibold mt-4">Les médias pointent du doigt ChatGPT :</h2>
+                <p>
                     Mais ils se trompent de cible.
                 </p>
-                <p class="text-lg font-semibold mt-4">Voici la réalité :</p>
-                <ul class="list-disc ml-5">
+
+                <h2 class="font-semibold mt-4">Voici la réalité :</h2>
+                <ul class="list-disc ml-6 space-y-2">
                     <li>🧠 33 <strong>milliards</strong> d’identifiants achetés sur Telegram.</li>
                     <li>🧑‍💻 Automatisation d’un <strong>credential stuffing</strong> classique.</li>
                     <li>🤖 ChatGPT leur a peut-être juste réécrit une boucle <code>for</code> plus propre.</li>
                 </ul>
-                <p class="text-lg font-semibold mt-4">Les vraies questions sont :</p>
-                <ul class="list-disc ml-5">
+
+                <h2 class="font-semibold mt-4">Les vraies questions sont :</h2>
+                <ul class="list-disc ml-6 space-y-2">
                     <li>❓ Pourquoi pas de double authentification (2FA) ?</li>
                     <li>❓ Pourquoi Rakuten n’a pas détecté ces accès massifs ?</li>
                     <li>❓ Pourquoi des jeunes brillants trouvent du sens uniquement sur des forums underground ?</li>
                 </ul>
-                <h2 class="text-lg mt-4">
+
+                <h2 class="mt-4">
                     Et surtout : on oublie le rôle du 🧠 <em>Social Cyber Engineering</em>.
                 </h2>
-                <p class="text-lg mt-4">
-                    Ce n’est pas qu’un problème technique, c’est une <strong>faille humaine</strong> :
+                <p class="mt-4">
+                    Ce n’test pas qu’un problème technique, c’est une <strong>faille humaine</strong> :
                 </p>
-                <ul class="list-disc ml-5">
+                <ul class="list-disc ml-6 space-y-2">
                     <li>Envie de reconnaissance.</li>
                     <li>Manque de mentorat.</li>
                     <li>Obsession pour les outils, oubli de l'humain.</li>
                 </ul>
-                <p class="text-lg font-semibold mt-4">Conclusion :</p>
-                <p class="text-lg">
+
+                <h2 class="font-semibold mt-4">Conclusion :</h2>
+                <p>
                     🛠️ <strong>ChatGPT est un outil, pas un complice.</strong> Tout dépend de qui l’utilise.
                 </p>
-                <p class="text-lg mt-4">
+                <p class="mt-4">
                     <strong>Former les talents de demain, c’est enseigner la technique ET l’éthique.</strong> C’est ça, le vrai <strong>Social Cyber Engineering</strong>.
                 </p>
-                <p class="text-lg mt-4">
-                    <strong>Hashtags :</strong><br>
+            </section>
+
+            <section class="mt-8 text-lg">
+                <p class="font-semibold">Hashtags :</p>
+                <div class="space-x-2 mt-2">
                     <a href="https://www.linkedin.com/feed/hashtag/chatgpt" target="_blank" class="text-blue-600 hover:underline">#ChatGPT</a>
                     <a href="https://www.linkedin.com/feed/hashtag/cybersecurite" target="_blank" class="text-blue-600 hover:underline">#Cybersécurité</a>
                     <a href="https://www.linkedin.com/feed/hashtag/education" target="_blank" class="text-blue-600 hover:underline">#Éducation</a>
@@ -67,33 +79,40 @@
                     <a href="https://www.linkedin.com/feed/hashtag/rakutenmobile" target="_blank" class="text-blue-600 hover:underline">#RakutenMobile</a>
                     <a href="https://www.linkedin.com/feed/hashtag/credentialstuffing" target="_blank" class="text-blue-600 hover:underline">#CredentialStuffing</a>
                     <a href="https://www.linkedin.com/feed/hashtag/iaethique" target="_blank" class="text-blue-600 hover:underline">#IAÉthique</a>
-                </p>
-            </div>
-        </div>
-         <!-- Share Block -->
-         <div class="mt-6 p-4 bg-gray-100 rounded-lg">
-            <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
-            <div class="flex space-x-4 share-buttons">
-                <a data-platform="linkedin" href="#" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
-                    <i class="fab fa-linkedin mr-2"></i> LinkedIn
-                </a>
-                <a data-platform="reddit" href="#" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                    <i class="fab fa-reddit mr-2"></i> Reddit
-                </a>
-                <a data-platform="x" href="#" target="_blank" class="bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500 flex items-center">
-                    <i class="fab fa-x-twitter mr-2"></i> X
-                </a>
-                <a data-platform="facebook" href="#" target="_blank" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 flex items-center">
-                    <i class="fab fa-facebook-f mr-2"></i> Facebook
-                </a>
-            </div>
-        </div>
-        <!-- Navigation Block -->
-        <div class="mt-6 p-4 bg-gray-100 rounded-lg flex justify-between">
-            <a href="/blog.html" class="text-blue-600 hover:underline">← Précédent List blogs</a>
-            <a href="/blogs/blog-3.html" class="text-blue-600 hover:underline">next blog →</a>
-        </div>
+                </div>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blog.html" class="hover:underline">← Précédent : Liste des articles</a>
+                <a href="/blogs/blog-3.html" class="hover:underline">Suivant : Prochain article →</a>
+            </nav>
+        </article>
     </main>
-    <script src="../assets/js/script.js"></script>
+
+    <footer role="contentinfo" class="bg-black text-white text-center py-4 mt-auto">
+        © 2025 Yating Chatiron. Tous droits réservés.
+    </footer>
+
+    <script src="../assets/js/script.js" defer></script>
 </body>
 </html>

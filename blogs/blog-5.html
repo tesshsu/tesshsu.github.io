@@ -8,39 +8,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
-<body class="bg-white text-black">
-     <!-- Sidebar Placeholder -->
-     <div id="sidebar-container"></div>
-    <main class="container mx-auto px-4 py-10">
-        <div class="space-y-6">
-            <div class="border-b pb-6">
-                <h1 class="blog-title text-2xl font-semibold mb-2">Surveillance des déploiements Azure : Prometheus et Grafana avec Ansible</h1>
-                <p class="text-gray-600 mb-2">01 Mai 2025</p>
-        
-                <p class="sub-title text-lg">
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="hidden sm:block fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 sm:ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="text-2xl font-semibold mb-2">Surveillance des déploiements Azure : Prometheus et Grafana avec Ansible</h1>
+                <p class="text-gray-600 mb-4">01 Mai 2025</p>
+                <p class="text-lg">
                     📊 Dans ce projet, j’ai amélioré mon déploiement sur Azure Kubernetes Service (AKS) en intégrant la surveillance avec Prometheus et Grafana, configurés via Ansible. Voici comment j’ai construit une solution de monitoring robuste pour mon application Node.js !
                 </p>
-        
-                <p class="text-lg font-semibold mt-4">Aperçu du projet</p>
-                <p class="sub-title text-lg">
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <h2 class="font-semibold">Aperçu du projet</h2>
+                <p class="sub-title">
                     Mon objectif était de surveiller mon application Node.js (`azuredev-appservice`) exécutée sur AKS, en suivant les taux de requêtes HTTP pour les endpoints comme `/`, `/api/stocks` et `/metrics`. J’ai utilisé Ansible pour automatiser l’installation de Prometheus et Grafana, configuré des métriques personnalisées et créé des tableaux de bord pour visualiser les données.
                 </p>
-        
-                <p class="text-lg font-semibold mt-4">Étape 1 : Installation de Prometheus et Grafana avec Ansible</p>
-                <p class="text-lg">
+
+                <h2 class="font-semibold mt-4">Étape 1 : Installation de Prometheus et Grafana avec Ansible</h2>
+                <p>
                     J’ai commencé par créer un playbook Ansible pour installer Prometheus et Grafana sur mon cluster AKS. Le playbook (`ansible/install_prometheus_grafana.yml`) a installé ces outils dans l’espace de noms `monitoring` en utilisant des charts Helm et a configuré Prometheus pour scraper l’endpoint `/metrics` de mon application.
                 </p>
-                <img src="../img/blog/blog-5.jpeg" alt="Playbook Ansible pour Prometheus et Grafana" class="w-25 h-auto object-cover mb-4">
-                <p class="text-lg">
+                <img src="../img/blog/blog-5.jpeg" alt="Playbook Ansible pour Prometheus et Grafana" class="w-full max-w-3xl mx-auto h-auto object-cover mb-4 rounded shadow">
+                <p>
                     Après avoir installé Ansible localement avec `brew install ansible`, j’ai exécuté le playbook :
                 </p>
                 <pre class="bg-gray-100 p-4 rounded"><code>ansible-playbook ansible/install_prometheus_grafana.yml</code></pre>
-                <p class="text-lg">
+                <p>
                     Cela a configuré Prometheus et Grafana en tant que services LoadBalancer, les exposant via des IPs externes.
                 </p>
-        
-                <p class="text-lg font-semibold mt-4">Étape 2 : Configuration des métriques dans l’application Node.js</p>
-                <p class="text-lg">
+
+                <h2 class="font-semibold mt-4">Étape 2 : Configuration des métriques dans l’application Node.js</h2>
+                <p>
                     Mon fichier `server.js` disposait déjà d’un endpoint `/metrics` utilisant la bibliothèque `prom-client` pour exposer des métriques personnalisées comme `http_requests_total`. J’ai vérifié que Prometheus était configuré pour scraper cet endpoint en ajoutant un job nommé `azuredev-appservice` dans le playbook Ansible :
                 </p>
                 <pre class="bg-gray-100 p-4 rounded"><code>- job_name: 'azuredev-appservice'
@@ -48,91 +50,101 @@
           scrape_timeout: 15s
           static_configs:
             - targets: ['132.220.10.28:80']</code></pre>
-                <img src="../img/blog/blog-5-2.jpeg" alt="Configuration des métriques Prometheus" class="w-25 h-auto object-cover mb-4">
-        
-                <p class="text-lg font-semibold mt-4">Étape 3 : Vérification des métriques dans Prometheus</p>
-                <p class="text-lg">
+                <img src="../img/blog/blog-5-2.jpeg" alt="Configuration des métriques Prometheus" class="w-full max-w-3xl mx-auto h-auto object-cover mb-4 rounded shadow">
+
+                <h2 class="font-semibold mt-4">Étape 3 : Vérification des métriques dans Prometheus</h2>
+                <p>
                     J’ai accédé à l’interface de Prometheus à `http://128.251.236.207:9090` et vérifié dans **Status > Targets** que le job `azuredev-appservice` était "UP". J’ai ensuite interrogé `http_requests_total` pour voir les métriques de mes endpoints :
                 </p>
                 <pre class="bg-gray-100 p-4 rounded"><code>http_requests_total{job="azuredev-appservice", method="GET", route="/api/stocks", status="200"}</code></pre>
-                <img src="../img/blog/blog-5-3.jpeg" alt="Vérification des cibles dans Prometheus" class="w-25 h-auto object-cover mb-4">
-                <p class="text-lg">
+                <img src="../img/blog/blog-5-3.jpeg" alt="Vérification des cibles dans Prometheus" class="w-full max-w-3xl mx-auto h-auto object-cover mb-4 rounded shadow">
+                <p>
                     Les métriques étaient présentes, mais `/api/stocks` n’apparaissait pas initialement à cause d’un problème de barre oblique finale dans l’étiquette de route. J’ai corrigé cela en normalisant la route dans `server.js`.
                 </p>
-        
-                <p class="text-lg font-semibold mt-4">Étape 4 : Création de tableaux de bord dans Grafana</p>
-                <p class="text-lg">
+
+                <h2 class="font-semibold mt-4">Étape 4 : Création de tableaux de bord dans Grafana</h2>
+                <p>
                     J’ai accédé à Grafana à `http://128.251.236.208:3000` en utilisant les identifiants admin (`admin/admin123`). J’ai créé un nouveau tableau de bord nommé "TaskOne" et ajouté des panneaux pour surveiller les taux de requêtes HTTP :
                 </p>
                 <pre class="bg-gray-100 p-4 rounded"><code>rate(http_requests_total{job="azuredev-appservice", method="GET", route="/api/stocks", status="200"}[5m])</code></pre>
-                <img src="../img/blog/blog-5-4.jpeg" alt="Tableau de bord Grafana pour les requêtes HTTP" class="w-25 h-auto object-cover mb-4">
-                <p class="text-lg">
+                <img src="../img/blog/blog-5-4.jpeg" alt="Tableau de bord Grafana pour les requêtes HTTP" class="w-full max-w-3xl mx-auto h-auto object-cover mb-4 rounded shadow">
+                <p>
                     J’ai également importé un tableau de bord préconfiguré en utilisant un modèle JSON pour visualiser d’autres métriques comme `/` et `/metrics`.
                 </p>
-        
-                <p class="text-lg font-semibold mt-4">Défi 1 : Métriques manquantes pour `/api/stocks`</p>
-                <p class="text-lg">
+
+                <h2 class="font-semibold mt-4">Défi 1 : Métriques manquantes pour `/api/stocks`</h2>
+                <p>
                     Initialement, les métriques de `/api/stocks` manquaient car l’endpoint échouait à cause de problèmes avec la bibliothèque `yahoo-finance2`. J’ai ajouté une gestion des erreurs dans `server.js` pour m’assurer que l’endpoint renvoie toujours un statut `200`, même si certaines données boursières échouaient à être récupérées.
                 </p>
-                <img src="../img/blog/blog-5-5.jpeg" alt="Correction des métriques de /api/stocks" class="w-25 h-auto object-cover mb-4">
-        
-                <p class="text-lg font-semibold mt-4">Défi 2 : Barre oblique finale dans les étiquettes de route</p>
-                <p class="text-lg">
+                <img src="../img/blog/blog-5-5.jpeg" alt="Correction des métriques de /api/stocks" class="w-full max-w-3xl mx-auto h-auto object-cover mb-4 rounded shadow">
+
+                <h2 class="font-semibold mt-4">Défi 2 : Barre oblique finale dans les étiquettes de route</h2>
+                <p>
                     L’étiquette `route` pour `/api/stocks` incluait parfois une barre oblique finale (`/api/stocks/`), ce qui faisait que la requête Grafana ne la détectait pas. J’ai mis à jour la requête pour utiliser une expression régulière (`route=~"/api/stocks.*"`) et normalisé la route dans le middleware de l’application.
                 </p>
-        
-                <p class="text-lg font-semibold mt-4">Vérification</p>
-                <p class="text-lg">
+
+                <h2 class="font-semibold mt-4">Vérification</h2>
+                <p>
                     Après avoir généré du trafic avec `curl`, le tableau de bord Grafana affichait les taux de requêtes pour tous les endpoints. Le tableau de bord "NodeJS Application Dashboard" offrait également des informations sur l’utilisation du CPU, la mémoire et le décalage de la boucle d’événements, confirmant la santé de l’application.
                 </p>
                 <pre class="bg-gray-100 p-4 rounded"><code>for i in {1..20}; do curl --connect-timeout 20 http://132.220.10.28/api/stocks; sleep 1; done</code></pre>
-        
-                <p class="text-lg font-semibold mt-4">Leçons apprises</p>
-                <ul class="list-disc ml-5">
+
+                <h2 class="font-semibold mt-4">Leçons apprises</h2>
+                <ul class="list-disc ml-6 space-y-2">
                     <li>Ansible simplifie la configuration d’outils de surveillance comme Prometheus et Grafana.</li>
                     <li>Les métriques personnalisées nécessitent une gestion minutieuse des étiquettes—attention aux incohérences comme les barres obliques finales.</li>
                     <li>Les tableaux de bord préconfigurés (par exemple, NodeJS Application Dashboard) sont excellents pour obtenir rapidement des informations sur les performances de l’application.</li>
                     <li>Générez toujours du trafic pour tester les métriques et les tableaux de bord après la configuration.</li>
                 </ul>
-        
-                <p class="text-lg mt-4">
+
+                <p class="mt-4">
                     Cette configuration de surveillance m’a offert des informations précieuses sur les performances de mon application. J’ai hâte d’explorer des requêtes Prometheus plus avancées et des visualisations Grafana dans de futurs projets ! Partagez vos astuces de surveillance ci-dessous !
                 </p>
-        
-                <p class="text-lg font-semibold mt-4">Hashtags :</strong><br>
+            </section>
+
+            <section class="mt-8 text-lg">
+                <p class="font-semibold">Hashtags :</p>
+                <div class="space-x-2 mt-2">
                     <a href="https://www.linkedin.com/feed/hashtag/azure" target="_blank" class="text-blue-600 hover:underline">#Azure</a>
                     <a href="https://www.linkedin.com/feed/hashtag/prometheus" target="_blank" class="text-blue-600 hover:underline">#Prometheus</a>
                     <a href="https://www.linkedin.com/feed/hashtag/grafana" target="_blank" class="text-blue-600 hover:underline">#Grafana</a>
                     <a href="https://www.linkedin.com/feed/hashtag/ansible" target="_blank" class="text-blue-600 hover:underline">#Ansible</a>
                     <a href="https://www.linkedin.com/feed/hashtag/devops" target="_blank" class="text-blue-600 hover:underline">#DevOps</a>
                     <a href="https://www.linkedin.com/feed/hashtag/monitoring" target="_blank" class="text-blue-600 hover:underline">#Monitoring</a>
-                </p>
-            </div>
-        </div>
-         <!-- Share Block -->
-         <div class="mt-6 p-4 bg-gray-100 rounded-lg">
-            <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
-            <div class="flex space-x-4 share-buttons">
-                <a data-platform="linkedin" href="#" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
-                    <i class="fab fa-linkedin mr-2"></i> LinkedIn
-                </a>
-                <a data-platform="reddit" href="#" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                    <i class="fab fa-reddit mr-2"></i> Reddit
-                </a>
-                <a data-platform="x" href="#" target="_blank" class="bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500 flex items-center">
-                    <i class="fab fa-x-twitter mr-2"></i> X
-                </a>
-                <a data-platform="facebook" href="#" target="_blank" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 flex items-center">
-                    <i class="fab fa-facebook-f mr-2"></i> Facebook
-                </a>
-            </div>
-        </div>
-        <!-- Navigation Block -->
-        <div class="mt-6 p-4 bg-gray-100 rounded-lg flex justify-between">
-            <a href="/blog.html" class="text-blue-600 hover:underline">← Précédent List blogs</a>
-            <a href="/blogs/blog-6.html" class="text-blue-600 hover:underline">next blog →</a>
-        </div>
+                </div>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blog.html" class="hover:underline">← Précédent : Liste des articles</a>
+                <a href="/blogs/blog-6.html" class="hover:underline">Suivant : Prochain article →</a>
+            </nav>
+        </article>
     </main>
-    <script src="../assets/js/script.js"></script>
+
+    <footer role="contentinfo" class="bg-black text-white text-center py-4 mt-auto">
+        © 2025 Yating Chatiron. Tous droits réservés.
+    </footer>
+
+    <script src="../assets/js/script.js" defer></script>
 </body>
-</html>        
+</html>

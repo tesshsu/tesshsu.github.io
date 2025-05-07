@@ -12,9 +12,9 @@
 </head>
 <body class="bg-white text-black flex">
     <!-- Sidebar Container -->
-    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white"></div>
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white hidden sm:block"></div>
     <!-- Main Content -->
-    <main class="ml-16 flex-1">
+    <main class="sm:ml-16 ml-0 flex-1">
         <!-- Navbar -->
         <nav class="fixed top-0 w-full bg-white shadow-md p-4 z-10">
             <div class="container mx-auto flex justify-between items-center">
@@ -56,7 +56,7 @@
     </main>
 
     <!-- Scripts -->
-    <script src="assets/js/script.js"></script>
+    <script src="assets/js/script.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('search-input');

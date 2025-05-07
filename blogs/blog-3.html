@@ -8,81 +8,98 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
-<body class="bg-white text-black">
-     <!-- Sidebar Placeholder -->
-     <div id="sidebar-container"></div>
-    <main class="container mx-auto px-4 py-10">
-        <div class="space-y-6">
-            <div class="border-b pb-6">
-                <h1 class="blog-title text-2xl font-semibold mb-2">Le piège GCP : attention aux "surprises automatiques" de Cloud Armor lors de la création d’un Load Balancer !</h1>
-                <p class="text-gray-600 mb-2">24 Avril 2025</p>
-                <img src="../img/blog/blog-3.jpeg" alt="GCP Cloud Armor" class="w-25 h-auto object-cover mb-4">
-                <p class="sub-title text-lg">
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="hidden sm:block fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 sm:ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="text-2xl font-semibold mb-2">Le piège GCP : attention aux "surprises automatiques" de Cloud Armor lors de la création d’un Load Balancer !</h1>
+                <p class="text-gray-600 mb-4">24 Avril 2025</p>
+                <img src="../img/blog/blog-3.jpeg" alt="GCP Cloud Armor" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow">
+                <p class="text-lg">
                     ⚠️ <strong>Avis aux utilisateurs de GCP :</strong> avez-vous été facturé pour Cloud Armor sans même vous en rendre compte ?
                 </p>
-                <p class=" sub-title text-lg">
+                <p class="text-lg">
                     Beaucoup découvrent, au moment de recevoir leur facture, que des politiques Cloud Armor ont été automatiquement ajoutées lors de la création d’un Load Balancer – sans qu’ils l’aient explicitement demandé.
                 </p>
-                <p class="text-lg font-semibold mt-4">Des frais imprévus :</p>
-                <ul class="list-disc ml-5">
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <h2 class="font-semibold">Des frais imprévus :</h2>
+                <ul class="list-disc ml-6 space-y-2">
                     <li>💰 Une politique coûte <strong>5 USD</strong>, avec deux règles supplémentaires à <strong>2 USD</strong> : cela fait <strong>7 USD</strong> de frais mensuels imprévus !</li>
                 </ul>
-                <p class="text-lg mt-4">
+
+                <p class="mt-4">
                     Personnellement, je suis tombé dans ce piège l’année dernière… sans aucun souvenir d’avoir activé une politique Cloud Armor.
                 </p>
-                <p class="text-lg mt-4">
+                <p class="mt-4">
                     <strong>Leçon apprise :</strong> lorsqu’on configure un service GCP, il ne faut jamais sous-estimer les valeurs par défaut préremplies automatiquement.
                 </p>
-                <p class="text-lg mt-4">
+                <p class="mt-4">
                     Soyons honnêtes : l’interface de Google Cloud peut être améliorée sur ce point. L’intention de renforcer la sécurité est louable, mais activer Cloud Armor par défaut, sans un choix explicite de l’utilisateur, ressemble un peu à une vente forcée.
                 </p>
-                <p class="text-lg mt-4">
+                <p class="mt-4">
                     Les fonctionnalités de Cloud Armor sont solides et apportent une vraie valeur en matière de sécurité. Mais le vrai souci, c’est que même après avoir supprimé un Load Balancer, les politiques associées continuent d’être facturées, sauf si on pense à les supprimer manuellement.
                 </p>
-                <p class="text-lg font-semibold mt-4">💡 À mon avis, Google devrait :</p>
-                <ul class="list-disc ml-5">
+
+                <h2 class="font-semibold mt-4">💡 À mon avis, Google devrait :</h2>
+                <ul class="list-disc ml-6 space-y-2">
                     <li>Fournir une option plus claire pour activer ou non Cloud Armor lors de la création d’un Load Balancer ;</li>
                     <li>Afficher une alerte au moment de la suppression d’un Load Balancer pour proposer la suppression des politiques Cloud Armor associées ;</li>
                     <li>Implémenter un mécanisme de nettoyage ou de notification automatique pour les services dépendants non utilisés.</li>
                 </ul>
-                <p class="text-lg mt-4">
+
+                <p class="mt-4">
                     🤔 D’autres personnes ont-elles rencontré ce type de situation ? Est-il possible de demander un remboursement à Google pour des politiques Cloud Armor non utilisées, lorsque le service principal a été supprimé ? N’hésitez pas à partager vos retours d’expérience !
                 </p>
-                <p class="text-lg mt-4">
-                    <strong>Hashtags :</strong><br>
+            </section>
+
+            <section class="mt-8 text-lg">
+                <p class="font-semibold">Hashtags :</p>
+                <div class="space-x-2 mt-2">
                     <a href="https://www.linkedin.com/feed/hashtag/gcp" target="_blank" class="text-blue-600 hover:underline">#GCP</a>
                     <a href="https://www.linkedin.com/feed/hashtag/googlecloud" target="_blank" class="text-blue-600 hover:underline">#GoogleCloud</a>
                     <a href="https://www.linkedin.com/feed/hashtag/cloudarmor" target="_blank" class="text-blue-600 hover:underline">#CloudArmor</a>
                     <a href="https://www.linkedin.com/feed/hashtag/loadbalancer" target="_blank" class="text-blue-600 hover:underline">#LoadBalancer</a>
                     <a href="https://www.linkedin.com/feed/hashtag/devops" target="_blank" class="text-blue-600 hover:underline">#DevOps</a>
                     <a href="https://www.linkedin.com/feed/hashtag/cloudcomputing" target="_blank" class="text-blue-600 hover:underline">#CloudComputing</a>
-                </p>
-            </div>
-        </div>
-         <!-- Share Block -->
-         <div class="mt-6 p-4 bg-gray-100 rounded-lg">
-            <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
-            <div class="flex space-x-4 share-buttons">
-                <a data-platform="linkedin" href="#" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
-                    <i class="fab fa-linkedin mr-2"></i> LinkedIn
-                </a>
-                <a data-platform="reddit" href="#" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                    <i class="fab fa-reddit mr-2"></i> Reddit
-                </a>
-                <a data-platform="x" href="#" target="_blank" class="bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500 flex items-center">
-                    <i class="fab fa-x-twitter mr-2"></i> X
-                </a>
-                <a data-platform="facebook" href="#" target="_blank" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 flex items-center">
-                    <i class="fab fa-facebook-f mr-2"></i> Facebook
-                </a>
-            </div>
-        </div>
-        <!-- Navigation Block -->
-        <div class="mt-6 p-4 bg-gray-100 rounded-lg flex justify-between">
-            <a href="/blog.html" class="text-blue-600 hover:underline">← Précédent List blogs</a>
-            <a href="/blogs/blog-4.html" class="text-blue-600 hover:underline">next blog →</a>
-        </div>
+                </div>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blog.html" class="hover:underline">← Précédent : Liste des articles</a>
+                <a href="/blogs/blog-4.html" class="hover:underline">Suivant : Prochain article →</a>
+            </nav>
+        </article>
     </main>
-    <script src="../assets/js/script.js"></script>
+
+    <footer role="contentinfo" class="bg-black text-white text-center py-4 mt-auto">
+        © 2025 Yating Chatiron. Tous droits réservés.
+    </footer>
+
+    <script src="../assets/js/script.js" defer></script>
 </body>
 </html>
