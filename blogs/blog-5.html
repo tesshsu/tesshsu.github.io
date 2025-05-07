@@ -30,7 +30,7 @@
                 <p class="text-lg">
                     J’ai commencé par créer un playbook Ansible pour installer Prometheus et Grafana sur mon cluster AKS. Le playbook (`ansible/install_prometheus_grafana.yml`) a installé ces outils dans l’espace de noms `monitoring` en utilisant des charts Helm et a configuré Prometheus pour scraper l’endpoint `/metrics` de mon application.
                 </p>
-                <img src="../img/blog-5.jpeg" alt="Playbook Ansible pour Prometheus et Grafana" class="w-25 h-auto object-cover mb-4">
+                <img src="../img/blog/blog-5.jpeg" alt="Playbook Ansible pour Prometheus et Grafana" class="w-25 h-auto object-cover mb-4">
                 <p class="text-lg">
                     Après avoir installé Ansible localement avec `brew install ansible`, j’ai exécuté le playbook :
                 </p>
@@ -48,14 +48,14 @@
           scrape_timeout: 15s
           static_configs:
             - targets: ['132.220.10.28:80']</code></pre>
-                <img src="../img/blog-5-2.jpeg" alt="Configuration des métriques Prometheus" class="w-25 h-auto object-cover mb-4">
+                <img src="../img/blog/blog-5-2.jpeg" alt="Configuration des métriques Prometheus" class="w-25 h-auto object-cover mb-4">
         
                 <p class="text-lg font-semibold mt-4">Étape 3 : Vérification des métriques dans Prometheus</p>
                 <p class="text-lg">
                     J’ai accédé à l’interface de Prometheus à `http://128.251.236.207:9090` et vérifié dans **Status > Targets** que le job `azuredev-appservice` était "UP". J’ai ensuite interrogé `http_requests_total` pour voir les métriques de mes endpoints :
                 </p>
                 <pre class="bg-gray-100 p-4 rounded"><code>http_requests_total{job="azuredev-appservice", method="GET", route="/api/stocks", status="200"}</code></pre>
-                <img src="../img/blog-5-3.jpeg" alt="Vérification des cibles dans Prometheus" class="w-25 h-auto object-cover mb-4">
+                <img src="../img/blog/blog-5-3.jpeg" alt="Vérification des cibles dans Prometheus" class="w-25 h-auto object-cover mb-4">
                 <p class="text-lg">
                     Les métriques étaient présentes, mais `/api/stocks` n’apparaissait pas initialement à cause d’un problème de barre oblique finale dans l’étiquette de route. J’ai corrigé cela en normalisant la route dans `server.js`.
                 </p>
@@ -65,7 +65,7 @@
                     J’ai accédé à Grafana à `http://128.251.236.208:3000` en utilisant les identifiants admin (`admin/admin123`). J’ai créé un nouveau tableau de bord nommé "TaskOne" et ajouté des panneaux pour surveiller les taux de requêtes HTTP :
                 </p>
                 <pre class="bg-gray-100 p-4 rounded"><code>rate(http_requests_total{job="azuredev-appservice", method="GET", route="/api/stocks", status="200"}[5m])</code></pre>
-                <img src="../img/blog-5-4.jpeg" alt="Tableau de bord Grafana pour les requêtes HTTP" class="w-25 h-auto object-cover mb-4">
+                <img src="../img/blog/blog-5-4.jpeg" alt="Tableau de bord Grafana pour les requêtes HTTP" class="w-25 h-auto object-cover mb-4">
                 <p class="text-lg">
                     J’ai également importé un tableau de bord préconfiguré en utilisant un modèle JSON pour visualiser d’autres métriques comme `/` et `/metrics`.
                 </p>
@@ -74,7 +74,7 @@
                 <p class="text-lg">
                     Initialement, les métriques de `/api/stocks` manquaient car l’endpoint échouait à cause de problèmes avec la bibliothèque `yahoo-finance2`. J’ai ajouté une gestion des erreurs dans `server.js` pour m’assurer que l’endpoint renvoie toujours un statut `200`, même si certaines données boursières échouaient à être récupérées.
                 </p>
-                <img src="../img/blog-5-5.jpeg" alt="Correction des métriques de /api/stocks" class="w-25 h-auto object-cover mb-4">
+                <img src="../img/blog/blog-5-5.jpeg" alt="Correction des métriques de /api/stocks" class="w-25 h-auto object-cover mb-4">
         
                 <p class="text-lg font-semibold mt-4">Défi 2 : Barre oblique finale dans les étiquettes de route</p>
                 <p class="text-lg">

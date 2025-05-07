@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const blogDate = doc.querySelector('.text-gray-600')?.textContent || 'Date Unknown';
                     const blogSubtitle = doc.querySelector('.sub-title')?.innerHTML || 'No subtitle available.';
                     const blogNumber = file.match(/blog-(\d+)\.html/)[1];
-                    const blogImageSrc = `../img/blog-${blogNumber}.jpeg`;
+                    const blogImageSrc = `../img/blog/blog-${blogNumber}.jpeg`;
 
                     const div = document.createElement('div');
                     div.className = 'border-b pb-6';
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const projectImages = [];
         for (let i = 1; i <= totalImages; i++) {
-            projectImages.push({ src: `img/img-${i}.jpg`, alt: `Projet ${i}` });
+            projectImages.push({ src: `img/work/img-${i}.jpg`, alt: `Projet ${i}` });
         }
         const shuffledProjects = shuffle([...projectImages]);
         projectSlider.innerHTML = shuffledProjects.map(project => `<img src="${project.src}" alt="${project.alt}">`).join('');
@@ -206,12 +206,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const blogImages = [
-            { src: '../img/blog-1.jpeg', href: '/blogs/blog-1.html' },
-            { src: '../img/blog-2.jpeg', href: '/blogs/blog-2.html' },
-            { src: '../img/blog-3.jpeg', href: '/blogs/blog-3.html' },
-            { src: '../img/blog-4.jpeg', href: '/blogs/blog-4.html' },
-            { src: '../img/blog-5.jpeg', href: '/blogs/blog-5.html' },
-            { src: '../img/blog-6.jpeg', href: '/blogs/blog-6.html' }
+            { src: '../img/blog/blog-1.jpeg', href: '/blogs/blog-1.html' },
+            { src: '../img/blog/blog-2.jpeg', href: '/blogs/blog-2.html' },
+            { src: '../img/blog/blog-3.jpeg', href: '/blogs/blog-3.html' },
+            { src: '../img/blog/blog-4.jpeg', href: '/blogs/blog-4.html' },
+            { src: '../img/blog/blog-5.jpeg', href: '/blogs/blog-5.html' },
+            { src: '../img/blog/blog-6.jpeg', href: '/blogs/blog-6.html' }
         ];
 
         const shuffledBlogs = shuffle([...blogImages]);
