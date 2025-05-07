@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yating Chatiron - Blog Post 7</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="bg-white text-black">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container"></div>
+    <main class="container mx-auto px-4 py-10 pl-20">
+        <div class="space-y-6">
+            <div class="border-b pb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2">🔎 Parcours d’un pentesteur : entre outils perdus, compatibilité et gain de temps</h1>
+                <p class="text-gray-600 mb-2">07 Mars 2025</p>
+                <img src="../img/blog/blog-7.jpeg" alt="Scanning with Python" class="w-25 h-auto object-cover mb-4">
+                <p class="sub-title text-lg">
+                    Comment scanner rapidement avec Python pour trouver des vulnérabilités avec une IP.
+                </p>
+                <p class="text-lg mt-4">
+                    Faire du pentest, c’est souvent comme naviguer dans un océan d’outils — certains à scanner, d’autres à exploiter. Mais entre les incompatibilités (Linux, Ubuntu, Windows…), les dépendances manquantes ou encore la complexité de certains outils, il est facile de s’y perdre. C’est exactement ce qui m’est arrivé.
+                </p>
+                <p class="text-lg mt-4">
+                    👉 Pour gagner du temps et éviter les reconfigurations permanentes, j’ai développé un petit script Python qui automatise plusieurs étapes clés du pentest, tout en restant flexible et léger.
+                </p>
+                <p class="text-lg font-semibold mt-4">✅ Ce que fait le script :</p>
+                <p class="text-lg mt-2">
+                    - Scan des ports principaux via nmap (même si non installé, le script continue).<br>
+                    - Détection automatique de services (ex : port 445 → smbclient, port 22 → SSH).<br>
+                    - Debug utile : il liste les fichiers suspects comme .txt, .bak, etc., directement depuis les partages réseau.<br>
+                    - Recherche d’exploits connus via searchsploit (et trace les outils manquants sans bloquer le processus).<br>
+                    - Génération d’un fichier report.txt clair, récapitulant vulnérabilités, fichiers suspects et exploits potentiels.
+                </p>
+                <p class="text-lg mt-4">
+                    🖼️ Quelques captures d’écran ci-dessous montrent le type de sortie générée, avec par exemple :
+                </p>
+                <p class="text-lg mt-2">
+                    - Une version vulnérable de OpenSSH 7.6p1 détectée avec énumération de CVE.<br>
+                    <img src="../img/blog/blog-7-1.jpeg" alt="Scanning with Python" class="w-25 h-auto object-cover mb-4">
+                    <img src="../img/blog/blog-7-3.jpeg" alt="Scanning with Python" class="w-25 h-auto object-cover mb-4">
+                    - Un partage SMB contenant des fichiers intéressants comme secret.txt.
+                    <img src="../img/blog/blog-7-2.jpeg" alt="Scanning with Python" class="w-25 h-auto object-cover mb-4">
+                </p>
+                <p class="text-lg mt-4">
+                    📥 Vous pouvez télécharger le script ici :
+                </p>
+                <pre class="bg-gray-100 p-2 rounded">wget https://raw.githubusercontent.com/tesshsu/pen_tester_tool/refs/heads/main/python_scan/quickpentest.py</pre>
+                <p class="text-lg mt-2">
+                    Ou consulter l’ensemble du repo :<br>
+                    🔗 <a href="https://github.com/tesshsu/pen_tester_tool" target="_blank" class="text-blue-600 hover:underline">https://github.com/tesshsu/pen_tester_tool</a>
+                </p>
+                <p class="text-lg mt-4">
+                    🔄 Le pentest n’est jamais linéaire, mais ce genre d’outil peut vous faire gagner un temps précieux.
+                </p>
+                <p class="text-lg mt-4">
+                    💬 Si vous avez des suggestions ou d'autres scripts à partager, je suis preneur !
+                </p>
+                <p class="text-lg mt-4">
+                    <strong>Hashtags :</strong><br>
+                    <a href="https://www.linkedin.com/feed/hashtag/cybersecurity" target="_blank" class="text-blue-600 hover:underline">#CyberSecurity</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/pentest" target="_blank" class="text-blue-600 hover:underline">#Pentest</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/pythontool" target="_blank" class="text-blue-600 hover:underline">#PythonTool</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/ctf" target="_blank" class="text-blue-600 hover:underline">#CTF</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/infosec" target="_blank" class="text-blue-600 hover:underline">#Infosec</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/linux" target="_blank" class="text-blue-600 hover:underline">#Linux</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/bugbounty" target="_blank" class="text-blue-600 hover:underline">#BugBounty</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Share Block -->
+        <div class="mt-6 p-4 bg-gray-100 rounded-lg">
+            <p class="sub-title text-lg font-semibold mb-2">Partagez cet article :</p>
+            <div class="flex space-x-4 share-buttons">
+                <a data-platform="linkedin" href="#" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                    <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                </a>
+                <a data-platform="reddit" href="#" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fab fa-reddit mr-2"></i> Reddit
+                </a>
+                <a data-platform="x" href="#" target="_blank" class="bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500 flex items-center">
+                    <i class="fab fa-x-twitter mr-2"></i> X
+                </a>
+                <a data-platform="facebook" href="#" target="_blank" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 flex items-center">
+                    <i class="fab fa-facebook-f mr-2"></i> Facebook
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Block -->
+        <div class="mt-6 p-4 bg-gray-100 rounded-lg flex justify-between">
+            <a href="/blogs/blog-6.html" class="text-blue-600 hover:underline">← Précédent blog</a>
+            <a href="/blog.html" class="text-blue-600 hover:underline">next blog →</a>
+        </div>
+    </main>
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>
