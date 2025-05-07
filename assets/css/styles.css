@@ -17,9 +17,6 @@ body {
     object-fit: cover;
     margin-right: 10px;
 }
-#blog-slider img {
-    max-width: 310px;
-}
 .slider-btn {
     position: absolute;
     top: 50%;
@@ -54,9 +51,6 @@ body {
         width: 100% !important;
         height: auto !important;
         margin-right: 5px;
-    }
-    #blog-slider img {
-        max-width: 100% !important;
     }
     .slider-container {
         overflow-x: auto;
