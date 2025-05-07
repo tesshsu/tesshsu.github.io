@@ -8,23 +8,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
-     <!-- GoatCounter tracking script -->
-     <script data-goatcounter="https://tesshsu.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+    <!-- GoatCounter tracking script -->
+    <script data-goatcounter="https://tesshsu.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
-<body class="bg-white text-black flex">
-   <!-- Sidebar Container -->
-   <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white"></div>
+<body class="bg-white text-black flex overflow-x-hidden">
+    <!-- Sidebar Container -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white hidden md:block"></div>
+
     <!-- Main Content -->
-    <main class="ml-16 flex-1">
+    <main class="flex-1 md:ml-16">
         <!-- Navbar -->
         <nav class="fixed top-0 w-full bg-white shadow-md p-4 z-10">
-            <div class="container mx-auto flex justify-between items-center">
-                <h1 class="text-xl font-bold">Yating Chatiron</h1>
-                <div class="hidden md:flex space-x-4">
-                    <a href="#about" class="hover:text-gray-600">About</a>
-                    <a href="#experience" class="hover:text-gray-600">Experience</a>
-                    <a href="#certificates" class="hover:text-gray-600">Certificates</a>
-                    <a href="#skills" class="hover:text-gray-600">Skills</a>
+            <div class="container mx-auto px-4 sm:px-6 md:px-8 flex justify-between items-center">
+                <h1 class="text-lg sm:text-xl font-bold">Yating Chatiron</h1>
+                <!-- Hamburger Menu for Mobile -->
+                <button id="menu-toggle" class="md:hidden text-2xl focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <!-- Navigation Links -->
+                <div id="nav-links" class="hidden md:flex space-x-4 absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent shadow-md md:shadow-none p-4 md:p-0 flex-col md:flex-row">
+                    <a href="#about" class="hover:text-gray-600 mb-2 md:mb-0">About</a>
+                    <a href="#experience" class="hover:text-gray-600 mb-2 md:mb-0">Experience</a>
+                    <a href="#certificates" class="hover:text-gray-600 mb-2 md:mb-0">Certificates</a>
+                    <a href="#skills" class="hover:text-gray-600 mb-2 md:mb-0">Skills</a>
                     <a href="blog.html" class="hover:text-gray-600">Blog</a>
                 </div>
             </div>
@@ -32,18 +38,18 @@
 
         <!-- About Section -->
         <section id="about" class="pt-20 pb-10">
-            <div class="container mx-auto px-4">
-                <img src="favicon-512x512.png" alt="Yating Chatiron Logo" class="w-30 h-30 mb-4">
-                <h2 class="text-3xl font-bold mb-4">About Me</h2>
-                <p class="text-lg">
+            <div class="container mx-auto px-4 sm:px-6 md:px-8">
+                <img src="favicon-512x512.png" alt="Yating Chatiron Logo" class="w-20 sm:w-24 md:w-30 mx-auto object-contain mb-4">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center md:text-left">About Me</h2>
+                <p class="text-base sm:text-lg">
                     Hi, I'm Yating Chatiron, a Senior Software Engineer over 15 years of experience in full-stack development, DevOps, and cloud technologies. I specialize in e-commerce, performance optimization, security, blockchain, and AI. I’m passionate about building scalable solutions and integrating security into the DevOps lifecycle.
                 </p>
-                <!-- New Block: My Journey -->
-                <div class="mt-6 p-6 border border-gray-300 rounded-lg bg-gray-50">
-                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                <!-- My Journey -->
+                <div class="mt-6 p-4 sm:p-6 border border-gray-300 rounded-lg bg-gray-50">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-3 flex items-center">
                         <i class="fas fa-road mr-2 text-gray-600"></i> My Atypical Journey
                     </h3>
-                    <p class="text-lg">
+                    <p class="text-base sm:text-lg">
                         My career path is not typical. After 10 years of experience in software development, I transitioned to DevOps, and later to cybersecurity. Having been a victim of cyberattacks myself, I realized the need to delve deeper into this field. That’s why I decided to share my knowledge through blogs on cybersecurity and DevOps.
                     </p>
                     <ul class="mt-4 space-y-2">
@@ -66,13 +72,13 @@
 
         <!-- Experience Section -->
         <section id="experience" class="py-10 bg-gray-100">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-4">Experience</h2>
+            <div class="container mx-auto px-4 sm:px-6 md:px-8">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center md:text-left">Experience</h2>
                 <div class="space-y-6">
                     <div>
-                        <h3 class="text-xl font-semibold">Senior Software Engineer - Budhapp</h3>
+                        <h3 class="text-lg sm:text-xl font-semibold">Senior Software Engineer - Budhapp</h3>
                         <p class="text-gray-600">September 2024 - Present</p>
-                        <ul class="list-disc ml-5">
+                        <ul class="list-disc ml-5 text-base sm:text-lg">
                             <li>Developed Animalink, a medical platform, with scalable infrastructure on GCP.</li>
                             <li>Integrated blockchain DeFi solutions, reducing transaction costs by 25%.</li>
                             <li>Automated CI/CD pipelines on GKE, cutting deployment time by 35%.</li>
@@ -80,18 +86,18 @@
                         </ul>
                     </div>
                     <div>
-                        <h3 class="text-xl font-semibold">R&D Engineer - Groupe Itekcom</h3>
+                        <h3 class="text-lg sm:text-xl font-semibold">R&D Engineer - Groupe Itekcom</h3>
                         <p class="text-gray-600">June 2023 - May 2024</p>
-                        <ul class="list-disc ml-5">
+                        <ul class="list-disc ml-5 text-base sm:text-lg">
                             <li>Built medical prescription modules for e-commerce platforms in healthcare.</li>
                             <li>Managed HDS servers on AWS with 99.9% uptime.</li>
                             <li>Optimized Prestashop, increasing sales by 20%.</li>
                         </ul>
                     </div>
                     <div>
-                        <h3 class="text-xl font-semibold">Full Stack Engineer - Livmed's</h3>
+                        <h3 class="text-lg sm:text-xl font-semibold">Full Stack Engineer - Livmed's</h3>
                         <p class="text-gray-600">June 2022 - March 2023</p>
-                        <ul class="list-disc ml-5">
+                        <ul class="list-disc ml-5 text-base sm:text-lg">
                             <li>Developed a WebSocket-based service for real-time communication in a medicine delivery app.</li>
                             <li>Optimized Google Maps API requests, reducing costs by 25%.</li>
                             <li>Mentored interns and established coding best practices.</li>
@@ -103,33 +109,33 @@
 
         <!-- Certificates Section -->
         <section id="certificates" class="py-10">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-4">Certificates</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="container mx-auto px-4 sm:px-6 md:px-8">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center md:text-left">Certificates</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     <div class="text-center">
-                        <img src="img/certificate/cs50.png" alt="CS50 Certificate" class="w-full h-80 object-cover mb-2">
-                        <p class="font-semibold">CS50 Computer Science - Harvard University</p>
-                        <p class="text-gray-600">April 30, 2012</p>
+                        <img src="img/certificate/cs50.png" alt="CS50 Certificate" class="w-full max-w-xs mx-auto object-contain mb-2">
+                        <p class="font-semibold text-sm sm:text-base">CS50 Computer Science - Harvard University</p>
+                        <p class="text-gray-600 text-sm">April 30, 2012</p>
                     </div>
                     <div class="text-center">
-                        <img src="img/certificate/java.png" alt="Java Certificate" class="w-full h-80 object-cover mb-2">
-                        <p class="font-semibold">Java certificats - Ecole Polytechnique federale de lausanne</p>
-                        <p class="text-gray-600">June 30, 2012</p>
+                        <img src="img/certificate/java.png" alt="Java Certificate" class="w-full max-w-xs mx-auto object-contain mb-2">
+                        <p class="font-semibold text-sm sm:text-base">Java certificats - Ecole Polytechnique federale de lausanne</p>
+                        <p class="text-gray-600 text-sm">June 30, 2012</p>
                     </div>
                     <div class="text-center">
-                        <img src="img/certificate/python.png" alt="Python Certificate" class="w-full h-80 object-cover mb-2">
-                        <p class="font-semibold">Python certificates - Greate Learning</p>
-                        <p class="text-gray-600">April 30, 2024</p>
+                        <img src="img/certificate/python.png" alt="Python Certificate" class="w-full max-w-xs mx-auto object-contain mb-2">
+                        <p class="font-semibold text-sm sm:text-base">Python certificates - Greate Learning</p>
+                        <p class="text-gray-600 text-sm">April 30, 2024</p>
                     </div>
                     <div class="text-center">
-                        <img src="img/certificate/ISC2.png" alt="ISC2 Certificate" class="w-full h-80 object-cover mb-2">
-                        <p class="font-semibold">ISC2 Certification</p>
-                        <p class="text-gray-600">April 12, 2025</p>
+                        <img src="img/certificate/ISC2.png" alt="ISC2 Certificate" class="w-full max-w-xs mx-auto object-contain mb-2">
+                        <p class="font-semibold text-sm sm:text-base">ISC2 Certification</p>
+                        <p class="text-gray-600 text-sm">April 12, 2025</p>
                     </div>
                     <div class="text-center">
-                        <img src="img/certificate/cybernin.png" alt="cybernin Certificate" class="w-full h-80 object-cover mb-2">
-                        <p class="font-semibold">Cybernin Certification</p>
-                        <p class="text-gray-600">Mars 27, 2025</p>
+                        <img src="img/certificate/cybernin.png" alt="cybernin Certificate" class="w-full max-w-xs mx-auto object-contain mb-2">
+                        <p class="font-semibold text-sm sm:text-base">Cybernin Certification</p>
+                        <p class="text-gray-600 text-sm">Mars 27, 2025</p>
                     </div>
                 </div>
             </div>
@@ -137,77 +143,77 @@
 
         <!-- Skills Section -->
         <section id="skills" class="py-10 bg-gray-100">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-4">Skills</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="container mx-auto px-4 sm:px-6 md:px-8">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center md:text-left">Skills</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <h3 class="text-lg font-semibold">Languages</h3>
-                        <p>PHP, Python, JavaScript, Java, HTML, Golang</p>
+                        <h3 class="text-base sm:text-lg font-semibold">Languages</h3>
+                        <p class="text-sm sm:text-base">PHP, Python, JavaScript, Java, HTML, Golang</p>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold">Frameworks</h3>
-                        <p>Symfony, Laravel, React, Angular, ASP.NET</p>
+                        <h3 class="text-base sm:text-lg font-semibold">Frameworks</h3>
+                        <p class="text-sm sm:text-base">Symfony, Laravel, React, Angular, ASP.NET</p>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold">DevOps & CI/CD</h3>
-                        <p>Docker, Kubernetes, Terraform, Azure, AWS, GCP, OVH, ArgoCD, GitOps, GitHub Actions, GitLab CI</p>
+                        <h3 class="text-base sm:text-lg font-semibold">DevOps & CI/CD</h3>
+                        <p class="text-sm sm:text-base">Docker, Kubernetes, Terraform, Azure, AWS, GCP, OVH, ArgoCD, GitOps, GitHub Actions, GitLab CI</p>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold">Monitoring</h3>
-                        <p>Prometheus, Grafana, Kafka, Datadog, Zabbix</p>
+                        <h3 class="text-base sm:text-lg font-semibold">Monitoring</h3>
+                        <p class="text-sm sm:text-base">Prometheus, Grafana, Kafka, Datadog, Zabbix</p>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold">Databases</h3>
-                        <p>SQL, MySQL, PostgreSQL, MongoDB, Firebase, GraphQL</p>
+                        <h3 class="text-base sm:text-lg font-semibold">Databases</h3>
+                        <p class="text-sm sm:text-base">SQL, MySQL, PostgreSQL, MongoDB, Firebase, GraphQL</p>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold">Cybersecurity</h3>
-                        <p>OWASP, Kali Linux, Metasploit, Burp Suite, Wireshark, Nmap, SSL/TLS, API Security, Pentesting, Cloud Security</p>
+                        <h3 class="text-base sm:text-lg font-semibold">Cybersecurity</h3>
+                        <p class="text-sm sm:text-base">OWASP, Kali Linux, Metasploit, Burp Suite, Wireshark, Nmap, SSL/TLS, API Security, Pentesting, Cloud Security</p>
                     </div>
                 </div>
             </div>
-        </section>        
+        </section>
 
-        <!-- Slider Section -->
         <!-- Slider Section for Blogs -->
         <section class="py-10">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-4">Recent Blogs</h2>
-                <div class="slider-container">
+            <div class="container mx-auto px-4 sm:px-6 md:px-8">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center md:text-left">Recent Blogs</h2>
+                <div class="slider-container overflow-x-hidden relative">
                     <button class="slider-btn prev-btn-blog">←</button>
-                    <div class="slider" id="blog-slider">
-                        <a href="/blogs/blog-1.html"><img src="../img/blog/blog-1.jpeg" alt="Blog 1"></a>
-                        <a href="/blogs/blog-2.html"><img src="../img/blog/blog-2.jpeg" alt="Blog 2"></a>
-                        <a href="/blogs/blog-3.html"><img src="../img/blog/blog-3.jpeg" alt="Blog 3"></a>
-                        <a href="/blogs/blog-4.html"><img src="../img/blog/blog-4.jpeg" alt="Blog 4"></a>
-                        <a href="/blogs/blog-6.html"><img src="../img/blog/blog-6.jpeg" alt="Blog 5"></a> 
+                    <div class="slider flex" id="blog-slider">
+                        <a href="/blogs/blog-1.html"><img src="../img/blog/blog-1.jpeg" alt="Blog 1" class="w-40 sm:w-48 md:w-52 object-cover"></a>
+                        <a href="/blogs/blog-2.html"><img src="../img/blog/blog-2.jpeg" alt="Blog 2" class="w-40 sm:w-48 md:w-52 object-cover"></a>
+                        <a href="/blogs/blog-3.html"><img src="../img/blog/blog-3.jpeg" alt="Blog 3" class="w-40 sm:w-48 md:w-52 object-cover"></a>
+                        <a href="/blogs/blog-4.html"><img src="../img/blog/blog-4.jpeg" alt="Blog 4" class="w-40 sm:w-48 md:w-52 object-cover"></a>
+                        <a href="/blogs/blog-6.html"><img src="../img/blog/blog-6.jpeg" alt="Blog 5" class="w-40 sm:w-48 md:w-52 object-cover"></a>
                     </div>
                     <button class="slider-btn next-btn-blog">→</button>
                 </div>
             </div>
         </section>
 
+        <!-- Slider Section for Projects -->
         <section class="py-10">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-4">Past Projects</h2>
-                <div class="slider-container">
+            <div class="container mx-auto px-4 sm:px-6 md:px-8">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center md:text-left">Past Projects</h2>
+                <div class="slider-container overflow-x-hidden relative">
                     <button class="slider-btn prev-btn">←</button>
-                    <div class="slider" id="project-slider">
-                        <img src="img/work/img-1.jpg" alt="Project 1">
-                        <img src="img/work/img-2.jpg" alt="Project 2">
-                        <img src="img/work/img-3.jpg" alt="Project 3">
-                        <img src="img/work/img-4.jpg" alt="Project 4">
-                        <img src="img/work/img-5.jpg" alt="Project 5">
-                        <img src="img/work/img-6.jpg" alt="Project 6">
-                        <img src="img/work/img-7.jpg" alt="Project 7">
-                        <img src="img/work/img-8.jpg" alt="Project 8">
-                        <img src="img/work/img-9.jpg" alt="Project 9">
-                        <img src="img/work/img-10.jpg" alt="Project 10">
-                        <img src="img/work/img-11.jpg" alt="Project 11">
-                        <img src="img/work/img-12.jpg" alt="Project 12">
-                        <img src="img/work/img-13.jpg" alt="Project 13">
-                        <img src="img/work/img-14.jpg" alt="Project 14">
-                        <img src="img/work/img-15.jpg" alt="Project 15">
+                    <div class="slider flex" id="project-slider">
+                        <img src="img/work/img-1.jpg" alt="Project 1" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-2.jpg" alt="Project 2" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-3.jpg" alt="Project 3" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-4.jpg" alt="Project 4" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-5.jpg" alt="Project 5" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-6.jpg" alt="Project 6" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-7.jpg" alt="Project 7" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-8.jpg" alt="Project 8" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-9.jpg" alt="Project 9" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-10.jpg" alt="Project 10" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-11.jpg" alt="Project 11" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-12.jpg" alt="Project 12" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-13.jpg" alt="Project 13" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-14.jpg" alt="Project 14" class="w-40 sm:w-48 md:w-52 object-cover">
+                        <img src="img/work/img-15.jpg" alt="Project 15" class="w-40 sm:w-48 md:w-52 object-cover">
                     </div>
                     <button class="slider-btn next-btn">→</button>
                 </div>
@@ -216,11 +222,20 @@
 
         <!-- Footer -->
         <footer class="py-4 bg-black text-white text-center">
-            <p>© 2025 Yating Chatiron. All rights reserved.</p>
+            <p class="text-sm sm:text-base">© 2025 Yating Chatiron. All rights reserved.</p>
         </footer>
     </main>
 
     <!-- Include the external script -->
     <script src="assets/js/script.js"></script>
+    <!-- Inline script for hamburger menu toggle -->
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('hidden');
+        });
+    </script>
 </body>
 </html>

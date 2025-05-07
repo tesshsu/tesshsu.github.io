@@ -259,7 +259,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const sidebarContainer = document.getElementById('sidebar-container');
         if (sidebarContainer) {
             try {
-                const response = await fetch('assets//partials/sidebar.html');
+                // Use absolute path to ensure correct loading from any page
+                const response = await fetch('/assets/partials/sidebar.html');
                 if (response.ok) {
                     const sidebarContent = await response.text();
                     sidebarContainer.innerHTML = sidebarContent;
@@ -278,7 +279,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadVisitCounterBlock() {
         const mainContent = document.querySelector('main');
-        if (mainContent && (window.location.pathname.includes('blogs/blog-') || window.location.pathname.includes('index.html'))) {
+        // Only load the visit counter on individual blog pages (e.g., blogs/blog-1.html)
+        if (mainContent && window.location.pathname.includes('blogs/blog-')) {
             try {
                 const response = await fetch('/assets/partials/visit-counter.html');
                 if (response.ok) {
@@ -317,40 +319,52 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentNumber = parseInt(currentPath.match(/blog-(\d+)\.html/)?.[1] || 1);
         const navBlock = document.querySelector('.flex.justify-between');
 
-        if (navBlock) {
-            const prevLink = navBlock.querySelector('a:nth-child(1)');
-            const nextLink = navBlock.querySelector('a:nth-child(2)');
-            const maxBlogNumber = 6;
+        // Check if navBlock exists before proceeding
+        if (!navBlock) {
+            console.warn('Navigation block (.flex.justify-between) not found in the DOM');
+            return;
+        }
 
-            if (currentNumber === 1) {
-                prevLink.href = '/blog.html';
-                prevLink.classList.add('cursor-not-allowed', 'text-gray-400');
-                prevLink.classList.remove('hover:underline');
-                prevLink.textContent = '← Précédent List blogs';
-            } else {
-                prevLink.href = `/blogs/blog-${currentNumber - 1}.html`;
-                prevLink.textContent = '← Précédent';
-            }
+        const prevLink = navBlock.querySelector('a:nth-child(1)');
+        const nextLink = navBlock.querySelector('a:nth-child(2)');
+        const maxBlogNumber = 6;
 
-            if (currentNumber === maxBlogNumber) {
-                nextLink.href = '#';
-                nextLink.classList.add('cursor-not-allowed', 'text-gray-400');
-                nextLink.classList.remove('hover:underline');
-                nextLink.textContent = 'next blog →';
-            } else {
-                nextLink.href = `/blogs/blog-${currentNumber + 1}.html`;
-                nextLink.textContent = 'next blog →';
-            }
+        // Check if prevLink and nextLink exist
+        if (!prevLink || !nextLink) {
+            console.warn('Previous or Next link not found in navigation block');
+            return;
+        }
+
+        if (currentNumber === 1) {
+            prevLink.href = '/blog.html';
+            prevLink.classList.add('cursor-not-allowed', 'text-gray-400');
+            prevLink.classList.remove('hover:underline');
+            prevLink.textContent = '← Précédent List blogs';
+        } else {
+            prevLink.href = `/blogs/blog-${currentNumber - 1}.html`;
+            prevLink.textContent = '← Précédent';
+        }
+
+        if (currentNumber === maxBlogNumber) {
+            nextLink.href = '#';
+            nextLink.classList.add('cursor-not-allowed', 'text-gray-400');
+            nextLink.classList.remove('hover:underline');
+            nextLink.textContent = 'next blog →';
+        } else {
+            nextLink.href = `/blogs/blog-${currentNumber + 1}.html`;
+            nextLink.textContent = 'next blog →';
         }
     }
 
+    // Load sidebar on all pages, including blog pages
     loadSidebar().then(() => {
         initializeShareButtons();
     }).catch(error => {
         console.error('Error loading sidebar:', error);
     });
 
-    if (window.location.pathname.includes('blogs/blog-') || window.location.pathname.includes('index.html')) {
+    // Only run loadVisitCounterBlock and setupBlogNavigation on individual blog pages
+    if (window.location.pathname.includes('blogs/blog-')) {
         Promise.all([loadVisitCounterBlock(), setupBlogNavigation()])
             .then(() => {
                 initializeShareButtons();
