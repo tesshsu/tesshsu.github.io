@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         projectSlider.innerHTML = shuffledProjects.map(project => `<img src="${project.src}" alt="${project.alt}">`).join('');
 
         function updateProjectSlider() {
-            const maxIndex = totalImages - 1;
+            const maxIndex = totalImages - 1 
             if (currentIndex < 0) currentIndex = 0;
             if (currentIndex > maxIndex - 3) currentIndex = maxIndex - 3;
             projectSlider.style.transform = `translateX(-${currentIndex * imageWidth}px)`;
@@ -323,15 +323,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Load sidebar on all pages
+    loadSidebar().then(() => {
+        // After sidebar is loaded, initialize share buttons on all pages
+        initializeShareButtons();
+    }).catch(error => {
+        console.error('Error loading sidebar:', error);
+    });
+
+    // Load visit counter and setup blog navigation only on specific pages
     if (window.location.pathname.includes('blogs/blog-') || window.location.pathname.includes('index.html')) {
-        Promise.all([loadSidebar(), loadVisitCounterBlock(), setupBlogNavigation()])
+        Promise.all([loadVisitCounterBlock(), setupBlogNavigation()])
             .then(() => {
                 initializeShareButtons();
             })
             .catch(error => console.error('Error in Promise.all:', error));
     }
 
+    // Ensure share buttons are initialized on pages that don't load the sidebar dynamically
     if (!window.location.pathname.includes('blog.html')) {
-        window.addEventListener('DOMContentLoaded', initializeShareButtons);
+        initializeShareButtons();
     }
 });
