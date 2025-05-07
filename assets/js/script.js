@@ -121,18 +121,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const languageSwitcher = document.getElementById('language-switcher');
-    if (languageSwitcher) {
-        languageSwitcher.addEventListener('change', function() {
-            const lang = this.value;
+    const initializeLanguageSwitcher = () => {
+        const languageSwitcher = document.getElementById('language-switcher');
+        if (languageSwitcher) {
+            console.log('Language switcher found:', languageSwitcher);
             const currentPage = window.location.pathname.split('/').pop();
-            if (lang === 'en' && currentPage !== 'index.html') {
-                window.location.href = 'index.html';
-            } else if (lang === 'fr' && currentPage !== 'fr.html') {
-                window.location.href = 'fr.html';
+            if (currentPage === 'fr.html') {
+                languageSwitcher.value = 'fr';
+            } else {
+                languageSwitcher.value = 'en';
             }
-        });
-    }
+
+            languageSwitcher.addEventListener('change', function() {
+                const lang = this.value;
+                console.log('Language selected:', lang);
+                console.log('Current page:', currentPage);
+
+                if (lang === 'fr' && currentPage !== 'fr.html') {
+                    console.log('Navigating to fr.html');
+                    window.location.href = '/fr.html';
+                } else if (lang === 'en' && currentPage !== 'index.html') {
+                    console.log('Navigating to index.html');
+                    window.location.href = '/index.html';
+                } else {
+                    console.log('No navigation needed');
+                }
+            });
+        } else {
+            console.error('Language switcher not found in the DOM');
+        }
+    };
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
@@ -169,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         projectSlider.innerHTML = shuffledProjects.map(project => `<img src="${project.src}" alt="${project.alt}">`).join('');
 
         function updateProjectSlider() {
-            const maxIndex = totalImages - 1 
+            const maxIndex = totalImages - 1;
             if (currentIndex < 0) currentIndex = 0;
             if (currentIndex > maxIndex - 3) currentIndex = maxIndex - 3;
             projectSlider.style.transform = `translateX(-${currentIndex * imageWidth}px)`;
@@ -241,16 +259,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const sidebarContainer = document.getElementById('sidebar-container');
         if (sidebarContainer) {
             try {
-                const response = await fetch('/assets/partials/sidebar.html');
+                const response = await fetch('assets//partials/sidebar.html');
                 if (response.ok) {
                     const sidebarContent = await response.text();
                     sidebarContainer.innerHTML = sidebarContent;
+                    console.log('Sidebar loaded successfully');
+                    initializeLanguageSwitcher();
                 } else {
                     console.error('Failed to load sidebar:', response.status);
                 }
             } catch (error) {
                 console.error('Error loading sidebar:', error);
             }
+        } else {
+            console.error('Sidebar container not found in the DOM');
         }
     }
 
@@ -268,7 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         const pageUrl = window.location.pathname;
                         let visits = localStorage.getItem(`visitCount_${pageUrl}`);
                         if (!visits) {
-                            // Generate a random number between 100 and 999
                             visits = Math.floor(Math.random() * 900) + 100;
                         } else {
                             visits = parseInt(visits) + 1;
@@ -277,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         visitCountElement.textContent = visits;
                     }
                     const navBlock = mainContent.querySelector('.flex.justify-between');
-                    if (navBlock) {
+                    if (navBlock && navBlock.parentNode === mainContent) {
                         mainContent.insertBefore(counterDiv, navBlock);
                     } else {
                         mainContent.appendChild(counterDiv);
@@ -323,15 +344,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Load sidebar on all pages
     loadSidebar().then(() => {
-        // After sidebar is loaded, initialize share buttons on all pages
         initializeShareButtons();
     }).catch(error => {
         console.error('Error loading sidebar:', error);
     });
 
-    // Load visit counter and setup blog navigation only on specific pages
     if (window.location.pathname.includes('blogs/blog-') || window.location.pathname.includes('index.html')) {
         Promise.all([loadVisitCounterBlock(), setupBlogNavigation()])
             .then(() => {
@@ -340,7 +358,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Error in Promise.all:', error));
     }
 
-    // Ensure share buttons are initialized on pages that don't load the sidebar dynamically
     if (!window.location.pathname.includes('blog.html')) {
         initializeShareButtons();
     }
