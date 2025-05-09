@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yating Chatiron - Blog Post 8</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 sm:ml-16">
+        <article class="container mx-auto px-4 py-10 sm: ml-16">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2">🚨 MirrorFace / APT10 est (encore) de retour</h1>
+                <p class="text-gray-600 mb-2">05 Mai 2025</p>
+                <img src="../img/blog/blog-8.jpeg" alt="MirrorFace APT10 Campaign" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow">
+                <p class="sub-title text-lg">
+                    Et cette fois, ils ne se limitent plus à l’Asie. → Japon 🇯🇵, Taïwan 🇹🇼, et maintenant… Europe centrale.
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-4">
+                    Il y a quelques semaines, une organisation japonaise a repéré une nouvelle campagne signée MirrorFace (aussi appelé Earth Kasha), un sous-groupe d’APT10. (On suppose qu’il s’agit d’un acteur d’un plus grand pays asiatique, sans le nommer de ma part 🥷)
+                </p>
+
+                <h2 class="font-semibold mt-4">🧵 De l’infection à l’exfiltration :</h2>
+                <h3 class="mt-2">Accès initial</h3>
+                <p class="mt-2">
+                    → Emails de spear-phishing envoyés depuis des boîtes compromises<br>
+                    → Liens OneDrive vers des fichiers ZIP piégés<br>
+                    → Dedans : fichiers Excel avec macros (RoamingMouse)
+                </p>
+                <h3 class="mt-2">Exécution ☠️</h3>
+                <p class="mt-2">
+                    → Lancement des macros = installation du backdoor ANEL<br>
+                    → Discret, persistant, parfait pour la reconnaissance
+                </p>
+                <h3 class="mt-2">Reconnaissance 👺</h3>
+                <p class="mt-2">
+                    → Collecte de :<br>
+                    ▪️ Captures d’écran<br>
+                    ▪️ Infos système + réseau
+                </p>
+                <h3 class="mt-2">Escalade si cible stratégique</h3>
+                <p class="mt-2">
+                    → Déploiement de NOOPDOOR<br>
+                    → Utilisation de DNS over HTTPS pour masquer les communications
+                </p>
+                <h3 class="mt-2">Évasion & persistance 🫀</h3>
+                <p class="mt-2">
+                    → Contournement via Windows Sandbox + VS Code<br>
+                    → Payload qui s’adapte selon la config (ex : McAfee présent ?)<br>
+                    → Exploits ciblant Fortinet, Citrix, Array Networks
+                </p>
+
+                <p class="mt-4">
+                    📍 Depuis 2024 : cap sur l’Europe. Une institution diplomatique en Europe centrale a été visée. → Même tactiques. Même outils. Nouveau terrain de jeu. Preuve que ce workflow, rodé en Asie, peut être déployé partout pour infiltrer les structures sensibles — diplomatie, administrations, etc.
+                </p>
+
+                <h2 class="font-semibold mt-4">🧠 Mon point de vue :</h2>
+                <p class="mt-2">
+                    Ce type d’acteur est persistant, adaptable, et très structuré.<br>
+                    ➡️ Les signaux faibles doivent devenir notre priorité.<br>
+                    ➡️ DNS over HTTPS ? À surveiller activement.<br>
+                    ➡️ Les charges malveillantes sont désormais context-aware.<br>
+                    La défense doit évoluer aussi vite que l’attaque.
+                </p>
+
+                <p class="mt-4">
+                    ♻️ Repartage si ça peut aider un collègue blue team
+                </p>
+            </section>
+
+            <section class="mt-8 text-lg">
+                <p class="font-semibold">Hashtags :</p>
+                <div class="space-x-2 mt-2">
+                    <a href="https://www.linkedin.com/feed/hashtag/mirrorface" target="_blank" class="text-blue-600 hover:underline">#MirrorFace</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/apt10" target="_blank" class="text-blue-600 hover:underline">#APT10</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/cybersecurity" target="_blank" class="text-blue-600 hover:underline">#Cybersecurity</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/spearphishing" target="_blank" class="text-blue-600 hover:underline">#SpearPhishing</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/malware" target="_blank" class="text-blue-600 hover:underline">#Malware</a>
+                    <a href="https://www.linkedin.com/feed/hashtag/infosec" target="_blank" class="text-blue-600 hover:underline">#Infosec</a>
+                </div>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blog.html" class="hover:underline">← Précédent : Liste des articles</a>
+                <a href="/blogs/blog-7.html" class="text-blue-600 hover:underline">Suivant : Prochain article →</a>
+            </nav>
+        </article>
+    </main>
+
+    <footer role="contentinfo" class="bg-black text-white text-center py-4 mt-auto">
+        © 2025 Yating Chatiron. Tous droits réservés.
+    </footer>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
