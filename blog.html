@@ -7,33 +7,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
-     <!-- GoatCounter tracking script -->
-     <script data-goatcounter="https://tesshsu.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+    <!-- GoatCounter tracking script -->
+    <script data-goatcounter="https://tesshsu.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
-<body class="bg-white text-black flex">
+<body class="bg-white text-black flex flex-col min-h-screen">
     <!-- Sidebar Container -->
-    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white"></div>
-    <!-- Main Content -->
-    <main class="ml-16 flex-1">
-        <!-- Navbar -->
-        <nav class="fixed top-0 w-full bg-white shadow-md p-4 z-10">
-            <div class="container mx-auto flex justify-between items-center">
-                <h1 class="text-xl font-bold">Yating Chatiron</h1>
-                <div class="hidden md:flex space-x-4">
-                    <a href="fr.html#about" class="hover:text-gray-600">À propos</a>
-                    <a href="fr.html#experience" class="hover:text-gray-600">Expérience</a>
-                    <a href="fr.html#certificates" class="hover:text-gray-600">Certificats</a>
-                    <a href="fr.html#skills" class="hover:text-gray-600">Compétences</a>
-                    <a href="blog.html" class="hover:text-gray-600">Blog</a>
-                </div>
-            </div>
-        </nav>
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
 
+    <!-- Main Content -->
+    <main role="main" class="flex-1 ml-16">
         <!-- Blog Header with Search -->
         <header class="pt-20 pb-6">
             <div class="container mx-auto px-4">
                 <h2 class="text-3xl font-bold mb-4">Blog</h2>
-                <div class="mb-6">
+                <div class="mb-6 relative">
                     <input type="text" id="search-input" class="w-full p-2 pl-10 border rounded-lg" placeholder="Rechercher..." aria-label="Rechercher un article">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 </div>
@@ -41,7 +28,7 @@
         </header>
 
         <!-- Blog Section -->
-        <section id="blog" class="pb-10 mt-4">
+        <section id="blog" class="pb-10 mt-2">
             <div class="container mx-auto px-4">
                 <div id="blog-posts" class="space-y-6">
                     <!-- Blog posts will be loaded dynamically -->
@@ -50,7 +37,7 @@
         </section>
 
         <!-- Footer -->
-        <footer class="py-4 bg-black text-white text-center">
+        <footer role="contentinfo" class="bg-black text-white text-center py-4 mt-auto">
             <p>© 2025 Yating Chatiron. Tous droits réservés.</p>
         </footer>
     </main>

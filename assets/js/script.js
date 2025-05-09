@@ -53,23 +53,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     div.innerHTML = `
                         <h2 class="blog-title text-2xl font-semibold mb-2">${blogTitle}</h2>
                         <p class="text-gray-600 mb-2">${blogDate}</p>
-                        <img src="${blogImageSrc}" alt="Blog ${blogNumber} Image" class="w-25 h-auto object-cover mb-4">
+                        <img src="${blogImageSrc}" alt="Blog ${blogNumber} Image" class="w-full max-w-3xl mx-auto h-auto object-cover mb-4 rounded shadow">
                         <p class="sub-title text-lg">${blogSubtitle}</p>
                         <a href="${file}" class="blog-link text-blue-600 hover:underline">Lire la suite</a>
                         <!-- Share Block -->
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                             <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
-                            <div class="flex space-x-4 share-buttons">
-                                <a data-platform="linkedin" href="#" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                            <div class="flex flex-wrap gap-4 share-buttons">
+                                <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                                     <i class="fab fa-linkedin mr-2"></i> LinkedIn
                                 </a>
-                                <a data-platform="reddit" href="#" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                                <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
                                     <i class="fab fa-reddit mr-2"></i> Reddit
                                 </a>
-                                <a data-platform="x" href="#" target="_blank" class="bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500 flex items-center">
+                                <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
                                     <i class="fab fa-x-twitter mr-2"></i> X
                                 </a>
-                                <a data-platform="facebook" href="#" target="_blank" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 flex items-center">
+                                <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
                                     <i class="fab fa-facebook-f mr-2"></i> Facebook
                                 </a>
                             </div>
@@ -103,9 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
                 };
 
-                container.querySelectorAll('a[data-platform]').forEach(button => {
-                    const platform = button.getAttribute('data-platform');
-                    if (shareLinks[platform]) {
+                container.querySelectorAll('a').forEach(button => {
+                    const platform = button.querySelector('i').classList.contains('fa-linkedin') ? 'linkedin' :
+                                    button.querySelector('i').classList.contains('fa-reddit') ? 'reddit' :
+                                    button.querySelector('i').classList.contains('fa-x-twitter') ? 'x' :
+                                    button.querySelector('i').classList.contains('fa-facebook-f') ? 'facebook' : null;
+                    if (platform && shareLinks[platform]) {
                         button.href = shareLinks[platform];
                     }
                 });
