@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Ensure full-height layout for footer positioning
+    const body = document.body;
+    if (!body.classList.contains('min-h-screen') || !body.classList.contains('flex') || !body.classList.contains('flex-col')) {
+        body.classList.add('min-h-screen', 'flex', 'flex-col');
+    }
+    const main = document.querySelector('main');
+    if (main && !main.classList.contains('flex-1')) {
+        main.classList.add('flex-1');
+    }
+
     // Load blog posts dynamically in descending order on blog.html
     async function loadBlogPosts() {
         const blogContainer = document.getElementById('blog-posts');
@@ -315,7 +325,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error loading visit counter block:', error);
             }
         }
-    }    
+    }
+
+    async function loadFooter() {
+        const mainContent = document.querySelector('main');
+        if (mainContent) {
+            try {
+                const response = await fetch('/assets/partials/footer.html');
+                if (response.ok) {
+                    const footerContent = await response.text();
+                    const footerDiv = document.createElement('div');
+                    footerDiv.innerHTML = footerContent;
+                    mainContent.appendChild(footerDiv);
+                    console.log('Footer loaded successfully');
+                } else {
+                    console.error('Failed to load footer:', response.status);
+                }
+            } catch (error) {
+                console.error('Error loading footer:', error);
+            }
+        } else {
+            console.error('Main content not found in the DOM for footer injection');
+        }
+    }
 
     function setupBlogNavigation() {
         const currentPath = window.location.pathname;
@@ -330,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const prevLink = navBlock.querySelector('a:nth-child(1)');
         const nextLink = navBlock.querySelector('a:nth-child(2)');
-        const maxBlogNumber = 6;
+        const maxBlogNumber = 8;
 
         // Check if prevLink and nextLink exist
         if (!prevLink || !nextLink) {
@@ -359,13 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Load sidebar on all pages, including blog pages
-    loadSidebar().then(() => {
-        initializeShareButtons();
-    }).catch(error => {
-        console.error('Error loading sidebar:', error);
-    });
-
     // Only run loadVisitCounterBlock and setupBlogNavigation on individual blog pages
     if (window.location.pathname.includes('blogs/blog-')) {
         Promise.all([loadVisitCounterBlock(), setupBlogNavigation()])
@@ -378,4 +403,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!window.location.pathname.includes('blog.html')) {
         initializeShareButtons();
     }
+
+     // Load sidebar and footer on all pages
+     Promise.all([loadSidebar(), loadFooter()])
+     .then(() => {
+         initializeShareButtons();
+     })
+     .catch(error => {
+         console.error('Error loading sidebar or footer:', error);
+     });
+
 });
