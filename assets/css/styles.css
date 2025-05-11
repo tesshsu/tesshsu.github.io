@@ -48,9 +48,8 @@ body {
 }
 @media (max-width: 768px) {
     .slider img {
-        width: 100% !important;
-        height: auto !important;
         margin-right: 5px;
+        max-width: none !important; 
     }
     .slider-container {
         overflow-x: auto;
