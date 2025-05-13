@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yating Chatiron - Blog Post 9</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-code mr-2 text-blue-500"></i> 💻 Vous codez ? Alors vous avez sûrement déjà croisé Nginx
+                </h1>
+                <p class="text-gray-600 mb-2">13 Mai 2025, 16:43 CEST</p>
+                <img src="../img/blog/blog-9.jpeg" alt="Nginx Overview" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Et si vous ne l’avez pas encore exploré, voici pourquoi il est incontournable.
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-server mr-2 text-green-500"></i> Le serveur web discret mais puissant
+                </h2>
+                <p class="mt-2">
+                    Besoin de lancer un site frontend ?<br>
+                    Que ce soit sur EC2 ou ailleurs, une bonne config <code>nginx.conf</code> suffit à servir vos fichiers statiques directement au navigateur.<br>
+                    <i class="fas fa-check-circle mr-1 text-green-500"></i> Simple, rapide, efficace.
+                </p>
+                <p class="mt-2">
+                    Et pourtant, ce n’est que la surface de ce que Nginx peut faire.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-exchange-alt mr-2 text-blue-500"></i> Proxy inverse : le chef d’orchestre invisible
+                </h2>
+                <p class="mt-2">
+                    Frontend prêt ? Place au backend.<br>
+                    Nginx devient alors un proxy inverse :<br>
+                    Il reçoit toutes les requêtes → les redirige au bon service → renvoie la réponse à l’utilisateur.<br>
+                    <i class="fas fa-utensils mr-1 text-gray-600"></i> Comme au restaurant : vous parlez au comptoir, pas au chef.<br>
+                    Mais c’est le chef qui cuisine.
+                </p>
+                <p class="mt-2">
+                    Résultat :<br>
+                    <i class="fas fa-eye-slash mr-1 text-red-500"></i> Le backend reste invisible<br>
+                    <i class="fas fa-shield-alt mr-1 text-red-500"></i> Moins d’exposition aux attaques<br>
+                    <i class="fas fa-sitemap mr-1 text-blue-500"></i> Plus de clarté dans l’architecture
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-balance-scale mr-2 text-purple-500"></i> Équilibrage de charge : scaler sans paniquer
+                </h2>
+                <p class="mt-2">
+                    Quand le trafic explose, un seul serveur ne suffit plus.<br>
+                    Nginx répartit les requêtes sur plusieurs machines.<br>
+                    <i class="fas fa-cogs mr-1 text-gray-600"></i> Round Robin, IP hash, Least Connections… vous choisissez votre méthode.<br>
+                    <i class="fas fa-shopping-cart mr-1 text-gray-600"></i> C’est comme avoir plusieurs caisses ouvertes dans un supermarché.<br>
+                    Moins d’attente, plus d’efficacité.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-compress-arrows-alt mr-2 text-orange-500"></i> Compression Gzip : plus léger, plus rapide
+                </h2>
+                <p class="mt-2">
+                    Vos pages prennent du poids avec le temps ?<br>
+                    Nginx compresse à la volée vos fichiers HTML, CSS, JS.<br>
+                    <i class="fas fa-tachometer-alt mr-1 text-green-500"></i> Moins de données = plus de vitesse = meilleure UX.<br>
+                    <i class="fas fa-exclamation-triangle mr-1 text-yellow-500"></i> Attention : pour les images/vidéos → utilisez un CDN.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-tools mr-2 text-teal-500"></i> Conclusion : Nginx, votre couteau suisse backend
+                </h2>
+                <p class="mt-2">
+                    Serveur web, proxy inverse, load balancer, compresseur...<br>
+                    Tout ça dans un seul fichier de config.<br>
+                    La vraie question :<br>
+                    <i class="fas fa-question-circle mr-1 text-blue-500"></i> Avez-vous déjà écrit un <code>nginx.conf</code> vous-même ?<br>
+                    Si non, c’est le moment d’essayer.<br>
+                    Vous comprendrez vite pourquoi il est au cœur de tant d’architectures modernes.
+                </p>
+                <p class="mt-2">
+                    <i class="fas fa-retweet mr-1 text-blue-500"></i> 🔁 Repostez si vous pensez que tout dev devrait comprendre Nginx.
+                </p>
+                <p class="mt-2">
+                    <i class="fas fa-comment-dots mr-1 text-gray-600"></i> P.S. Votre rôle préféré de Nginx ?
+                </p>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-8.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="#" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
