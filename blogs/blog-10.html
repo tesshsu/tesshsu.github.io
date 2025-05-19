@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pièges de facturation fréquents sur Google Cloud Platform (GCP) — À surveiller absolument !</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2 text-red-500"></i> Pièges de facturation fréquents sur Google Cloud Platform (GCP) — À surveiller absolument !
+                </h1>
+                <p class="text-gray-600 mb-2">19 Mai 2025, 16:25 CEST</p>
+                <img src="../img/blog/blog-10.jpeg" alt="GCP Billing Traps Overview" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Un guide pratique pour éviter les coûts cachés et garder ton budget sous contrôle.
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    Google Cloud Platform (GCP) facture au réel, selon ta consommation.<br>
+                    Sur le papier, c’est très avantageux : si tu n’utilises pas un service, tu ne payes pas.<br>
+                    Mais… attention !
+                </p>
+                <p class="mt-2">
+                    Parfois, tu penses ne rien utiliser, mais Google considère que oui.<br>
+                    Et sans que tu t’en rendes compte, la facture grimpe…<br>
+                    Tes économies s’envolent, sans que tu comprennes vraiment pourquoi.
+                </p>
+                <p class="mt-2">
+                    Pour t’éviter ces mauvaises surprises, voici une liste des principales sources de coûts cachés et souvent négligées sur GCP.<br>
+                    Un petit guide pratique pour éviter de te faire facturer des services inutilisés.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-server mr-2 text-green-500"></i> 1. Instances Compute Engine oubliées en marche
+                </h2>
+                <img src="../img/blog/blog-10-1.jpeg" alt="Compute Engine Instances Running" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Le grand classique des coûts imprévus.<br>
+                    Même après des années d’utilisation, il m’arrive encore d’oublier des VM allumées.<br>
+                    Si tu as plusieurs projets GCP, la vigilance est de mise, car ces machines peuvent être disséminées un peu partout.<br>
+                    <i class="fas fa-check-circle mr-1 text-green-500"></i> Pense à vérifier régulièrement ta liste d’instances actives !
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-exchange-alt mr-2 text-blue-500"></i> 2. Load Balancer laissé en place
+                </h2>
+                <img src="../img/blog/blog-10-2.jpeg" alt="Load Balancer Forwarding Rules" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Les Load Balancers facturent via les Forwarding Rules, à l’heure.<br>
+                    Même s’ils ne sont plus connectés à des machines backend, ils coûtent environ 0,025 USD/heure (soit 18 USD/mois).<br>
+                    <i class="fas fa-exclamation-circle mr-1 text-yellow-500"></i> Donc, mieux vaut supprimer ceux dont tu n’as plus besoin.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-globe mr-2 text-purple-500"></i> 3. Adresses IP statiques externes non supprimées
+                </h2>
+                <img src="../img/blog/blog-10-3.jpeg" alt="Static External IP Unused" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Une IP statique associée à une VM est relativement peu chère (0,0005 USD/heure).<br>
+                    Mais une IP statique non utilisée coûte beaucoup plus cher : 0,01 USD/heure, soit 7,2 USD par mois.<br>
+                    <i class="fas fa-trash-alt mr-1 text-red-500"></i> Il vaut donc mieux libérer les IP inutilisées.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cloud mr-2 text-teal-500"></i> 4. Serverless Access Connector
+                </h2>
+                <p class="mt-2">
+                    Utilisé par App Engine, Cloud Run, Cloud Functions pour accéder aux VM.<br>
+                    Il lance automatiquement 2 VM, donc engendre des coûts même si tu ne t’en rends pas compte.<br>
+                    <i class="fas fa-mobile-alt mr-1 text-gray-600"></i> Ce service n’apparaît pas dans l’application mobile Google Cloud, ce qui rend sa suppression difficile depuis un smartphone.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-shield-alt mr-2 text-orange-500"></i> 5. Politiques et règles Cloud Armor
+                </h2>
+                <img src="../img/blog/blog-10-5.jpeg" alt="Cloud Armor Policies" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Même sans backend associé, laisser une Policy Cloud Armor active entraîne des coûts :<br>
+                    <i class="fas fa-dollar-sign mr-1 text-green-500"></i> 5 USD/mois par Policy<br>
+                    <i class="fas fa-dollar-sign mr-1 text-green-500"></i> 1 USD/mois par Rule<br>
+                    Ce sont des frais assez cachés, souvent par défaut après la création d’un Load Balancer.<br>
+                    Google impose cela sans trop demander, ce qui peut surprendre.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-image mr-2 text-yellow-500"></i> 6. Images de machines dépréciées (Depreciated Images)
+                </h2>
+                <img src="../img/blog/blog-10-6.jpeg" alt="Depreciated Machine Images" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Les images système anciennes ou supprimées peuvent toujours générer des coûts.<br>
+                    Elles sont souvent cachées dans la console, surtout si tu ne coches pas “Afficher les images obsolètes”.<br>
+                    <i class="fas fa-exclamation-triangle mr-1 text-red-500"></i> Un piège facile à oublier.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-bookmark mr-2 text-blue-500"></i> 7. Réservations (Reservations)
+                </h2>
+                <img src="../img/blog/blog-10-7.jpeg" alt="Resource Reservations" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Ce système te permet de “réserver” des ressources CPU et RAM à l’avance pour tes VM, afin d’éviter qu’elles soient utilisées par d’autres.<br>
+                    Mais attention : même si tu n’allumes pas la VM, Google te facture dès la réservation.<br>
+                    <i class="fas fa-info-circle mr-1 text-blue-500"></i> Les disques et IP ne sont pas facturés à ce stade.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cogs mr-2 text-purple-500"></i> 8. Autoscaling sans limite sur Google App Engine (GAE)
+                </h2>
+                <img src="../img/blog/blog-10-8.jpeg" alt="Google App Engine Autoscaling" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Dans le fichier <code>app.yaml</code> de ton application GAE, il faut impérativement définir une limite <code>max_instances</code>.<br>
+                    Sinon, en cas de pic de trafic, GAE va automatiquement lancer un grand nombre d’instances pour gérer la charge — et ta facture peut exploser.<br>
+                    <i class="fas fa-tachometer-alt mr-1 text-green-500"></i> Le nombre d’instances actives se trouve dans la console GAE, onglet “Exécutions” → “Instances”.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-green-500"></i> En résumé
+                </h2>
+                <p class="mt-2">
+                    <i class="fas fa-eye mr-1 text-blue-500"></i> Vérifie régulièrement tes ressources actives<br>
+                    <i class="fas fa-bell mr-1 text-yellow-500"></i> Active les alertes de facturation dans la console GCP<br>
+                    <i class="fas fa-trash mr-1 text-red-500"></i> Supprime ce que tu n’utilises pas<br>
+                    <i class="fas fa-search mr-1 text-teal-500"></i> Sois vigilant sur les services “cachés” et automatiques
+                </p>
+                <p class="mt-2">
+                    Si tu connais d’autres pièges ou frais cachés sur GCP, n’hésite pas à les partager !<br>
+                    Garder la maîtrise de son budget cloud, c’est possible.<br>
+                    Mais ça demande un peu de discipline et d’attention…<br>
+                    <i class="fas fa-exclamation-circle mr-1 text-red-500"></i> Ne laisse pas Google te prélever sans que tu sois au courant !
+                </p>
+                <p class="mt-2">
+                    <i class="fas fa-retweet mr-1 text-blue-500"></i> 🔁 Repostez si vous pensez que tout utilisateur de GCP devrait connaître ces pièges.
+                </p>
+                <p class="mt-2">
+                    <i class="fas fa-comment-dots mr-1 text-gray-600"></i> P.S. Quel est le piège GCP qui t’a le plus surpris ?
+                </p>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-9.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="#" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
