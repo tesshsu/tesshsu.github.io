@@ -166,7 +166,7 @@ function setupBlogNavigation() {
 
     const prevLink = navBlock.querySelector('a:nth-child(1)');
     const nextLink = navBlock.querySelector('a:nth-child(2)');
-    const maxBlogNumber = 10;
+    const maxBlogNumber = 11;
 
     // Check if prevLink and nextLink exist
     if (!prevLink || !nextLink) {

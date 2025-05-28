@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Découverte d’une faille critique dans le noyau Linux grâce à l’IA : Un tournant ?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2 text-red-500"></i> Découverte d’une faille critique dans le noyau Linux grâce à l’IA : Un tournant ?
+                </h1>
+                <p class="text-gray-600 mb-2">28 Mai 2025, 16:41 CEST</p>
+                <img src="../img/blog/blog-11.jpeg" alt="Linux Kernel Vulnerability Discovery" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Comment l’IA d’OpenAI a surpassé Claude dans la détection de vulnérabilités critiques.
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    La semaine dernière, une découverte a secoué le monde de la cybersécurité.<br>
+                    Sean Heelan, un chercheur indépendant, a identifié une faille critique dans le noyau Linux (CVE-2025-37899).<br>
+                    Mais ce qui choque encore plus, c’est la manière dont il l’a trouvée : en utilisant le modèle o3 d’OpenAI.
+                </p>
+                <p class="mt-2">
+                    Pendant que Claude Sonnet 3.5 et 3.7 échouaient à détecter cette vulnérabilité, o3 a repéré le problème avec une précision digne d’un expert humain.<br>
+                    Fascinant… et un peu inquiétant.
+                </p>
+                <p class="mt-2">
+                    Voici comment tout s’est déroulé, et pourquoi cela pourrait marquer un tournant dans l’utilisation de l’IA pour la cybersécurité.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-bug mr-2 text-red-500"></i> Une découverte inattendue dans ksmbd
+                </h2>
+                <img src="../img/blog/blog-11-1.jpeg" alt="Linux ksmbd Module Audit" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    À l’origine, Sean Heelan voulait faire une pause avec les grands modèles de langage (LLM).<br>
+                    Il s’est plongé dans un audit du module ksmbd, un serveur SMB3 intégré au noyau Linux.<br>
+                    Mais l’arrivée du modèle o3 d’OpenAI a ravivé sa curiosité.
+                </p>
+                <p class="mt-2">
+                    En testant ses anciens scénarios de bugs sur o3, il a découvert la faille CVE-2025-37899 en seulement quelques requêtes.<br>
+                    Cette vulnérabilité, un bug de type <code>use-after-free</code>, peut provoquer une corruption de la mémoire et, dans certains cas, permettre l’exécution de code arbitraire.<br>
+                    <i class="fas fa-exclamation-circle mr-1 text-yellow-500"></i> Un problème sérieux, détecté grâce à l’IA.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-chart-bar mr-2 text-blue-500"></i> o3 face à Claude : Une comparaison éloquente
+                </h2>
+                <img src="../img/blog/blog-11-2.jpeg" alt="AI Model Comparison" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Heelan ne s’est pas arrêté là. Il a comparé o3 avec Claude 3.5 et 3.7 sur une autre vulnérabilité, CVE-2025-37778.<br>
+                    Les résultats sont frappants :
+                </p>
+                <ul class="list-disc pl-6">
+                    <li><strong>o3</strong> : Détection réussie dans 8 cas sur 100.</li>
+                    <li><strong>Claude 3.7</strong> : Détection dans 3 cas sur 100.</li>
+                    <li><strong>Claude 3.5</strong> : Aucun succès.</li>
+                </ul>
+                <p class="mt-2">
+                    Ces chiffres montrent qu’o3 ne se contente pas d’analyser le code statiquement.<br>
+                    Il comprend les interactions complexes entre threads et anticipe des scénarios d’exécution dangereux.<br>
+                    <i class="fas fa-brain mr-1 text-purple-500"></i> Une capacité qui le rapproche d’un analyste humain expérimenté.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-question-circle mr-2 text-orange-500"></i> Un cap franchi, mais à quel prix ?
+                </h2>
+                <p class="mt-2">
+                    Cette prouesse d’o3 marque un tournant dans l’utilisation des LLMs pour la cybersécurité.<br>
+                    Mais elle soulève une question cruciale : que se passe-t-il si cette puissance est utilisée à des fins malveillantes ?<br>
+                    Un modèle capable de détecter des failles aussi efficacement pourrait devenir un outil d’attaque redoutable.
+                </p>
+                <p class="mt-2">
+                    On parle beaucoup d’IA défensive, mais l’IA offensive est une réalité à ne pas négliger.<br>
+                    Intégrée dans les mauvais outils, elle pourrait amplifier les cyberattaques.<br>
+                    <i class="fas fa-shield-alt mr-1 text-red-500"></i> La frontière entre protection et menace devient floue.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-green-500"></i> En résumé
+                </h2>
+                <p class="mt-2">
+                    <i class="fas fa-eye mr-1 text-blue-500"></i> L’IA, comme o3, redéfinit l’audit de sécurité logicielle.<br>
+                    <i class="fas fa-bell mr-1 text-yellow-500"></i> Sa capacité à comprendre des dynamiques complexes est une avancée majeure.<br>
+                    <i class="fas fa-exclamation-circle mr-1 text-red-500"></i> Mais elle exige une vigilance accrue sur son utilisation.<br>
+                    <i class="fas fa-search mr-1 text-teal-500"></i> La cybersécurité doit évoluer pour anticiper les abus potentiels.
+                </p>
+                <p class="mt-2">
+                    Si tu as des retours ou des idées sur l’impact de l’IA dans la cybersécurité, partage-les !<br>
+                    Cette révolution ne fait que commencer.<br>
+                    <i class="fas fa-exclamation-circle mr-1 text-red-500"></i> Restons vigilants face à ces nouvelles possibilités.
+                </p>
+                <p class="mt-2">
+                    <i class="fas fa-retweet mr-1 text-blue-500"></i> 🔁 Repostez si vous pensez que cette découverte mérite d’être connue.
+                </p>
+                <p class="mt-2">
+                    <i class="fas fa-comment-dots mr-1 text-gray-600"></i> P.S. Que penses-tu de l’utilisation des LLMs dans la cybersécurité ?
+                </p>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-10.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="#" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
