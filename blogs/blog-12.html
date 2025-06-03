@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment installer des logiciels sous Linux ?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-download mr-2 text-purple-500"></i> Comment installer des logiciels sous Linux ?
+                </h1>
+                <p class="text-gray-600 mb-2">03 Juin 2025, 09:11 CEST</p>
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">Compute</span>
+                <img src="../img/blog/blog-12.jpeg" alt="Software Installation on Linux" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Mes conseils et préférences
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    Sous Linux, il existe plusieurs façons d’installer un même logiciel, ce qui peut prêter à confusion, surtout pour les débutants. Voici un guide simple pour choisir la meilleure méthode selon votre situation.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cogs mr-2 text-purple-500"></i> Les principales méthodes d’installation
+                </h2>
+                <h3 class="font-medium mt-2">Gestionnaire de paquets natif</h3>
+                <p class="mt-2">
+                    Outil intégré à votre distribution (ex : APT pour Ubuntu/Debian, DNF pour Fedora, Pacman pour Arch).
+                </p>
+                <p class="mt-2">
+                    Exemple :
+                </p>
+                <pre><code>sudo apt install firefox</code></pre>
+
+                <h3 class="font-medium mt-2">Gestionnaires de paquets universels</h3>
+                <p class="mt-2">
+                    Fonctionnent sur plusieurs distributions : Flatpak, Snap, AppImage.
+                </p>
+                <p class="mt-2">
+                    Avantages : applications à jour, installation facile, moins de problèmes de dépendances.
+                </p>
+                <img src="../img/blog/blog-12-2.jpeg" alt="Flatpak" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Exemple avec Flatpak :
+                </p>
+                <pre><code>$ flatpak install flathub org.mozilla.firefox</code></pre>
+
+                <h3 class="font-medium mt-2">Binaire exécutable à télécharger</h3>
+                <p class="mt-2">
+                    Téléchargez un fichier, décompressez et lancez-le directement.
+                </p>
+                <p class="mt-2">
+                    Pratique mais moins intégré au système.
+                </p>
+
+                <h3 class="font-medium mt-2">Scri     pt d’installation fourni par le développeur</h3>
+                <p class="mt-2">
+                    Parfois utilisé pour des pilotes ou outils spécifiques (ex : Nvidia CUDA).
+                </p>
+                <p class="mt-2">
+                    Suivre les instructions officielles.
+                </p>
+
+                <h3 class="font-medium mt-2">Compilation à partir du code source</h3>
+                <p class="mt-2">
+                    Pour les utilisateurs avancés ou si aucune autre méthode n’est disponible.
+                </p>
+                <p class="mt-2">
+                    Plus complexe, nécessite des connaissances techniques.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-square mr-2 text-purple-500"></i> Quelle méthode choisir ?
+                </h2>
+                <img src="../img/blog/blog-12-1.jpeg" alt="Flatpak" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <h3 class="font-medium mt-2">Pour les applications de bureau (logiciels avec interface graphique)</h3>
+                <p class="mt-2">
+                    Ordre de préférence :
+                </p>
+                <ol class="list-decimal pl-6 mt-2">
+                    <li>Gestionnaire de paquets universel (Flatpak > AppImage > Snap)</li>
+                    <li>Gestionnaire de paquets natif (APT, DNF, etc.)</li>
+                    <li>Binaire téléchargeable</li>
+                    <li>Compilation manuelle</li>
+                </ol>
+                <p class="mt-2">
+                    Pourquoi ? Les gestionnaires universels offrent des applications récentes, faciles à installer et à désinstaller, et fonctionnent sur plusieurs distributions.
+                </p>
+
+                <h3 class="font-medium mt-2">Pour les applications système (pilotes, outils système, environnements de bureau)</h3>
+                <p class="mt-2">
+                    Ordre de préférence :
+                </p>
+                <ol class="list-decimal pl-6 mt-2">
+                    <li>Dépôt officiel du développeur</li>
+                    <li>Gestionnaire de paquets natif</li>
+                    <li>Binaire téléchargeable</li>
+                    <li>Compilation manuelle</li>
+                </ol>
+                <p class="mt-2">
+                    Pourquoi ? Les applications système touchent au cœur du système. Il vaut mieux utiliser les dépôts officiels ou le gestionnaire natif pour garantir la stabilité et la facilité de maintenance.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-purple-500"></i> Conseils pratiques
+                </h2>
+                <img src="../img/blog/blog-12-3.jpeg" alt="Flatpak" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Toujours vérifier les recommandations du site officiel du logiciel avant d’installer.</li>
+                    <li>Évitez la compilation manuelle sauf si vous savez ce que vous faites.</li>
+                    <li>Pour les nouveaux projets sur GitHub : s’il n’existe qu’un paquet .deb, utilisez-le avec APT sur Debian/Ubuntu. Sinon, attendez qu’une version Flatpak, Snap ou AppImage soit disponible.</li>
+                    <li>Pour les applications système, privilégiez toujours l’intégration avec le gestionnaire de paquets natif.</li>
+                </ul>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-file-alt mr-2 text-purple-500"></i> Résumé
+                </h2>
+                <p class="mt-2">
+                    Il existe plusieurs méthodes pour installer un logiciel sous Linux.
+                </p>
+                <p class="mt-2">
+                    Privilégiez les gestionnaires universels pour les applications de bureau, et les gestionnaires natifs pour les applications système.
+                </p>
+                <p class="mt-2">
+                    Suivez toujours les recommandations officielles pour éviter les problèmes.
+                </p>
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><a href="https://flathub.org/?category=popular" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Flathub - Popular Applications</a></li>
+                    <li><a href="https://linuxopsys.com/make-command-in-linux" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">LinuxOpsys - Make Command in Linux</a></li>
+                    <li><a href="https://hamradio.my/2025/01/snap-vs-flatpak-a-detailed-comparison/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">HamRadio - Snap vs Flatpak: A Detailed Comparison</a></li>
+                </ul>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-11.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="#" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
