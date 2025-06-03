@@ -21,9 +21,17 @@
         <header class="pt-20 pb-6">
             <div class="container mx-auto px-4">
                 <h2 class="text-3xl font-bold mb-4">Blog</h2>
-                <div class="mb-6 relative">
-                    <input type="text" id="search-input" class="w-full p-2 pl-10 border rounded-lg" placeholder="Rechercher..." aria-label="Rechercher un article">
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <div class="mb-6 flex flex-col sm:flex-row gap-4 items-center">
+                    <div class="relative w-full sm:w-1/2">
+                        <input type="text" id="search-input" class="w-full p-2 pl-10 border rounded-lg" placeholder="Rechercher..." aria-label="Rechercher un article">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <select id="category-filter" class="w-full sm:w-1/4 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Filtrer par catégorie">
+                        <option value="">Toutes les catégories</option>
+                        <option value="cyber">Cyber</option>
+                        <option value="devops">DevOps</option>
+                        <option value="compute">Compute</option>
+                    </select>
                 </div>
             </div>
         </header>
@@ -40,60 +48,5 @@
 
     <!-- Scripts -->
     <script src="assets/js/script.js" defer></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchInput = document.getElementById('search-input');
-            const blogPosts = document.querySelectorAll('#blog-posts > div');
-
-            // Function to calculate string similarity (Levenshtein Distance)
-            function levenshteinDistance(a, b) {
-                const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
-                for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
-                for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
-                for (let j = 1; j <= b.length; j++) {
-                    for (let i = 1; i <= a.length; i++) {
-                        const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
-                        matrix[j][i] = Math.min(
-                            matrix[j][i - 1] + 1,
-                            matrix[j - 1][i] + 1,
-                            matrix[j - 1][i - 1] + indicator
-                        );
-                    }
-                }
-                return matrix[b.length][a.length];
-            }
-
-            // Search functionality
-            searchInput.addEventListener('input', () => {
-                const searchTerm = searchInput.value.toLowerCase().trim();
-
-                if (searchTerm === '') {
-                    // Show all blog posts if search is empty
-                    blogPosts.forEach(post => {
-                        post.classList.remove('hidden');
-                    });
-                } else {
-                    // Calculate similarity for each blog post title and sort by closest match
-                    const postsWithDistance = Array.from(blogPosts).map(post => {
-                        const title = post.querySelector('.blog-title').textContent.toLowerCase();
-                        const distance = levenshteinDistance(searchTerm, title);
-                        return { post, distance };
-                    });
-
-                    // Sort by distance (lower distance = closer match)
-                    postsWithDistance.sort((a, b) => a.distance - b.distance);
-
-                    // Show/hide posts based on sorted order
-                    postsWithDistance.forEach(({ post }, index) => {
-                        if (index < 3) { // Show top 3 closest matches (adjust as needed)
-                            post.classList.remove('hidden');
-                        } else {
-                            post.classList.add('hidden');
-                        }
-                    });
-                }
-            });
-        });
-    </script>
 </body>
 </html>

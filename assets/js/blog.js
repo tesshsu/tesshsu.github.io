@@ -36,7 +36,6 @@ async function loadBlogPosts() {
     const blogFiles = [];
     let maxIndex = 1;
 
-    // Try to fetch blog posts until we get a 404
     while (true) {
         const file = `blogs/blog-${maxIndex}.html`;
         try {
@@ -79,18 +78,36 @@ async function loadBlogPosts() {
                 const blogTitle = doc.querySelector('.blog-title')?.textContent || 'Untitled Blog';
                 const blogDate = doc.querySelector('.text-gray-600')?.textContent || 'Date Unknown';
                 const blogSubtitle = doc.querySelector('.sub-title')?.innerHTML || 'No subtitle available.';
+                const blogCategory = doc.querySelector('.category')?.textContent || 'Uncategorized';
                 const blogNumber = file.match(/blog-(\d+)\.html/)[1];
                 const blogImageSrc = `../img/blog/blog-${blogNumber}.jpeg`;
+
+                let categoryClass;
+                switch (blogCategory.toLowerCase()) {
+                    case 'cyber':
+                        categoryClass = 'bg-blue-100 text-blue-800';
+                        break;
+                    case 'devops':
+                        categoryClass = 'bg-green-100 text-green-800';
+                        break;
+                    case 'compute':
+                        categoryClass = 'bg-purple-100 text-purple-800';
+                        break;
+                    default:
+                        categoryClass = 'bg-gray-100 text-gray-800';
+                }
 
                 const div = document.createElement('div');
                 div.className = 'border-b pb-6';
                 div.innerHTML = `
                     <h2 class="blog-title text-2xl font-semibold mb-2">${blogTitle}</h2>
-                    <p class="text-gray-600 mb-2">${blogDate}</p>
+                    <div class="flex items-center mb-2">
+                        <p class="text-gray-600 mr-4">${blogDate}</p>
+                        <span class="category ${categoryClass} text-sm font-medium px-2.5 py-0.5 rounded">${blogCategory}</span>
+                    </div>
                     <img src="${blogImageSrc}" alt="Blog ${blogNumber} Image" class="w-full max-w-3xl mx-auto h-auto object-cover mb-4 rounded shadow">
                     <p class="sub-title text-lg">${blogSubtitle}</p>
                     <a href="${file}" class="blog-link text-blue-600 hover:underline">Lire la suite</a>
-                    <!-- Share Block -->
                     <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                         <p class="text-lg font-semibold mb-2">Partagez cet article :</p>
                         <div class="flex flex-wrap gap-4 share-buttons">
@@ -109,27 +126,32 @@ async function loadBlogPosts() {
                         </div>
                     </div>
                 `;
-                blogPosts.push({ element: div, title: blogTitle });
+                blogPosts.push({ element: div, title: blogTitle, category: blogCategory });
             }
         } catch (error) {
             console.error(`Error loading ${file}:`, error);
         }
     }
 
-    // Initially display all blog posts
     blogPosts.forEach(post => blogContainer.appendChild(post.element));
     initializeShareButtons();
 
     return blogPosts;
 }
 
-function displayBlogPosts(blogPosts, keyword = '') {
+function displayBlogPosts(blogPosts, keyword = '', category = '') {
     const blogContainer = document.getElementById('blog-posts');
     blogContainer.innerHTML = '';
 
-    const filteredPosts = keyword
-        ? blogPosts.filter(post => post.title.toLowerCase().includes(keyword.toLowerCase()))
-        : blogPosts;
+    const filteredPosts = blogPosts.filter(post => {
+        const matchesKeyword = keyword
+            ? post.title.toLowerCase().includes(keyword.toLowerCase())
+            : true;
+        const matchesCategory = category
+            ? post.category.toLowerCase() === category.toLowerCase()
+            : true;
+        return matchesKeyword && matchesCategory;
+    });
 
     if (filteredPosts.length === 0) {
         const div = document.createElement('div');
@@ -143,19 +165,35 @@ function displayBlogPosts(blogPosts, keyword = '') {
     initializeShareButtons();
 }
 
-async function filterBlogTitleKeyword() {
+async function filterBlogTitleKeyword(blogPosts) {
     const searchInput = document.getElementById('search-input');
     if (!searchInput) {
         console.warn('Search input element not found');
         return;
     }
 
-    const blogPosts = await loadBlogPosts();
-    if (blogPosts.length === 0) return;
+    const categoryFilter = document.getElementById('category-filter');
+    const selectedCategory = categoryFilter ? categoryFilter.value : '';
 
     searchInput.addEventListener('input', () => {
         const keyword = searchInput.value.trim();
-        displayBlogPosts(blogPosts, keyword);
+        displayBlogPosts(blogPosts, keyword, selectedCategory);
+    });
+}
+
+async function filterBlogCategory(blogPosts) {
+    const categoryFilter = document.getElementById('category-filter');
+    if (!categoryFilter) {
+        console.warn('Category filter element not found');
+        return;
+    }
+
+    const searchInput = document.getElementById('search-input');
+    const keyword = searchInput ? searchInput.value.trim() : '';
+
+    categoryFilter.addEventListener('change', () => {
+        const selectedCategory = categoryFilter.value;
+        displayBlogPosts(blogPosts, keyword, selectedCategory);
     });
 }
 
@@ -207,7 +245,7 @@ function setupBlogNavigation() {
 
     const prevLink = navBlock.querySelector('a:nth-child(1)');
     const nextLink = navBlock.querySelector('a:nth-child(2)');
-    const maxBlogNumber = 12; // Updated to 12 to include blog-12.html
+    const maxBlogNumber = 12;
 
     if (!prevLink || !nextLink) {
         console.warn('Previous or Next link not found in navigation block');
@@ -238,7 +276,8 @@ function setupBlogNavigation() {
 document.addEventListener('DOMContentLoaded', () => {
     if (window.location.pathname.includes('blog.html')) {
         loadBlogPosts().then((blogPosts) => {
-            filterBlogTitleKeyword();
+            filterBlogTitleKeyword(blogPosts);
+            filterBlogCategory(blogPosts);
         }).catch(error => console.error('Error loading blog posts:', error));
     }
 
