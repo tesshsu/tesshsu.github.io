@@ -36,6 +36,7 @@ async function loadBlogPosts() {
     const blogFiles = [];
     let maxIndex = 1;
 
+    // Try to fetch blog posts until we get a 404
     while (true) {
         const file = `blogs/blog-${maxIndex}.html`;
         try {
@@ -57,7 +58,7 @@ async function loadBlogPosts() {
         div.className = 'text-center text-gray-600 py-10';
         div.textContent = 'Aucun article de blog trouvé.';
         blogContainer.appendChild(div);
-        return;
+        return [];
     }
 
     blogFiles.sort((a, b) => {
@@ -65,6 +66,8 @@ async function loadBlogPosts() {
         const numB = parseInt(b.match(/blog-(\d+)\.html/)[1]);
         return numB - numA;
     });
+
+    const blogPosts = [];
 
     for (const file of blogFiles) {
         try {
@@ -106,19 +109,58 @@ async function loadBlogPosts() {
                         </div>
                     </div>
                 `;
-                blogContainer.appendChild(div);
+                blogPosts.push({ element: div, title: blogTitle });
             }
         } catch (error) {
             console.error(`Error loading ${file}:`, error);
         }
     }
 
+    // Initially display all blog posts
+    blogPosts.forEach(post => blogContainer.appendChild(post.element));
     initializeShareButtons();
+
+    return blogPosts;
+}
+
+function displayBlogPosts(blogPosts, keyword = '') {
+    const blogContainer = document.getElementById('blog-posts');
+    blogContainer.innerHTML = '';
+
+    const filteredPosts = keyword
+        ? blogPosts.filter(post => post.title.toLowerCase().includes(keyword.toLowerCase()))
+        : blogPosts;
+
+    if (filteredPosts.length === 0) {
+        const div = document.createElement('div');
+        div.className = 'text-center text-gray-600 py-10';
+        div.textContent = 'Aucun article de blog trouvé.';
+        blogContainer.appendChild(div);
+    } else {
+        filteredPosts.forEach(post => blogContainer.appendChild(post.element));
+    }
+
+    initializeShareButtons();
+}
+
+async function filterBlogTitleKeyword() {
+    const searchInput = document.getElementById('search-input');
+    if (!searchInput) {
+        console.warn('Search input element not found');
+        return;
+    }
+
+    const blogPosts = await loadBlogPosts();
+    if (blogPosts.length === 0) return;
+
+    searchInput.addEventListener('input', () => {
+        const keyword = searchInput.value.trim();
+        displayBlogPosts(blogPosts, keyword);
+    });
 }
 
 async function loadVisitCounterBlock() {
     const mainContent = document.querySelector('main');
-    // Only load the visit counter on individual blog pages (e.g., blogs/blog-1.html)
     if (mainContent && window.location.pathname.includes('blogs/blog-')) {
         try {
             const response = await fetch('/assets/partials/visit-counter.html');
@@ -158,7 +200,6 @@ function setupBlogNavigation() {
     const currentNumber = parseInt(currentPath.match(/blog-(\d+)\.html/)?.[1] || 1);
     const navBlock = document.querySelector('.flex.justify-between');
 
-    // Check if navBlock exists before proceeding
     if (!navBlock) {
         console.warn('Navigation block (.flex.justify-between) not found in the DOM');
         return;
@@ -166,9 +207,8 @@ function setupBlogNavigation() {
 
     const prevLink = navBlock.querySelector('a:nth-child(1)');
     const nextLink = navBlock.querySelector('a:nth-child(2)');
-    const maxBlogNumber = 11;
+    const maxBlogNumber = 12; // Updated to 12 to include blog-12.html
 
-    // Check if prevLink and nextLink exist
     if (!prevLink || !nextLink) {
         console.warn('Previous or Next link not found in navigation block');
         return;
@@ -197,9 +237,9 @@ function setupBlogNavigation() {
 
 document.addEventListener('DOMContentLoaded', () => {
     if (window.location.pathname.includes('blog.html')) {
-        loadBlogPosts().then(() => {
-            initializeShareButtons();
-        });
+        loadBlogPosts().then((blogPosts) => {
+            filterBlogTitleKeyword();
+        }).catch(error => console.error('Error loading blog posts:', error));
     }
 
     if (window.location.pathname.includes('blogs/blog-')) {
