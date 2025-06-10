@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment ça roule, un "external Rotin" sur le cloud AWS ?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-cloud mr-2 text-purple-500"></i> Comment ça roule, un "external Rotin" sur le cloud AWS ?
+                </h1>
+                <p class="text-gray-600 mb-2">03 Juin 2025, 09:11 CEST</p>
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">Cloud Computing</span>
+                <img src="../img/blog/blog-13.jpeg" alt="AWS RDS deployment with Terraform" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Optimisation des coûts avec Terraform et AWS
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    Oui, tu as bien lu <strong>"Rotin"</strong> (et non pas "Ratin") ! C’est une expression un peu étrange, peut-être même négative à première vue, mais ici je l’utilise pour désigner une manière <strong>astucieuse et maligne</strong> de consommer les ressources informatiques. Pourquoi "Rotin" ? Parce que comme ce matériau, l’idée est de construire une infrastructure <strong>solide, souple et légère</strong>, optimisée et performante, mais surtout <strong>la moins coûteuse possible</strong>, tout en gardant la capacité de monter rapidement en charge sur le cloud.
+                </p>
+                <p class="mt-2">
+                    Voici donc une procédure pour déployer une base de données <strong>MySQL RDS</strong> sur AWS à l’aide de <strong>Terraform</strong>, déjà optimisée pour minimiser les coûts tout en gardant un maximum de flexibilité. Let’s go !
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cogs mr-2 text-purple-500"></i> 🛠️ Scénario : Créer une base de données MySQL RDS avec Terraform, optimisée dès le départ
+                </h2>
+                <h3 class="font-medium mt-2">1ʳᵉ étape : Cloner le dépôt Terraform RDS MySQL</h3>
+                <img src="../img/blog/blog-13-1.jpeg" alt="Terraform AWS RDS Setup" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Puis Ajouté le fichier <code>terraform.tfvars</code> et ce fichier <code>terraform.tfvars</code> contiendra les métadonnées et les valeurs personnalisées de ta configuration.
+                </p>
+                <pre><code>
+git clone https://github.com/tmknom/terraform-aws-rds-mysql.git
+cd terraform-aws-rds-mysql/examples/minimal
+mkdir terraform.tfvars
+                </code></pre>
+
+                <h3 class="font-medium mt-2">🧠 Pré-requis : Connaître son environnement AWS</h3>
+                <p class="mt-2">
+                    Si tu viens juste de créer ton compte AWS, il faut récupérer les valeurs importantes comme <code>vpc_id</code>, <code>subnet_ids</code>, etc. Pour cela, installe <strong>AWS CLI</strong>, qui te permettra de gérer tes ressources AWS rapidement, y compris les identifiants réseau.
+                </p>
+                <p class="mt-2">
+                    Récupérer ton VPC ID :
+                </p>
+                <img src="../img/blog/blog-13-3.jpeg" alt="Terraform AWS RDS Setup" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <pre><code>
+aws ec2 describe-vpcs \
+  --filters Name=isDefault,Values=false \
+  --query "Vpcs[].{ID:VpcId,Name:Tags[?Key=='Name'].Value|[0]}" \
+  --output table
+                </code></pre>
+
+                <h3 class="font-medium mt-2">2ᵉ étape : Créer deux sous-réseaux privés dans ton VPC</h3>
+                <p class="mt-2">
+                    Choisis deux AZ (Availability Zones), par exemple : <code>us-east-1a</code> et <code>us-east-1b</code> :
+                </p>
+                <img src="../img/blog/blog-13-4.jpeg" alt="Terraform AWS RDS Setup" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <pre><code>
+                    # Subnet dans us-east-1a
+                    aws ec2 create-subnet \
+                    --vpc-id <your-vpc-id> \
+                    --cidr-block 10.0.1.0/24 \
+                    --availability-zone us-east-1a \
+                    --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=private-1a}]' \
+                    --region us-east-1
+
+                    # Subnet dans us-east-1b
+                    aws ec2 create-subnet \
+                    --vpc-id <your-vpc-id> \
+                    --cidr-block 10.0.2.0/24 \
+                    --availability-zone us-east-1b \
+                    --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=private-1b}]' \
+                    --region us-east-1
+                </code></pre>               
+                <p class="mt-2">
+                    💡 <strong>Astuce 1</strong> : Créer deux sous-réseaux dans des AZ différentes permet une <strong>tolérance aux pannes</strong>. Si une zone tombe, l’autre peut prendre le relais.
+                </p>
+                <p class="mt-2">
+                    <img src="../img/blog/blog-13-2.jpeg" alt="Terraform AWS RDS Setup" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                    💡 <strong>Astuce 2</strong> : Ici, on a choisi la région <code>us-east-1</code> pour des raisons de coût, mais si ton application cible principalement l’Europe en temps réel, préfère <code>europe-west1</code> (Irlande) ou <code>europe-west3</code> (Paris).
+                </p>
+                <p class="mt-2">
+                    Tagger les subnets pour plus de lisibilité :
+                </p>
+                <img src="../img/blog/blog-13-6.jpeg" alt="Terraform AWS RDS Setup" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <pre><code>
+aws ec2 create-tags \
+  --resources <subnet-id> \
+  --tags Key=Name,Value=private-1a \
+  --region us-east-1
+
+aws ec2 create-tags \
+  --resources <subnet-id> \
+  --tags Key=Name,Value=private-1b \
+  --region us-east-1
+                </code></pre>
+
+                <h3 class="font-medium mt-2">3ᵉ étape : Configurer Terraform</h3>
+                <p class="mt-2">
+                    Retourne dans le dossier <code>examples/minimal</code> et édite le fichier <code>terraform.tfvars</code> :
+                </p>
+                <pre><code>
+identifier          = "prod-db"
+engine_version      = "8.0.35"
+instance_class      = "db.t4g.micro"
+allocated_storage   = 50
+username            = "admin"
+password            = "TonMotDePasse123"
+subnet_ids          = ["subnet-xxx1", "subnet-xxx2"]
+vpc_id              = "vpc-xxxxxxx"
+source_cidr_blocks  = ["10.0.0.0/16"]
+                </code></pre>
+                <p class="mt-2">
+                    💡 <strong>Astuce</strong> : choisissez l’instance_class « db.t4g.micro » ou « db.t4g.small », c’est moins coûteux.
+                </p>
+                <p class="mt-2">
+                    💡 <strong>Astuce stockage</strong> : La taille <code>allocated_storage</code> contrôle la taille du volume EBS rattaché. Avec un volume <code>gp2</code>, tu obtiens 3 IOPS/GiB :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>20 GiB → 60 IOPS</li>
+                    <li>50 GiB → 150 IOPS</li>
+                    <li>100 GiB → 300 IOPS</li>
+                </ul>
+                <p class="mt-2">
+                    50 GiB est souvent un bon équilibre : peu coûteux mais avec des performances correctes.
+                </p>
+                <p class="mt-2">
+                    ⚠️ <strong>Attention</strong> : Assure-toi que ton fichier <code>main.tf</code> utilise bien <code>var.identifier</code> etc. Cela rend ta configuration <strong>modulaire et réutilisable</strong>.
+                </p>
+                <h3 class="font-medium mt-2">4ᵉ étape : Lancer les commandes Terraform</h3>
+                <img src="../img/blog/blog-13-7.jpeg" alt="AWS RDS Result" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <pre><code>
+cd examples/minimal
+terraform init
+terraform plan
+terraform apply
+                </code></pre>
+                <p class="mt-2">
+                    👀 Tu verras une infrastructure RDS créée de manière déclarative et optimisée.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2 text-purple-500"></i> ⚠️ Points d’attention
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Pour MySQL 8.x, l’ancien paramètre <code>tx_isolation</code> n’est plus valide. Utilise <code>transaction_isolation</code> à la place dans les paramètres RDS.</li>
+                    <li>Le mot de passe ne doit pas contenir les caractères <code>/</code>, <code>@</code>, <code>"</code>, ni d’espaces.</li>
+                </ul>
+                <p class="mt-2">
+                    Réf : <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/SQLServer.Concepts.General.PasswordPolicy.MasterLogin.html" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Amazon RDS password policy</a>
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> ✅ Résultat
+                </h2>
+                <p class="mt-2">
+                    Une base de données <strong>MySQL RDS</strong> performante, sécurisée, et <strong>déployée proprement grâce à Terraform</strong>, prête à évoluer et à résister à la charge — comme un bon vieux meuble en rotin 🌿.
+                </p>
+                <img src="../img/blog/blog-13-8.jpeg" alt="AWS RDS Result" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-forward mr-2 text-purple-500"></i> 🔜 Et ensuite ?
+                </h2>
+                <p class="mt-2">
+                    Dans la prochaine partie, on optimisera le <strong>déploiement d’une instance EC2</strong> de façon tout aussi "Rotinesque" : légère, cost-effective et résiliente !
+                </p>
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><a href="https://github.com/tmknom/terraform-aws-rds-mysql" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Terraform AWS RDS MySQL</a></li>
+                    <li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/SQLServer.Concepts.General.PasswordPolicy.MasterLogin.html" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Amazon RDS Password Policy</a></li>
+                    <li><a href="https://www.bdccglobal.com/blog/terraform-multi-region-deployment-aws-codepipeline/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Terraform Multi-Region Deployment</a></li>
+                </ul>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-12.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="#" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
