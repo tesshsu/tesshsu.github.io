@@ -173,6 +173,61 @@ terraform apply
                 <img src="../img/blog/blog-13-8.jpeg" alt="AWS RDS Result" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
 
                 <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cube mr-2 text-purple-500"></i> 🔧 Bonus : Comprendre la structure de base d’un module Terraform
+                </h2>
+                <p class="mt-2">
+                    Si vous débutez avec Terraform, comprendre sa structure est essentiel pour gérer l’infrastructure efficacement. Voici un aperçu rapide de l’organisation d’un module Terraform, basé sur mon expérience avec la documentation et des projets concrets.
+                </p>
+                <p class="mt-2">
+                    Chaque service cloud — comme AWS RDS, ECR, ALB, etc. — peut être encapsulé dans un module Terraform. Un module est un conteneur regroupant plusieurs ressources utilisées ensemble. Voici les fichiers principaux d’une structure typique :
+                </p>
+                <pre><code>
+terraform-aws-rds-mysql/
+├── variables.tf          # Interface du module : définit les variables d’entrée (NE PAS MODIFIER)
+├── main.tf               # Implémentation du module : contient la logique de l’infrastructure (NE PAS MODIFIER)
+├── Makefile              # Optionnel : raccourcis CLI pour les commandes Terraform
+└── examples/
+    └── minimal/
+        ├── variables.tf        # Définit les variables spécifiques à cet exemple
+        ├── main.tf             # Appelle le module RDS
+        └── terraform.tfvars    # Vos valeurs de variables vont ici
+                </code></pre>
+                <h3 class="font-medium mt-2">📁 Explication des fichiers clés</h3>
+                <p class="mt-2">
+                    <strong>main.tf</strong> : C’est ici que les ressources principales de l’infrastructure sont définies. Considérez-le comme le plan de ce que Terraform va provisionner (par exemple, une instance RDS AWS).
+                </p>
+                <p class="mt-2">
+                    <strong>variables.tf</strong> : Ce fichier définit les paramètres d’entrée attendus pour le module, y compris leur type (string, bool, number, etc.) et les valeurs par défaut optionnelles.
+                </p>
+                <p class="mt-2">
+                    <strong>terraform.tfvars</strong> (optionnel) : Ce fichier attribue des valeurs spécifiques aux variables déclarées dans <code>variables.tf</code>. Il est particulièrement utile pour tester ou ajuster les paramètres de l’infrastructure, comme la taille de l’instance ou les paramètres de sauvegarde, sans modifier le code du module.
+                </p>
+                <p class="mt-2">
+                    <strong>output.tf</strong> (non montré ci-dessus) : Utilisé optionnellement pour exposer des valeurs du module, comme les URL des points de terminaison ou les ID des ressources.
+                </p>
+                <h3 class="font-medium mt-2">🧠 Comment Terraform utilise ces fichiers</h3>
+                <p class="mt-2">
+                    <strong>Initialisation</strong> : Exécutez <code>terraform init</code> pour initialiser le répertoire de travail.
+                </p>
+                <p class="mt-2">
+                    <strong>Planification</strong> : Utilisez <code>terraform plan</code> pour prévisualiser ce qui sera créé ou modifié.
+                </p>
+                <p class="mt-2">
+                    <strong>Application</strong> : Appliquez la configuration avec <code>terraform apply</code>.
+                </p>
+                <p class="mt-2">
+                    Lorsque vous exécutez ces commandes, Terraform :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Analyse <code>main.tf</code> pour comprendre quelles ressources créer.</li>
+                    <li>Utilise <code>terraform.tfvars</code> pour injecter des valeurs spécifiques dans les variables.</li>
+                    <li>Se réfère à <code>variables.tf</code> pour valider les types et les exigences des entrées.</li>
+                </ul>
+                <p class="mt-2">
+                    ⚠️ <strong>Conseil pro</strong> : Si vous ne définissez pas correctement vos variables dans <code>variables.tf</code>, ou si vous oubliez de les assigner dans <code>terraform.tfvars</code> ou via CLI/environnement, Terraform signalera une erreur de "variable non définie".
+                </p>
+                
+                <h2 class="font-semibold mt-4 flex items-center">
                     <i class="fas fa-forward mr-2 text-purple-500"></i> 🔜 Et ensuite ?
                 </h2>
                 <p class="mt-2">
