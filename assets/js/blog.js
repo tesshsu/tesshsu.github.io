@@ -245,7 +245,7 @@ function setupBlogNavigation() {
 
     const prevLink = navBlock.querySelector('a:nth-child(1)');
     const nextLink = navBlock.querySelector('a:nth-child(2)');
-    const maxBlogNumber = 13;
+    const maxBlogNumber = 14;
 
     if (!prevLink || !nextLink) {
         console.warn('Previous or Next link not found in navigation block');
