@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="../assets/css/styles.css">
     <script src="../assets/js/blog.js" defer></script>
 </head>
+
 <body class="bg-white text-black flex flex-col min-h-screen">
     <!-- Sidebar Placeholder -->
     <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
@@ -20,16 +22,23 @@
                     <i class="fas fa-cloud mr-2 text-purple-500"></i> Serial 'Radin' pour ton EC2 connecté à RDS !! 🚀
                 </h1>
                 <p class="text-gray-600 mb-2">03 Juin 2025, 09:11 CEST</p>
-                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">Cloud Computing</span>
-                <img src="../img/blog/blog-14.jpeg" alt="AWS EC2 and RDS Setup" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">Cloud
+                    Computing</span>
+                <img src="../img/blog/blog-14.jpeg" alt="AWS EC2 and RDS Setup"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
                 <p class="sub-title text-lg flex items-center">
-                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Créer une application full-stack complète sur AWS avec un budget maîtrisé
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Créer une application full-stack complète sur
+                    AWS avec un budget maîtrisé
                 </p>
             </header>
 
             <section class="space-y-4 text-lg">
                 <p class="mt-2">
-                    Bienvenue dans notre <strong>série sur l’optimisation des coûts AWS</strong> ! Dans l’article précédent, nous avons mis en place une base de données MySQL RDS optimisée via Terraform. Aujourd’hui, on passe à la vitesse supérieure : <strong>connecter une vraie application</strong> à cette infrastructure. À la fin, tu auras une <strong>application full-stack prête pour la production</strong>, reposant sur les bonnes pratiques AWS… et sans faire exploser ton budget.
+                    Bienvenue dans notre <strong>série sur l’optimisation des coûts AWS</strong> ! Dans l’article
+                    précédent, nous avons mis en place une base de données MySQL RDS optimisée via Terraform.
+                    Aujourd’hui, on passe à la vitesse supérieure : <strong>connecter une vraie application</strong> à
+                    cette infrastructure. À la fin, tu auras une <strong>application full-stack prête pour la
+                        production</strong>, reposant sur les bonnes pratiques AWS… et sans faire exploser ton budget.
                 </p>
 
                 <h2 class="font-semibold mt-4 flex items-center">
@@ -69,9 +78,12 @@
                 <h2 class="font-semibold mt-4 flex items-center">
                     <i class="fas fa-code-branch mr-2 text-purple-500"></i> Étape 1 : Forquer l'application 🍴
                 </h2>
-                <img src="../img/blog/blog-14-7.jpeg" alt="AWS Full-Stack Setup Overview" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <img src="../img/blog/blog-14-7.jpeg" alt="AWS Full-Stack Setup Overview"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
                 <p class="mt-2">
-                    On commence avec un fork de la <a href="https://github.com/yogasaikrishna/todo-app" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">todo app de yogasaikrishna</a>.
+                    On commence avec un fork de la <a href="https://github.com/yogasaikrishna/todo-app"
+                        class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">todo app de
+                        yogasaikrishna</a>.
                 </p>
                 <p class="mt-2">
                     <strong>Pourquoi forker plutôt que cloner ?</strong>
@@ -87,9 +99,11 @@
                     👉 <strong>Branche créée</strong> : <code>feat-addEnv</code>
                 </p>
                 <h2 class="font-semibold mt-4 flex items-center">
-                    <i class="fas fa-cogs mr-2 text-purple-500"></i> Étape 2 : Mise en place de l’infra avec Terraform 🏗️
+                    <i class="fas fa-cogs mr-2 text-purple-500"></i> Étape 2 : Mise en place de l’infra avec Terraform
+                    🏗️
                 </h2>
-                <img src="../img/blog/blog-14-11.jpeg" alt="Forking the Todo App" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <img src="../img/blog/blog-14-11.jpeg" alt="Forking the Todo App"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
                 <p class="mt-2">
                     On ajoute une instance EC2 dans le <code>main.tf</code> :
                 </p>
@@ -156,32 +170,46 @@ resource "aws_security_group" "ec2" {
                 </code></pre>
                 <p class="mt-2">
                     Pour consulter le changement complet du code, vous pouvez retrouver le commit ici :
-                    <a href="https://github.com/tesshsu/terraform-aws-rds-mysql/pull/1/files" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
-                      <i class="fab fa-github"></i>
+                    <a href="https://github.com/tesshsu/terraform-aws-rds-mysql/pull/1/files" target="_blank"
+                        rel="noopener noreferrer" class="text-blue-600 hover:underline">
+                        <i class="fab fa-github"></i>
                     </a>
-                </p> 
-                <p class="mt-2">
-                    Puis, une fois le code Terraform correctement ajouté, exécutez <code>terraform plan</code> et <code>terraform apply</code> pour déployer l'EC2.
                 </p>
-                <img src="../img/blog/blog-14-2.jpeg" alt="Terraform EC2 Setup" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy"> 
-                <p class="mt-2"> Vous pouvez également accéder au tableau de bord EC2 pour vérifier votre instance récemment créée avec Terraform. Vous y trouverez les détails importants tels que les métadonnées et l’adresse IPv4 publique. Ces informations seront indispensables une fois votre application TODO lancée et accessible sur EC2. </p>
-                <img src="../img/blog/blog-14-10.jpeg" alt="Terraform EC2 Setup" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy"> 
                 <p class="mt-2">
-                    <i class="fas fa-lightbulb"></i> Voici une autre astuce pour vérifier si votre RDS est bien connecté à votre instance EC2 :  
-                    rendez-vous dans le groupe de règles de sécurité (Security Group) de votre RDS, puis consultez la section des règles entrantes (Inbound rules) où figure le CIDR/IP autorisé.  
-                    Vérifiez que le nom et l’ID du Security Group correspondent bien à ceux du Security Group de votre instance EC2.  
-                    Si c’est le cas, <i class="fas fa-check-circle" style="color:green;"></i> félicitations : vous avez correctement configuré la connexion entre votre instance EC2 et votre RDS via Terraform.  
+                    Puis, une fois le code Terraform correctement ajouté, exécutez <code>terraform plan</code> et
+                    <code>terraform apply</code> pour déployer l'EC2.
+                </p>
+                <img src="../img/blog/blog-14-2.jpeg" alt="Terraform EC2 Setup"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2"> Vous pouvez également accéder au tableau de bord EC2 pour vérifier votre instance
+                    récemment créée avec Terraform. Vous y trouverez les détails importants tels que les métadonnées et
+                    l’adresse IPv4 publique. Ces informations seront indispensables une fois votre application TODO
+                    lancée et accessible sur EC2. </p>
+                <img src="../img/blog/blog-14-10.jpeg" alt="Terraform EC2 Setup"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    <i class="fas fa-lightbulb"></i> Voici une autre astuce pour vérifier si votre RDS est bien connecté
+                    à votre instance EC2 :
+                    rendez-vous dans le groupe de règles de sécurité (Security Group) de votre RDS, puis consultez la
+                    section des règles entrantes (Inbound rules) où figure le CIDR/IP autorisé.
+                    Vérifiez que le nom et l’ID du Security Group correspondent bien à ceux du Security Group de votre
+                    instance EC2.
+                    Si c’est le cas, <i class="fas fa-check-circle" style="color:green;"></i> félicitations : vous avez
+                    correctement configuré la connexion entre votre instance EC2 et votre RDS via Terraform.
                     (Voir capture d’écran ci-dessous.)
-                  </p>
-                  <img src="../img/blog/blog-14-15.jpeg" alt="Terraform EC2 Setup" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">              
+                </p>
+                <img src="../img/blog/blog-14-15.jpeg" alt="Terraform EC2 Setup"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
                 <h2 class="font-semibold mt-4 flex items-center">
                     <i class="fas fa-key mr-2 text-purple-500"></i> Étape 3 : Gestion des clés SSH 🔑
                 </h2>
-                <img src="../img/blog/blog-14-3.jpeg" alt="Terraform EC2 Setup" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <img src="../img/blog/blog-14-3.jpeg" alt="Terraform EC2 Setup"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
                 <p class="mt-2">
                     Dès que l'EC2 est déployé, vous pouvez aller sur le tableau de bord EC2, puis créer une clé.
                 </p>
-                <img src="../img/blog/blog-14-12.jpeg" alt="Environment Configuration" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <img src="../img/blog/blog-14-12.jpeg" alt="Environment Configuration"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
 
                 <p class="mt-2">
                     Crée et utilise une nouvelle clé SSH pour connecté au serveur EC2:
@@ -196,7 +224,8 @@ ssh -i ~/.ssh/&lt;nom-de-ta-cle&gt;.pem ec2-user@&lt;Adresse-IP-Publique-EC2&gt;
                 <h2 class="font-semibold mt-4 flex items-center">
                     <i class="fas fa-server mr-2 text-purple-500"></i> Étape 4 : Configuration du serveur EC2 🛠️
                 </h2>
-                <img src="../img/blog/blog-14-4.jpeg" alt="SSH Key Configuration" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <img src="../img/blog/blog-14-4.jpeg" alt="SSH Key Configuration"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
 
                 <p class="mt-2">
                     Installer Node.js et PM2 sur Amazon Linux 2 :
@@ -227,21 +256,28 @@ CREATE TABLE todo_list (
 );
                 </code></pre>
                 <p class="mt-2">
-                    Vous pouvez aussi tout simplement lancer le script Bash directement depuis le terminal de votre EC2. Voici un exemple de code disponible sur GitHub :
-                    <a href="https://github.com/tesshsu/terraform-aws-rds-mysql/blob/master/examples/minimal/user_data.sh" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
-                      <i class="fab fa-github"></i> user_data.sh
+                    Vous pouvez aussi tout simplement lancer le script Bash directement depuis le terminal de votre EC2.
+                    Voici un exemple de code disponible sur GitHub :
+                    <a href="https://github.com/tesshsu/terraform-aws-rds-mysql/blob/master/examples/minimal/user_data.sh"
+                        target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+                        <i class="fab fa-github"></i> user_data.sh
                     </a>
-                  </p>
+                </p>
                 <p class="mt-2">
-                    Une fois l'application TODO correctement installée et la première table <code>todo</code> créée, vous pouvez déjà aller dans <strong>AWS RDS</strong> puis dans <strong>CloudWatch</strong> pour consulter les logs. 
-                    Vérifiez notamment les connexions à la base de données (<code>DatabaseConnections</code>) afin de vous assurer que tout fonctionne correctement. 
+                    Une fois l'application TODO correctement installée et la première table <code>todo</code> créée,
+                    vous pouvez déjà aller dans <strong>AWS RDS</strong> puis dans <strong>CloudWatch</strong> pour
+                    consulter les logs.
+                    Vérifiez notamment les connexions à la base de données (<code>DatabaseConnections</code>) afin de
+                    vous assurer que tout fonctionne correctement.
                     Voir la capture d’écran ci-dessous.
-                </p>        
-                <img src="../img/blog/blog-14-6.jpeg" alt="Environment Configuration" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">          
+                </p>
+                <img src="../img/blog/blog-14-6.jpeg" alt="Environment Configuration"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
                 <h2 class="font-semibold mt-4 flex items-center">
                     <i class="fas fa-paint-brush mr-2 text-purple-500"></i> Étape 6 :lancer avec PM2 🎨
                 </h2>
-                <img src="../img/blog/blog-14-13.jpeg" alt="pm2" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <img src="../img/blog/blog-14-13.jpeg" alt="pm2"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
                 <p class="mt-2">
                     Et lance avec PM2 :
                 </p>
@@ -252,21 +288,31 @@ pm2 logs todoapp
 pm2 save
 pm2 startup
                 </code></pre>
-                <p class="mt-2"> Une fois le serveur application lancé, vous verrez dans les logs le démarrage de l’application Todo. Ensuite, rendez-vous sur l’adresse publique de votre instance EC2 en ajoutant le port <code>:8000</code> à l’URL. Vous pourrez ainsi accéder à votre application en fonctionnement. </p>
-                <img src="../img/blog/blog-14-9.jpeg" alt="Ajouter le frontend" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2"> Une fois le serveur application lancé, vous verrez dans les logs le démarrage de
+                    l’application Todo. Ensuite, rendez-vous sur l’adresse publique de votre instance EC2 en ajoutant le
+                    port <code>:8000</code> à l’URL. Vous pourrez ainsi accéder à votre application en fonctionnement.
+                </p>
+                <img src="../img/blog/blog-14-9.jpeg" alt="Ajouter le frontend"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
 
                 <h2 class="font-semibold mt-4 flex items-center">
                     <i class="fas fa-network-wired mr-2 text-purple-500"></i> Bonus : ENI, c’est quoi ce truc ? 🌐
                 </h2>
                 <p class="mt-2">
-                    Les interfaces réseau élastiques (ENI) jouent un rôle clé en liant les instances RDS et EC2 au sein de votre VPC.  
-                    Lorsqu’une instance RDS est créée via Infrastructure as Code (IaC), AWS génère automatiquement une ENI associée à cette instance.  
-                    Cette ENI agit comme un point d’attache réseau virtuel, permettant la communication sécurisée entre les services AWS et votre instance RDS.  
-                    Elle garantit que le trafic réseau entre votre EC2 et la base de données passe par un canal dédié et isolé dans votre infrastructure cloud.  
-                    Sans cette interface réseau, la connexion entre vos ressources AWS ne serait pas possible ou sécurisée.
-                  </p>
-                  <img src="../img/blog/blog-14-17.jpeg" alt="ENI" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
-                  <table class="table-auto w-full mt-2">
+                    Les interfaces réseau élastiques (ENI) jouent un rôle clé en liant les instances RDS et EC2 au sein
+                    de votre VPC.
+                    Lorsqu’une instance RDS est créée via Infrastructure as Code (IaC), AWS génère automatiquement une
+                    ENI associée à cette instance.
+                    Cette ENI agit comme un point d’attache réseau virtuel, permettant la communication sécurisée entre
+                    les services AWS et votre instance RDS.
+                    Elle garantit que le trafic réseau entre votre EC2 et la base de données passe par un canal dédié et
+                    isolé dans votre infrastructure cloud.
+                    Sans cette interface réseau, la connexion entre vos ressources AWS ne serait pas possible ou
+                    sécurisée.
+                </p>
+                <img src="../img/blog/blog-14-17.jpeg" alt="ENI"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <table class="table-auto w-full mt-2">
                     <thead>
                         <tr>
                             <th class="px-4 py-2">Type d’ENI</th>
@@ -287,8 +333,12 @@ pm2 startup
                         </tr>
                     </tbody>
                 </table>
-                <p class="mt-2">Cette Resource Map révèle l'infrastructure VPC qui accueille nos ENI RDS. Les deux subnets dans des Availability Zones distinctes (us-east-1a et us-east-1b) expliquent pourquoi AWS crée automatiquement deux ENI : une pour l'instance RDS principale et une pour le standby Multi-AZ. Les route tables orchestrent le routage du trafic vers ces interfaces réseau virtuelles.</p>
-                <img src="../img/blog/blog-14-16.jpeg" alt="VPC" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">Cette Resource Map révèle l'infrastructure VPC qui accueille nos ENI RDS. Les deux
+                    subnets dans des Availability Zones distinctes (us-east-1a et us-east-1b) expliquent pourquoi AWS
+                    crée automatiquement deux ENI : une pour l'instance RDS principale et une pour le standby Multi-AZ.
+                    Les route tables orchestrent le routage du trafic vers ces interfaces réseau virtuelles.</p>
+                <img src="../img/blog/blog-14-16.jpeg" alt="VPC"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
                 <h2 class="font-semibold mt-4 flex items-center">
                     <i class="fas fa-shield-alt mr-2 text-purple-500"></i> Groupes de sécurité : Ingress vs Egress
                 </h2>
@@ -368,7 +418,7 @@ resource "aws_security_group" "app" {
                 <p class="mt-2">
                     Après Free Tier : <strong>~20–25 €/mois</strong>
                 </p>
-               
+
                 <h2 class="font-semibold mt-4 flex items-center">
                     <i class="fas fa-rocket mr-2 text-purple-500"></i> 🎉 Démo finale
                 </h2>
@@ -387,7 +437,7 @@ curl -X POST -H "Content-Type: application/json" \
   -d '{"task":"Apprendre AWS","status":false}' \
   http://&lt;Adresse-IP-Publique-EC2&gt;:8000/todo/
                 </code></pre>
-               
+
                 <h2 class="font-semibold mt-4 flex items-center">
                     <i class="fas fa-book mr-2 text-purple-500"></i> 📚 À retenir
                 </h2>
@@ -404,10 +454,43 @@ curl -X POST -H "Content-Type: application/json" \
                     <li>Supervision via CloudWatch</li>
                     <li>PM2 pour la résilience</li>
                 </ul>
-              
-                <p class="mt-2">
-                    Tu veux aller plus loin sur AWS sans te ruiner ? La suite arrive très vite ! 🚀
+
+                <!--  Tailwind CSS + Font Awesome paragraph with two bullet points  -->
+                <p class="mt-4 text-gray-700 leading-relaxed">
+                    Attention&nbsp;: même après toutes les optimisations décrites dans cette série, il reste toujours
+                    des
+                    leviers supplémentaires à activer en fonction de votre projet, de la taille de votre code-base et du
+                    trafic attendu.
                 </p>
+
+                <ul class="mt-3 space-y-2 text-gray-700">
+                    <!-- S3 ZIP tip -->
+                    <li class="flex">
+                        <i class="fa-solid fa-box-archive text-indigo-500 mr-2 mt-[2px]"></i>
+                        <span>
+                            Si votre dépôt dépasse <strong>100&nbsp;Go</strong>, réduisez encore la bande passante :
+                            stockez une
+                            archive <strong>ZIP</strong> de l’application sur <strong>Amazon S3</strong>, puis
+                            décompressez-la lors
+                            du déploiement. Vous éliminez ainsi les <code>git clone</code> répétitifs et quasiment tous
+                            les coûts
+                            de transfert.
+                        </span>
+                    </li>
+
+                    <!-- Ansible tip -->
+                    <li class="flex">
+                        <i class="fa-solid fa-screwdriver-wrench text-emerald-500 mr-2 mt-[2px]"></i>
+                        <span>
+                            Pour une industrialisation complète, adoptez <strong>Ansible</strong> : un playbook peut
+                            installer
+                            automatiquement les dépendances (MySQL, Node.js, npm, etc.), centraliser la configuration et
+                            rendre
+                            le processus réutilisable pour vos prochains projets.
+                        </span>
+                    </li>
+                </ul>
+
             </section>
 
             <!-- References -->
@@ -416,9 +499,14 @@ curl -X POST -H "Content-Type: application/json" \
                     <i class="fas fa-link mr-2 text-blue-500"></i> Références
                 </h2>
                 <ul class="list-disc pl-6 mt-2">
-                    <li><a href="https://github.com/yogasaikrishna/todo-app" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Todo App GitHub Repository</a></li>
-                    <li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/SQLServer.Concepts.General.PasswordPolicy.MasterLogin.html" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Amazon RDS Password Policy</a></li>
-                    <li><a href="https://www.bdccglobal.com/blog/terraform-multi-region-deployment-aws-codepipeline/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Terraform Multi-Region Deployment</a></li>
+                    <li><a href="https://github.com/yogasaikrishna/todo-app" class="text-blue-600 hover:underline"
+                            target="_blank" rel="noopener noreferrer">Todo App GitHub Repository</a></li>
+                    <li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/SQLServer.Concepts.General.PasswordPolicy.MasterLogin.html"
+                            class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Amazon RDS
+                            Password Policy</a></li>
+                    <li><a href="https://www.bdccglobal.com/blog/terraform-multi-region-deployment-aws-codepipeline/"
+                            class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Terraform
+                            Multi-Region Deployment</a></li>
                 </ul>
             </section>
 
@@ -457,4 +545,5 @@ curl -X POST -H "Content-Type: application/json" \
 
     <script src="../assets/js/script.js" defer></script>
 </body>
+
 </html>
