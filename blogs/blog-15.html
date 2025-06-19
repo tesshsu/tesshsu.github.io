@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injection sécurisée des identifiants AWS Secrets Manager dans votre stack Terraform & Node.js</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-cloud mr-2 text-purple-500"></i> Injection sécurisée des identifiants AWS Secrets Manager dans votre stack Terraform & Node.js
+                </h1>
+                <p class="text-gray-600 mb-2">18 Juin 2025, 17:00 CEST</p>
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">Devops</span>
+                <img src="../img/blog/blog-15.jpeg" alt="AWS Secrets Manager Setup"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Sécurisez vos identifiants de base de données avec AWS Secrets Manager
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    Dans l’article précédent, nous avons configuré une connexion RDS avec EC2 optimisée via Terraform. Aujourd’hui, nous allons renforcer la sécurité de votre application en déportant les identifiants de base de données du code Terraform vers AWS Secrets Manager. Suivez ce guide pour éliminer les secrets codés en dur et adopter les bonnes pratiques de sécurité.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-shield-alt mr-2 text-purple-500"></i> 1. Pourquoi déplacer les identifiants vers AWS Secrets Manager ?
+                </h2>
+                <p class="mt-2">
+                    Coder en dur un mot de passe de base de données dans Terraform ou dans votre application expose ces informations à des risques via l’historique Git, les journaux CI, ou les fichiers d’état Terraform. AWS Secrets Manager stocke les secrets chiffrés avec KMS, permet de tracer les accès, et prend en charge la rotation automatique.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-key mr-2 text-purple-500"></i> 2. Créer (ou localiser) le secret
+                </h2>
+                <p class="mt-2">
+                    Créez un secret dans AWS Secrets Manager avec la commande suivante :
+                </p>
+                <pre><code>
+aws secretsmanager create-secret \
+  --name prod-db-credentials \
+  --secret-string '{"username":"yourDBUsername","password":"yourDBpassWord"}'
+                </code></pre>
+                <p class="mt-2">
+                    Via la console AWS → Secrets Manager → Secrets, recherchez <code>prod-db-credentials</code> pour vérifier son existence. Cliquez sur <strong>Récupérer la valeur du secret</strong> pour voir le JSON.
+                </p>
+                <img src="../img/blog/blog-15-1.jpeg" alt="AWS Secrets Manager Setup"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> <strong>Astuce</strong> : tu peux spécifier une KMS encryption key dans la commande AWS CLI secretsmanager create-secret via le paramètre --kms-key-id
+                <img src="../img/blog/blog-15-2.jpeg" alt="AWS Secrets Manager Setup encryption"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-code mr-2 text-purple-500"></i> 3. Récupérer le secret dans Terraform
+                </h2>
+                <h3 class="font-medium mt-2">3.1 Ajouter une data source</h3>
+                <pre><code>
+data "aws_secretsmanager_secret_version" "db" {
+  secret_id = "prod-db-credentials"          # nom ou ARN
+}
+
+locals {
+  creds = jsondecode(data.aws_secretsmanager_secret_version.db.secret_string)
+}
+                </code></pre>
+                <p class="mt-2">
+                    La fonction <code>jsondecode</code> convertit la chaîne JSON en une map utilisable dans Terraform : vous pouvez appeler <code>local.creds.username</code> et <code>local.creds.password</code>.
+                </p>
+                <h3 class="font-medium mt-2">3.2 Passer les valeurs au module RDS</h3>
+                <pre><code>
+module "rds_mysql" {
+  source            = "../../"
+  identifier        = "prod-db"
+  engine_version    = "8.0.40"
+  instance_class    = "db.t4g.micro"
+  allocated_storage = 50
+
+  username = local.creds.username
+  password = local.creds.password
+
+  subnet_ids         = module.vpc.public_subnet_ids
+  vpc_id             = module.vpc.vpc_id
+  source_cidr_blocks = [module.vpc.vpc_cidr_block]
+}
+                </code></pre>
+                <p class="mt-2">
+                    Puisque le mot de passe provient désormais de Secrets Manager, vous pouvez supprimer la variable <code>password</code> ou lui attribuer une valeur par défaut pour éviter les prompts interactifs.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-server mr-2 text-purple-500"></i> 4. Injecter les secrets dans le script EC2 (User Data)
+                </h2>
+                <pre><code>
+user_data = base64encode(templatefile("${path.module}/user_data.sh", {
+  rds_endpoint = module.rds_mysql.db_instance_endpoint,
+  db_username  = local.creds.username,
+  db_password  = local.creds.password
+}))
+                </code></pre>
+                <p class="mt-2">
+                    Remplacez les références <code>var.username</code> / <code>var.password</code> restantes par les valeurs de <code>local.creds</code>.
+                </p>
+                <p class="mt-2">
+                    Pour le changement de code Terraform, voici le lien&nbsp;GitHub&nbsp;:
+                    <a href="https://github.com/tesshsu/terraform-aws-rds-mysql/pull/3/files"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="text-blue-600 hover:text-blue-800 underline inline-flex items-center">
+                        <i class="fab fa-github mr-1"></i>
+                        Voir la Pull-Request
+                    </a>
+                  </p>               
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-rocket mr-2 text-purple-500"></i> 5. Lancer le pipeline
+                </h2>
+                <pre><code>
+terraform init       # télécharge les providers
+terraform validate   # détecte les erreurs de syntaxe
+terraform plan       # aucun prompt interactif ; champs sensibles masqués
+terraform apply      # déploie ou met à jour les ressources
+                </code></pre>
+                <img src="../img/blog/blog-15-3.jpeg" alt="AWS Secrets Manager terraform apply"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    <i class="fas fa-info-circle mr-2 text-blue-500"></i> Si AWS a mis à jour la version de MySQL, verrouillez <code>engine_version</code> sur la version actuelle (ex : <code>8.0.40</code>) car RDS interdit les rétrogradations.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-code mr-2 text-purple-500"></i> 6. Utiliser le même secret dans votre application Node.js
+                </h2>
+                <pre><code>
+// connection.js
+const mysql = require('mysql');
+const { SecretsManagerClient, GetSecretValueCommand } =
+  require('@aws-sdk/client-secrets-manager');
+
+const region  = process.env.AWS_REGION || 'us-east-1';
+const name    = process.env.SECRET_NAME;            // prod-db-credentials
+const client  = new SecretsManagerClient({ region });
+let cache;
+
+async function getCreds() {
+  if (cache) return cache;
+  const cmd = new GetSecretValueCommand({ SecretId: name });
+  const { SecretString } = await client.send(cmd);
+  cache = JSON.parse(SecretString);
+  return cache;
+}
+
+async function initPool() {
+  const c = await getCreds();
+  return mysql.createPool({
+    connectionLimit: 10,
+    host:     c.host || process.env.DB_HOST,
+    user:     c.username,
+    password: c.password,
+    database: c.database,
+    ssl:      { rejectUnauthorized: true }
+  });
+}
+
+module.exports = { initPool };
+                </code></pre>
+                <p class="mt-2">
+                    Pour voir le code de l’application Todo Node, voici le lien GitHub :&nbsp;
+                    <a
+                      href="https://github.com/tesshsu/todo-app"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-blue-600 hover:text-blue-800 underline inline-flex items-center"
+                    >
+                      <i class="fab fa-github mr-1"></i>
+                      Voir le code
+                    </a>
+                  </p>
+                  
+                <p class="mt-2">
+                    Le SDK récupère la version <code>AWSCURRENT</code> une seule fois par conteneur ou exécution Lambda et la réutilise pour éviter des appels API supplémentaires.
+                </p>
+                <p class="mt-2">
+                    Vous pouvez voir l&rsquo;état de votre instance attachée à RDS&nbsp;:
+                  </p>
+                <img src="../img/blog/blog-15-5.jpeg" alt="AWS Secrets Manager terraform apply"
+                    class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">  
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> 7. Liste de bonnes pratiques
+                </h2>
+                <table class="table-auto w-full mt-2">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-2">Domaine</th>
+                            <th class="px-4 py-2">Recommandation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2">Sécurité d’état</td>
+                            <td class="border px-4 py-2">Stockez l’état Terraform dans S3 + KMS pour garantir le chiffrement au repos.</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">Rotation</td>
+                            <td class="border px-4 py-2">Activez la rotation dans Secrets Manager ou mettez à jour avec <code>random_password</code>. Terraform lit automatiquement <code>AWSCURRENT</code>.</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">Hygiène des variables</td>
+                            <td class="border px-4 py-2">Supprimez les variables inutilisées. Pour les facultatives, définissez une valeur par défaut.</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">Versions mineures</td>
+                            <td class="border px-4 py-2">Verrouillez uniquement la version majeure (<code>8.0</code>) pour permettre les mises à jour automatiques.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-flag-checkered mr-2 text-purple-500"></i> 8. Conclusion
+                </h2>
+                <p class="mt-2">
+                    En déportant la gestion des identifiants vers AWS Secrets Manager et en les décodant dans Terraform et Node.js, vous éliminez les secrets codés en dur, gardez vos plans Terraform non interactifs et bénéficiez d’une rotation automatique native — avec seulement quelques lignes de code supplémentaires.
+                </p>
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AWS Secrets Manager Documentation</a></li>
+                    <li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/secretsmanager_secret_version" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Terraform AWS Secrets Manager Data Source</a></li>
+                    <li><a href="https://aws.amazon.com/sdk-for-javascript/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AWS SDK for JavaScript</a></li>
+                </ul>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-14.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="#" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+
+</html>
