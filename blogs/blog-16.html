@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Associez une IP Fixe à votre Instance EC2 avec Terraform : La Méthode Économique</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-cloud mr-2 text-purple-500"></i> Associez une IP Fixe à votre Instance EC2 avec Terraform : La Méthode Économique
+                </h1>
+                <p class="text-gray-600 mb-2">23 Juin 2025, 09:13 CEST</p>
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">DevOps</span>
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Application Node.js et sa base de données RDS avec AWS Secrets Manager
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    Aujourd’hui, nous nous attaquons à un autre irritant courant en environnement de développement : l’adresse IP publique de notre instance EC2 qui change à chaque redéploiement Terraform.
+                </p>
+                <p class="mt-2">
+                    Pour faciliter les présentations à l’équipe, configurer un DNS ou simplement avoir un point d’accès stable, une IP fixe est indispensable. La solution la plus simple et la plus économique pour un environnement de dev/staging est d’utiliser une IP Élastique (EIP).
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> Pourquoi opter pour une IP Élastique (EIP) ?
+                </h2>
+                <p class="mt-2">
+                    Une IP Élastique est une adresse IPv4 publique et statique que vous allouez à votre compte AWS et que vous pouvez attacher à une instance EC2. Contrairement à l’IP publique standard, elle présente plusieurs avantages :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><strong>Adresse IP Fixe</strong> : L’EIP ne change jamais, même si vous arrêtez et redémarrez votre instance. C’est idéal pour configurer un enregistrement DNS (ex: dev.votre-app.com) ou pour autoriser cette IP dans des pare-feux.</li>
+                    <li><strong>Gestion Simplifiée</strong> : Elle facilite le dépannage et la gestion de l’accès à votre environnement de développement.</li>
+                    <li><strong>Faible Coût</strong> : C’est une solution bien plus abordable qu’un Load Balancer, parfaite pour un besoin simple sur une seule instance.</li>
+                </ul>
+                <img src="../img/blog/blog-16-1.jpeg" alt="Elastic IP Benefits" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2 text-purple-500"></i> ⚠️ Point sur la tarification (Mise à jour 2024)
+                </h2>
+                <p class="mt-2">
+                    Autrefois gratuite lorsqu’elle était attachée à une instance en cours d’exécution, AWS facture désormais toutes les adresses IPv4 publiques depuis le 1er février 2024. Le coût est d’environ 0,005 $ par heure, soit environ 3,60 $ par mois. Cela reste une option très économique pour la stabilité qu’elle apporte en développement.
+                </p>
+                <a href="https://aws.amazon.com/fr/blogs/aws/new-aws-public-ipv4-address-charge-public-ip-insights/" target="_blank" rel="noopener noreferrer">
+                    <img src="../img/blog/blog-16-3.jpeg"
+                         alt="Elastic IP Pricing"
+                         class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow"
+                         loading="lazy" />
+                </a>                  
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cogs mr-2 text-purple-500"></i> Mettre en place l’EIP avec Terraform en 2 étapes
+                </h2>
+                <p class="mt-2">
+                    L’ajout d’une EIP à une configuration Terraform existante est très simple. Nous allons ajouter deux ressources à notre fichier <code>main.tf</code>.
+                </p>
+
+                <h3 class="font-medium mt-2">Étape 1 : Allouer une nouvelle IP Élastique (aws_eip)</h3>
+                <p class="mt-2">
+                    Cette ressource demande à AWS de réserver une nouvelle EIP dans votre VPC. Ajoutez ce bloc à votre fichier <code>main.tf</code>.
+                </p>
+                <pre><code>
+# examples/minimal/main.tf
+
+# 1. Alloue une nouvelle IP Élastique dans votre VPC
+resource "aws_eip" "todo_app" {
+  # 'vpc = true' indique que l'EIP est pour une utilisation dans un VPC.
+  # L'argument 'instance' est déprécié, on privilégie une association séparée.
+  vpc      = true
+
+  tags = {
+    Name = "${var.identifier}-eip"
+  }
+}
+                </code></pre>
+                <h3 class="font-medium mt-2">Étape 2 : Associer l’EIP à l’instance EC2 (aws_eip_association)</h3>
+                <p class="mt-2">
+                    Maintenant que l’IP est réservée, cette seconde ressource l’associe à votre instance EC2 existante.
+                </p>
+                <pre><code>
+# examples/minimal/main.tf
+
+# 2. Associe l'EIP à votre instance EC2
+resource "aws_eip_association" "eip_assoc" {
+  # L'ID de l'instance EC2 déjà définie dans votre code
+  instance_id   = aws_instance.app_server.id
+  
+  # Fait le lien avec l'EIP que nous venons de créer
+  allocation_id = aws_eip.todo_app.id
+}
+                </code></pre>
+                <p class="mt-2">
+                    Après avoir ajouté ces deux blocs, votre fichier <code>main.tf</code> (version simplifiée) ressemblera à ceci :
+                </p>
+                <pre><code>
+# --- Votre code existant ---
+resource "aws_instance" "app_server" {
+  ami           = data.aws_ami.amazon_linux.id
+  instance_type = var.ec2_instance_type
+  # ... autres configurations ...
+}
+
+# --- NOUVEAU BLOC AJOUTÉ ---
+resource "aws_eip" "todo_app" {
+  vpc = true
+  tags = {
+    Name = "${var.identifier}-eip"
+  }
+}
+
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.app_server.id
+  allocation_id = aws_eip.todo_app.id
+}
+                </code></pre>
+                <p class="mt-2">
+                    Lancez <code>terraform apply</code>, et votre instance EC2 disposera désormais d’une adresse IP publique fixe !
+                </p>
+                <p class="mt-2">
+                    Pour le changement de code Terraform, voici le lien&nbsp;GitHub&nbsp;:
+                    <a href="https://github.com/tesshsu/terraform-aws-rds-mysql/pull/3/files"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="text-blue-600 hover:text-blue-800 underline inline-flex items-center">
+                        <i class="fab fa-github mr-1"></i>
+                        Voir la Pull-Request
+                    </a>
+                  </p>
+                  <img src="../img/blog/blog-16-2.jpeg"
+                  alt="Elastic IP Pricing"
+                  class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow"
+                  loading="lazy" />
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2 text-purple-500"></i> Limitations à connaître
+                </h2>
+                <p class="mt-2">
+                    Cette solution est parfaite pour les environnements de développement et de staging, mais elle a une contrainte majeure : une EIP ne peut être attachée qu’à une seule instance à la fois. Elle ne convient donc pas pour des environnements de production nécessitant de la haute disponibilité ou de l’auto-scaling. Dans ces cas, un Application Load Balancer (ALB) reste la solution à privilégier.
+                </p>
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-trophy mr-2 text-purple-500"></i> Bonus : Le Duel des Coûts pour un Choix Malin
+                </h2>
+                <p class="mt-2">
+                    Pour vraiment optimiser les coûts, il faut connaître les chiffres. Voici une comparaison directe entre l’utilisation d’une EIP et le passage à un Load Balancer, afin de faire le choix le plus économique pour votre besoin.
+                </p>
+
+                <h3 class="font-medium mt-2">1. Le Coût d’une IP Élastique (EIP)</h3>
+                <p class="mt-2">
+                    Depuis février 2024, la règle a changé : AWS facture toutes les adresses IPv4 publiques.
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><strong>Coût de base</strong> : Une EIP vous coûtera environ 3,60 $ par mois, qu’elle soit attachée à une instance en cours d’exécution ou non.</li>
+                    <li><strong>Le piège à éviter</strong> : Créer une EIP avec Terraform est simple, mais si vous la laissez "flotter" (non-attachée à une instance), vous payez pour une ressource que vous n’utilisez absolument pas. C’est le contraire de l’esprit "radin malin" !</li>
+                </ul>
+                <h3 class="font-medium mt-2">2. Le Coût d’un Application Load Balancer (ALB)</h3>
+                <p class="mt-2">
+                    Lorsque votre application grandit et que vous avez besoin de répartir la charge, l’ALB devient indispensable. Mais son coût est d’un autre ordre.
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><strong>Coût de base</strong> : Un ALB démarre à environ 16,40 $ par mois.</li>
+                    <li><strong>Coûts additionnels</strong> : À ce prix de base s’ajoutent les frais de traitement des données (mesurés en LCU - Load Balancer Capacity Units).</li>
+                </ul>
+                <h3 class="font-medium mt-2">Le Verdict en un Coup d’Œil</h3>
+                <table class="table-auto w-full mt-2 border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 border">Solution</th>
+                            <th class="px-4 py-2 border">Coût Mensuel Estimé</th>
+                            <th class="px-4 py-2 border">Idéal Pour</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white">
+                            <td class="px-4 py-2 border">IP Élastique (EIP)</td>
+                            <td class="px-4 py-2 border">~ 3,60 $</td>
+                            <td class="px-4 py-2 border">Développement, staging, instance unique</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-4 py-2 border">Application Load Balancer (ALB)</td>
+                            <td class="px-4 py-2 border">~ 16,40 $ + frais de données</td>
+                            <td class="px-4 py-2 border">Production, haute disponibilité, auto-scaling</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> Conclusion
+                </h2>
+                <p class="mt-2">
+                    Pour un environnement de développement ou de staging sur une seule instance, l’EIP est sans conteste la solution la plus logique et la plus économique. Elle vous offre la stabilité d’une IP fixe pour un coût mensuel très faible. Gardez le Load Balancer pour le moment où votre application passera en production et nécessitera une infrastructure plus robuste.
+                </p>
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AWS Elastic IP Addresses Documentation</a></li>
+                    <li><a href="https://www.terraform.io/docs/providers/aws/r/eip.html" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Terraform AWS EIP Resource</a></li>
+                </ul>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-15.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="#" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
