@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wow, tout ce bazar autour des réseaux, des sous-réseaux, et des adresses IP derrière tout le modèle OSI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-cloud mr-2 text-purple-500"></i> Wow, tout ce bazar autour des réseaux, des sous-réseaux, et des adresses IP derrière tout le modèle OSI
+                </h1>
+                <p class="text-gray-600 mb-2">14 Juillet 2025, 11:01 CEST</p>
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">Compute</span>
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Comprendre les bases réseau pour DevOps et Cybersécurité
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    Aujourd’hui, je veux parler d’un concept de base que tout DevOps ou ingénieur cybersécurité doit comprendre.
+                </p>
+                <p class="mt-2">
+                    Spécialement en DevOps, on utilise tous les jours des adresses IPv4 ou IPv6, qu’elles soient privées ou publiques, dans différents sous-réseaux.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> Le défi des plateformes cloud
+                </h2>
+                <p class="mt-2">
+                    Mais parfois, on se perd facilement, surtout sur des plateformes cloud comme Azure ou AWS. On crée plein de sous-réseaux, on doit déterminer quelle adresse IPv4 publique via une Elastic IP attribuer, ou comprendre les IP par défaut assignées par AWS.
+                </p>
+                <p class="mt-2">
+                    Bref : on doit savoir "quoi", "quand" et "pourquoi" on le fait.
+                </p>
+                <img src="../img/blog/blog-17.jpeg" alt="Réseaux et Modèle OSI" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cogs mr-2 text-purple-500"></i> 🔧 Le Modèle OSI Simplifié (pour DevOps & Cybersécurité)
+                </h2>
+                <p class="mt-2">
+                    Le modèle OSI (Open Systems Interconnection) est une architecture en 7 couches qui standardise la façon dont les données circulent à travers un réseau.
+                </p>
+                <p class="mt-2">
+                    Il aide les pros DevOps et SecOps à comprendre où vivent les protocoles, outils, et vulnérabilités.
+                </p>
+                <img src="../img/blog/blog-17-2.jpeg" alt="Modèle OSI" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    En tant que DevOps ou pentester, on travaille principalement sur les couches 3 (Réseau) et 4 (Transport).
+                </p>
+                <p class="mt-2">
+                    Les couches 1 et 2 (Physique et Liaison de données, comme les adresses MAC) sont gérées par les infrastructures cloud (ex. AWS).
+                </p>
+                <p class="mt-2">
+                    Donc : focus sur les couches 3 & 4.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-network-wired mr-2 text-purple-500"></i> 🔌 Qu’est-ce qu’un Réseau ?
+                </h2>
+                <p class="mt-2">
+                    Un réseau est un groupe de deux ordinateurs ou plus connectés pour partager des ressources (fichiers, imprimantes, internet...).
+                </p>
+                <img src="../img/blog/blog-17-1.jpeg" alt="Réseau" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-globe mr-2 text-purple-500"></i> 📗 IPv4 (Internet Protocol version 4)
+                </h2>
+                <p class="mt-2">
+                    Format : 4 octets en décimal (ex : 192.168.64.3)
+                </p>
+                <p class="mt-2">
+                    Taille : 32 bits (2³² ≈ 4,3 milliards d’adresses)
+                </p>
+                <p class="mt-2">
+                    Structure Exemple :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Binaire : 11000000.10101000.01000000.00000011</li>
+                    <li>Décimal : 192.168.64.3</li>
+                </ul>
+                <p class="mt-2">
+                    Utilisation : Toujours largement utilisé dans les réseaux locaux, les routeurs domestiques, et sur Internet.
+                </p>
+                <p class="mt-2">
+                    Problème : épuisement des adresses — pas assez d’IP pour tous les appareils.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-globe-americas mr-2 text-purple-500"></i> 📘 IPv6 (Internet Protocol version 6)
+                </h2>
+                <p class="mt-2">
+                    Format : Groupes hexadécimaux séparés par : (ex : fe80::c83b:ccff:fe0e:1069)
+                </p>
+                <p class="mt-2">
+                    Taille : 128 bits (2¹²⁸ ≈ infini d’adresses)
+                </p>
+                <p class="mt-2">Avantages :</p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Beaucoup plus d’adresses (idéal pour IoT, cloud, etc.)</li>
+                    <li>Meilleur routage et sécurité</li>
+                </ul>
+                <p class="mt-2">
+                    Utilisation actuelle : En croissance dans les systèmes modernes (cloud, mobiles...), mais l’IPv4 reste dominant.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-lock mr-2 text-purple-500"></i> 🔐 IP Publiques vs Privées
+                </h2>
+                <table class="table-auto w-full mt-2 border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 border">Type</th>
+                            <th class="px-4 py-2 border">Utilisé où ?</th>
+                            <th class="px-4 py-2 border">Routable sur Internet ?</th>
+                            <th class="px-4 py-2 border">Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white">
+                            <td class="px-4 py-2 border">Publique</td>
+                            <td class="px-4 py-2 border">Sur Internet</td>
+                            <td class="px-4 py-2 border">✅ Oui</td>
+                            <td class="px-4 py-2 border">8.8.8.8 (Google DNS)</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-4 py-2 border">Privée</td>
+                            <td class="px-4 py-2 border">Réseaux locaux (LAN)</td>
+                            <td class="px-4 py-2 border">❌ Non</td>
+                            <td class="px-4 py-2 border">192.168.x.x, 10.x.x.x, 172.16.x.x – 172.31.x.x</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="mt-2">
+                    IP privée : utilisée en interne (ex : réseau domestique)
+                </p>
+                <p class="mt-2">
+                    IP publique : visible sur Internet
+                </p>
+                <p class="mt-2">
+                    NAT (Network Address Translation) : permet à une IP privée de communiquer avec l’extérieur via une IP publique.
+                </p>
+                <img src="../img/blog/blog-17-3.jpeg" alt="NAT et Subnetting" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-divide mr-2 text-purple-500"></i> ✅ Qu’est-ce que le Subnetting ? (version simple)
+                </h2>
+                <p class="mt-2">
+                    Subnetting = diviser un grand réseau en petits morceaux plus faciles à gérer.
+                </p>
+                <p class="mt-2">
+                    Imagine un hôtel avec 1000 chambres. On ne dit pas juste “Chambre 752”, mais :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>“Allez à l’étage 7, puis chambre 52.”</li>
+                </ul>
+                <p class="mt-2">
+                    Dans un réseau :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Adresse IP = numéro de chambre</li>
+                    <li>Subnet = l’étage</li>
+                    <li>Masque de sous-réseau = indique où s’arrête l’étage et où commence la chambre</li>
+                </ul>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cogs mr-2 text-purple-500"></i> ⚙️ Résumé du Workflow : Déployer une EC2 avec IP publique + IP privée
+                </h2>
+                <p class="mt-2">
+                    Internet ↔ IGW ↔ Table de Routage ↔ Subnet ↔ Instance EC2
+                </p>
+                <img src="../img/blog/blog-17-4.jpeg" alt="EC2 Workflow" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2 font-semibold">❗ Pour que l’instance EC2 soit réellement accessible publiquement :</p>
+                <ol class="list-decimal pl-6 mt-2">
+                    <li>Ajouter une Internet Gateway :<br>
+                        <code>resource "aws_internet_gateway" "igw" { vpc_id = aws_vpc.main.id }</code>
+                    </li>
+                    <li>Ajouter une Table de Routage et l’associer au Subnet :<br>
+                        <code>resource "aws_route_table" "public" { vpc_id = aws_vpc.main.id route { cidr_block = "0.0.0.0/0" gateway_id = aws_internet_gateway.igw.id } } resource "aws_route_table_association" "a" { subnet_id = aws_subnet.public.id route_table_id = aws_route_table.public.id }</code>
+                    </li>
+                    <li>S’assurer que l’EC2 a une IP publique :<br>
+                        <code>resource "aws_instance" "example" { ami = "ami-xxxxxx" instance_type = "t2.micro" subnet_id = aws_subnet.public.id vpc_security_group_ids = [aws_security_group.web.id] associate_public_ip_address = true }</code>
+                    </li>
+                </ol>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cogs mr-2 text-purple-500"></i> 🧠 Étape par étape
+                </h2>
+                <p class="mt-2">🌐 1. Internet Gateway (IGW)</p>
+                <p class="mt-2">
+                    Permet à la VPC d’accéder à l’internet public.
+                </p>
+                <p class="mt-2">
+                    C’est comme le routeur de ta maison.
+                </p>
+                <p class="mt-2">📘 2. Table de Routage</p>
+                <p class="mt-2">
+                    Permet d’indiquer vers où envoyer le trafic :
+                </p>
+                <p class="mt-2">
+                    <code>route { cidr_block = "0.0.0.0/0" gateway_id = aws_internet_gateway.igw.id }</code>
+                </p>
+                <p class="mt-2">
+                    Cela signifie : “tout le trafic vers internet passe par l’IGW”.
+                </p>
+                <p class="mt-2">📦 3. Subnet</p>
+                <p class="mt-2">
+                    Un segment IP à l’intérieur de ta VPC.
+                </p>
+                <p class="mt-2">
+                    Un sous-réseau devient “public” si :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Il est associé à une table de routage pointant vers l’IGW.</li>
+                    <li>Les instances dedans ont une IP publique.</li>
+                </ul>
+                <p class="mt-2">🔄 4. NAT Gateway (optionnel pour sous-réseaux privés)</p>
+                <p class="mt-2">
+                    Si ton EC2 est dans un subnet privé mais a besoin d’accès sortant à internet (par exemple pour MAJ ou télécharger), tu peux utiliser un NAT Gateway.
+                </p>
+                <p class="mt-2">
+                    Permet accès sortant vers internet.
+                </p>
+                <p class="mt-2">
+                    Bloque le trafic entrant.
+                </p>
+                <p class="mt-2">
+                    Pas nécessaire si tu veux que l’instance soit 100% publique.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-map mr-2 text-purple-500"></i> 🔍 Le modèle OSI dans AWS (mapping)
+                </h2>
+                <table class="table-auto w-full mt-2 border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 border">Élément AWS</th>
+                            <th class="px-4 py-2 border">Couche OSI</th>
+                            <th class="px-4 py-2 border">Explication</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white">
+                            <td class="px-4 py-2 border">Adresse IPv4 d’EC2</td>
+                            <td class="px-4 py-2 border">Couche 3</td>
+                            <td class="px-4 py-2 border">Adresse logique (routage IP)</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-4 py-2 border">Subnet (ex : 10.0.1.0/24)</td>
+                            <td class="px-4 py-2 border">Couche 3</td>
+                            <td class="px-4 py-2 border">Regroupe les IPs logiques</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="px-4 py-2 border">Table de Routage</td>
+                            <td class="px-4 py-2 border">Couche 3</td>
+                            <td class="px-4 py-2 border">Définit les chemins réseau</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-4 py-2 border">IGW / NAT Gateway</td>
+                            <td class="px-4 py-2 border">Couche 3</td>
+                            <td class="px-4 py-2 border">Permet l’accès public ou privé</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="px-4 py-2 border">Règle 0.0.0.0/0</td>
+                            <td class="px-4 py-2 border">Couche 3</td>
+                            <td class="px-4 py-2 border">Tout le trafic sortant</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-4 py-2 border">Groupe de sécurité (SG)</td>
+                            <td class="px-4 py-2 border">Couche 4</td>
+                            <td class="px-4 py-2 border">Filtres par protocole / port</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="px-4 py-2 border">ACL réseau</td>
+                            <td class="px-4 py-2 border">Couches 3 & 4</td>
+                            <td class="px-4 py-2 border">Filtres IP + port</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-4 py-2 border">Adresse MAC (invisible dans AWS)</td>
+                            <td class="px-4 py-2 border">Couche 2</td>
+                            <td class="px-4 py-2 border">Gérée par AWS, rarement utilisée directement</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-shield-alt mr-2 text-purple-500"></i> 🔐 Conseils de Sécurité (OSI)
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>C7 (Application) : attention aux injections, XSS, auth cassée</li>
+                    <li>C6 (Présentation) : chiffrement fort (TLS 1.3+)</li>
+                    <li>C3–C4 (Réseau/Transport) : restreindre les ports, surveiller le trafic</li>
+                    <li>C1–C2 (Physique/Liaison) : sécurité physique, désactiver les ports inutilisés</li>
+                </ul>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> ✅ Conclusion
+                </h2>
+                <p class="mt-2">
+                    Voici tout ce que tu dois comprendre en tant que DevOps ou Pentester pour bien configurer ton environnement AWS EC2, comprendre les réseaux, IP, sous-réseaux, et leur place dans le modèle OSI.
+                </p>
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><a href="https://www.aruljohn.com/mac/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">MAC Address – Arul John</a></li>
+                    <li><a href="https://thecybermentor.com/subnetting-cheat-sheet/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Feuille de triche Subnetting – The CyberMentor</a></li>
+                    <li><a href="https://www.nsrc.org/workshops/2018/apricot2018/security/pdf/subnetting.pdf" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Feuille alternative – NSRC Subnetting PDF</a></li>
+                </ul>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-16.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="/blogs/blog-18.html" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
