@@ -304,6 +304,114 @@
                 </ul>
 
                 <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-gift mr-2 text-purple-500"></i> 🛣️ Bonus : Différence entre Transit Gateway et VPC Peering dans AWS
+                </h2>
+                <h3 class="font-medium mt-2">🏗️ Exemple Visuel :</h3>
+                <h4 class="font-medium mt-2">🔁 VPC Peering (Maillage Manuel)</h4>
+                <p class="mt-2">
+                    Si vous avez 3 VPCs (A, B, C) :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>A ↔ B</li>
+                    <li>B ↔ C</li>
+                    <li>A ↔ C</li>
+                </ul>
+                <p class="mt-2">
+                    Vous devez créer 3 connexions de peering et mettre à jour 3 ensembles de tables de routage.
+                </p>
+                <p class="mt-2">
+                    Pour N VPCs, vous avez besoin de N × (N - 1) / 2 connexions.
+                </p>
+                <img src="../img/blog/blog-17-5.jpeg" alt="VPC Peering" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <img src="../img/blog/blog-17-6.jpeg" alt="VPC Peering" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <h4 class="font-medium mt-2">🌀 Transit Gateway (Hub Central)</h4>
+                <p class="mt-2">
+                    Toutes les VPCs se connectent à un TGW central, et le TGW gère le routage.
+                </p>
+                <p class="mt-2">
+                    Donc :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>VPC A → TGW</li>
+                    <li>VPC B → TGW</li>
+                    <li>VPC C → TGW</li>
+                </ul>
+                <p class="mt-2">
+                    Puis : A ↔ B ↔ C automatiquement.
+                </p>
+                <img src="../img/blog/blog-17-7.jpeg" alt="Transit Gateway" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <img src="../img/blog/blog-17-8.jpeg" alt="Transit Gateway" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <h3 class="font-medium mt-2">💸 Comparaison des Coûts (Simplifiée)</h3>
+                <table class="table-auto w-full mt-2 border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 border">Élément</th>
+                            <th class="px-4 py-2 border">VPC Peering</th>
+                            <th class="px-4 py-2 border">Transit Gateway</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white">
+                            <td class="px-4 py-2 border">Coût de connexion</td>
+                            <td class="px-4 py-2 border">Gratuit</td>
+                            <td class="px-4 py-2 border">~0,05 $/h par attachement de VPC</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-4 py-2 border">Transfert de données (intra-région)</td>
+                            <td class="px-4 py-2 border">~0,01 $/GB</td>
+                            <td class="px-4 py-2 border">~0,02–0,04 $/GB</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="px-4 py-2 border">Mise à l’échelle</td>
+                            <td class="px-4 py-2 border">Mauvais au-delà de 3–4 VPCs</td>
+                            <td class="px-4 py-2 border">Excellent</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-4 py-2 border">Gestion</td>
+                            <td class="px-4 py-2 border">Manuelle & complexe</td>
+                            <td class="px-4 py-2 border">Centralisée & propre</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3 class="font-medium mt-2">✅ Quand utiliser quoi ?</h3>
+                <table class="table-auto w-full mt-2 border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 border">Scénario</th>
+                            <th class="px-4 py-2 border">Recommandation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white">
+                            <td class="px-4 py-2 border">2–3 VPCs, sensible au coût</td>
+                            <td class="px-4 py-2 border">VPC Peering</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-4 py-2 border">4+ VPCs ou architecture en croissance</td>
+                            <td class="px-4 py-2 border">Transit Gateway</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="px-4 py-2 border">Besoin de routage transitif</td>
+                            <td class="px-4 py-2 border">Transit Gateway</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-4 py-2 border">Contrôle centralisé souhaité</td>
+                            <td class="px-4 py-2 border">Transit Gateway</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="px-4 py-2 border">Hybride (on-prem + AWS)</td>
+                            <td class="px-4 py-2 border">Transit Gateway (avec VPN/Direct Connect)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="mt-2">
+                    Si vous connectez seulement 2 ou 3 VPCs et voulez économiser, le VPC Peering est suffisant.
+                </p>
+                <p class="mt-2">
+                    Si vous construisez un réseau multi-comptes ou anticipez une croissance, le Transit Gateway est un meilleur investissement à long terme.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
                     <i class="fas fa-check-circle mr-2 text-purple-500"></i> ✅ Conclusion
                 </h2>
                 <p class="mt-2">
