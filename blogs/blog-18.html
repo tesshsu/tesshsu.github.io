@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Concepts de Cybersécurité] 001 – Introduction au Hash : principe, applications, méthodes d’attaque et stratégies de défense</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-shield-alt mr-2 text-purple-500"></i> [Concepts de Cybersécurité] 001 – Introduction au Hash : principe, applications, méthodes d’attaque et stratégies de défense
+                </h1>
+                <p class="text-gray-600 mb-2">06 Août 2025, 15:24 CEST</p>
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">Cyber</span>
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Bases du hachage pour débutants en sécurité informatique
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    Cet article a pour objectif de vous expliquer, de manière simple et accessible, la notion de hash (hachage), son rôle dans les applications quotidiennes, les techniques d’attaque utilisées par les hackers, les outils couramment employés, ainsi que les moyens efficaces pour s’en protéger. Il s’adresse particulièrement aux débutants en sécurité informatique ou en mécanismes de chiffrement.
+                </p>
+                <img src="../img/blog/blog-18-1.jpeg" alt="Introduction" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-info-circle mr-2 text-purple-500"></i> 1. Qu’est-ce qu’un Hash (hachage) ?
+                </h2>
+                <p class="mt-2">
+                    Le hachage (en anglais hash ou hash function) est une fonction mathématique qui convertit une donnée de longueur arbitraire en une valeur de longueur fixe, appelée valeur de hachage.
+                </p>
+                <p class="mt-2">Caractéristiques principales :</p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Sortie de longueur fixe : Peu importe si l’entrée fait 1 octet ou plusieurs centaines de mégaoctets, la fonction de hachage produit une sortie de taille fixe. Par exemple, SHA-256 produit toujours une sortie de 256 bits (soit 64 caractères hexadécimaux).</li>
+                    <li>Effet avalanche : Une modification minime dans l’entrée (par exemple, changer un “A” majuscule en “a”) entraîne un changement drastique dans le résultat, ce qui rend impossible de déduire l’entrée d’origine à partir de la sortie.</li>
+                    <li>Vérification d’intégrité : Si l’on applique la même fonction de hachage à une même donnée, on obtient toujours la même valeur de hachage. Cela permet de vérifier si une donnée a été modifiée pendant son stockage ou son transfert.</li>
+                </ul>
+                <p class="mt-2">Pourquoi la valeur de hachage permet-elle de vérifier l’intégrité ?</p>
+                <p class="mt-2">
+                    A calcule la valeur de hachage du mot « APPLE » avec SHA-1 et obtient : d0be2dc421be4fcd0172e5afceea3970e2f3d940
+                </p>
+                <p class="mt-2">
+                    A transmet ce hash à B, en plus du texte « APPLE ».
+                </p>
+                <p class="mt-2">
+                    B calcule lui-même le hash avec SHA-1 et compare :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Si les deux valeurs sont identiques, le message n’a pas été modifié.</li>
+                    <li>Si un seul caractère a changé, le hash sera complètement différent et B détectera la modification.</li>
+                </ul>
+                <img src="../img/blog/blog-18-2.jpeg" alt="Qu'est-ce qu'un Hash" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-clock mr-2 text-purple-500"></i> 2. Quand utilise-t-on le Hash ?
+                </h2>
+                <p class="mt-2">
+                    Vérification de l’intégrité des fichiers
+                </p>
+                <p class="mt-2">
+                    Par exemple, lors du téléchargement d’une image ISO d’un système d’exploitation, le site officiel fournit la valeur de hachage (MD5, SHA-256, etc.). L’utilisateur peut comparer le hash pour s’assurer que le fichier n’a pas été altéré.
+                </p>
+                <p class="mt-2">
+                    Stockage sécurisé des mots de passe
+                </p>
+                <p class="mt-2">
+                    Les sites ne conservent pas les mots de passe en clair, mais leur valeur hachée (avec ajout d’un salt). Ainsi, même si un pirate accède à la base, il sera difficile de retrouver les mots de passe d’origine.
+                </p>
+                <p class="mt-2">
+                    Signatures et certificats numériques
+                </p>
+                <p class="mt-2">
+                    Pour envoyer un document important, on calcule son hash puis on le chiffre avec une clé privée. Le destinataire déchiffre avec la clé publique et compare avec son propre calcul. Si les deux valeurs correspondent, le document est intact et authentique.
+                </p>
+                <p class="mt-2">
+                    Combinaison hachage + chiffrement asymétrique
+                </p>
+                <p class="mt-2">
+                    L’utilisation de clés publiques/privées pour signer la valeur de hachage garantit à la fois l’intégrité des données et l’authenticité de l’expéditeur.
+                </p>
+                <img src="../img/blog/blog-18-3.jpeg" alt="Utilisation du Hash" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-skull-crossbones mr-2 text-purple-500"></i> 3. Comment les hackers attaquent-ils les Hash ?
+                </h2>
+                <p class="mt-2">
+                    Attaque par dictionnaire (Dictionary Attack)
+                </p>
+                <p class="mt-2">
+                    Utilisation de listes de mots de passe courants ou fuités (123456, password, etc.), testés les uns après les autres.
+                </p>
+                <p class="mt-2">
+                    Brute Force (attaque exhaustive)
+                </p>
+                <p class="mt-2">
+                    Essai systématique de toutes les combinaisons possibles jusqu’à trouver la bonne.
+                </p>
+                <p class="mt-2">
+                    Rainbow Table Attack (attaque par tables arc-en-ciel)
+                </p>
+                <p class="mt-2">
+                    Utilisation de tables pré-calculées associant chaînes → valeurs de hachage pour accélérer la recherche.
+                </p>
+                <p class="mt-2">
+                    Collision Attack (attaque par collision)
+                </p>
+                <p class="mt-2">
+                    Trouver deux entrées différentes produisant le même hash. Si l’algorithme est faible, cela permet des modifications invisibles dans les documents.
+                </p>
+                <img src="../img/blog/blog-18-4.jpeg" alt="Attaques sur Hash" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-tools mr-2 text-purple-500"></i> 4. Outils d’attaque courants
+                </h2>
+                <p class="mt-2">
+                    Hashcat
+                </p>
+                <p class="mt-2">
+                    Outil puissant de cassage de hash, compatible CPU/GPU, capable d’attaques par dictionnaire, brute force et rainbow tables.
+                </p>
+                <p class="mt-2">
+                    John the Ripper
+                </p>
+                <p class="mt-2">
+                    Outil ancien mais encore populaire, supportant plusieurs systèmes et algorithmes.
+                </p>
+                <p class="mt-2">
+                    RainbowCrack
+                </p>
+                <p class="mt-2">
+                    Spécialisé dans les attaques par tables arc-en-ciel.
+                </p>
+                <p class="mt-2">
+                    Sites de recherche en ligne
+                </p>
+                <p class="mt-2">
+                    Certains sites disposent de bases massives de hash, permettant de retrouver le texte clair correspondant.
+                </p>
+                <img src="../img/blog/blog-18-5.jpeg" alt="Outils d'Attaque" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-shield mr-2 text-purple-500"></i> 5. Comment se protéger efficacement ?
+                </h2>
+                <p class="mt-2">
+                    Utiliser Salt et des algorithmes sécurisés pour les mots de passe
+                </p>
+                <p class="mt-2">
+                    Ajouter un salt (chaîne aléatoire) avant le hachage pour éviter les attaques par tables pré-calculées.
+                </p>
+                <p class="mt-2">
+                    Utiliser des algorithmes robustes : bcrypt, scrypt, PBKDF2, Argon2, qui ralentissent volontairement le calcul pour compliquer les attaques.
+                </p>
+                <p class="mt-2">
+                    Mettre à jour régulièrement les algorithmes et systèmes
+                </p>
+                <p class="mt-2">
+                    Éviter les algorithmes vulnérables (MD5, SHA-1).
+                </p>
+                <p class="mt-2">
+                    Préférer SHA-256, SHA-3 ou des algorithmes dédiés aux mots de passe.
+                </p>
+                <p class="mt-2">
+                    Limiter les tentatives de connexion + activer la MFA
+                </p>
+                <p class="mt-2">
+                    Restreindre le nombre d’essais pour réduire le risque de brute force.
+                </p>
+                <p class="mt-2">
+                    Activer l’authentification multi-facteurs (MFA) pour une protection supplémentaire.
+                </p>
+                <p class="mt-2">
+                    Utiliser des signatures avec clés publiques/privées et le hachage
+                </p>
+                <p class="mt-2">
+                    Pour garantir l’identité et l’intégrité dans les échanges.
+                </p>
+                <p class="mt-2">
+                    Sécuriser la transmission (SSL/TLS)
+                </p>
+                <p class="mt-2">
+                    Même si le hash protège l’intégrité, les données en clair peuvent être interceptées. Un chiffrement réseau est indispensable.
+                </p>
+                <img src="../img/blog/blog-18-6.jpeg" alt="Protection" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> En résumé
+                </h2>
+                <p class="mt-2">
+                    Le hachage sert à vérifier l’intégrité des données et authentifier les identités.
+                </p>
+                <p class="mt-2">
+                    Il est utilisé dans la vérification d’intégrité, le stockage des mots de passe, les signatures numériques, etc.
+                </p>
+                <p class="mt-2">
+                    Les hackers utilisent des attaques par dictionnaire, brute force, rainbow tables, ou exploitent les collisions.
+                </p>
+                <p class="mt-2">
+                    Les outils les plus connus : Hashcat, John the Ripper, RainbowCrack.
+                </p>
+                <p class="mt-2">
+                    Pour se protéger : KeePass, LastPass, salt, algorithmes robustes, limitation des tentatives, MFA, signatures cryptographiques, et chiffrement des communications.
+                </p>
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><a href="https://id0-rsa.pub/problem/18/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Introduction au Hash - id0-rsa</a></li>
+                </ul>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-17.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="/blogs/blog-19.html" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
