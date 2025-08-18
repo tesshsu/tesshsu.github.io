@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les dangers cachés de la sur-automatisation en DevOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-cogs mr-2 text-purple-500"></i> Les dangers cachés de la sur-automatisation en DevOps
+                </h1>
+                <p class="text-gray-600 mb-2">17 Août 2025, 18:07 CEST</p>
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">DevOps</span>
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Comprendre et éviter les pièges de l’automatisation excessive
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    L’automatisation est un pilier du DevOps : elle accélère les tâches répétitives, standardise les processus et réduit les erreurs humaines. Mais trop d’automatisation, sans garde-fous, peut transformer un outil puissant en source de chaos. Cet article explore les dangers de la sur-automatisation, les erreurs courantes et comment sécuriser vos déploiements.
+                </p>
+                <img src="../img/blog/blog-19.jpeg" alt="Introduction" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-info-circle mr-2 text-purple-500"></i> 1. Une histoire vraie
+                </h2>
+                <p class="mt-2">
+                    Imaginez un vendredi après-midi : une mise à jour mineure est déployée sur une application. Cette modification supprime une colonne dans la base de données. Grâce à l’automatisation, la mise à jour passe directement en production sans vérification humaine. Résultat : le système de paiement tombe en panne. Pire, l’équipe met une heure à s’en rendre compte, car les alertes indiquent que “tout va bien”. Moralité : la sur-automatisation, sans filet de sécurité, peut causer des désastres.
+                </p>
+                <img src="../img/blog/blog-19-1.jpeg" alt="Histoire vraie" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2 text-purple-500"></i> 2. Quand l’automatisation devient un piège
+                </h2>
+                <p class="mt-2">
+                    L’automatisation est idéale pour gagner du temps, mais devient risquée si :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Elle masque des informations critiques.</li>
+                    <li>Elle élimine tout contrôle humain.</li>
+                    <li>Elle complique une intervention rapide en cas de problème.</li>
+                </ul>
+                <p class="mt-2">
+                    Dans ces cas, l’automatisation peut introduire plus de risques qu’elle n’en résout.
+                </p>
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-question-circle mr-2 text-purple-500"></i> 3. Pourquoi on tombe dans le piège
+                </h2>
+                <p class="mt-2">
+                    La sur-automatisation ne se décide pas du jour au lendemain. Elle s’installe progressivement parce que :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>L’enthousiasme pour les nouveaux outils pousse à tout automatiser.</li>
+                    <li>Supprimer les étapes manuelles semble accélérer les processus.</li>
+                    <li>On croit à tort que moins d’intervention humaine réduit les erreurs.</li>
+                    <li>On oublie de réévaluer si l’automatisation reste adaptée avec le temps.</li>
+                </ul>
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-bell mr-2 text-purple-500"></i> 4. Les signaux d’alerte
+                </h2>
+                <p class="mt-2">
+                    Vous avez peut-être trop automatisé si :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>La production est une boîte noire que personne n’ose modifier.</li>
+                    <li>Un petit changement déclenche une cascade de jobs automatisés.</li>
+                    <li>Revenir en arrière (rollback) est plus complexe que déployer.</li>
+                    <li>Les nouveaux membres comprennent les scripts, mais pas la logique globale.</li>
+                </ul>
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> 5. Comment savoir quoi automatiser (ou pas)
+                </h2>
+                <p class="mt-2">
+                    Avant d’automatiser, posez-vous ces questions :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Est-ce une tâche fréquente ? (Oui = automatisez)</li>
+                    <li>Si ça casse, est-ce grave ? (Oui = gardez un contrôle humain)</li>
+                    <li>L’automatisation masque-t-elle des informations utiles ?</li>
+                    <li>Peut-on réagir rapidement en cas de problème ?</li>
+                    <li>Qui maintiendra ce script, et est-il bien documenté ?</li>
+                </ul>
+                <p class="mt-2">
+                    <strong>Règle d’or :</strong> Automatisez les tâches fréquentes, simples et peu risquées. Gardez les actions rares ou critiques partiellement manuelles, avec un bouton d’arrêt d’urgence.
+                </p>
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-shield-alt mr-2 text-purple-500"></i> 6. Sécuriser vos déploiements
+                </h2>
+                <p class="mt-2">
+                    Un déploiement entièrement automatisé peut être rapide, mais ultra-risqué. Voici un workflow plus sûr :
+                </p>
+                <ol class="list-decimal pl-6 mt-2">
+                    <li>Poussez le code, qui est construit et envoyé en staging.</li>
+                    <li>Testez en staging.</li>
+                    <li>Validez manuellement avant le déploiement en production.</li>
+                    <li>Utilisez un “kill switch” (<a href="#ref-1" class="text-blue-600 hover:underline">*1</a>) pour arrêter ou revenir en arrière immédiatement si nécessaire.</li>
+                </ol>
+                <p class="mt-2">
+                    L’automatisation, c’est comme le sel dans un plat : indispensable, mais en excès, ça gâche tout.
+                </p>
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2 text-purple-500"></i> Les 4 erreurs d’automatisation courantes
+                </h2>
+                <p class="mt-2">
+                    Voici quatre erreurs fréquentes qui transforment l’automatisation en cauchemar :
+                </p>
+                <h3 class="font-semibold mt-4">1. Le pipeline “direct en prod”</h3>
+                <p class="mt-2">
+                    Chaque commit sur la branche principale est déployé directement en production. C’est rapide, mais une erreur passe immédiatement en prod.
+                </p>
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code># .github/workflows/deploy.yml
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Build and push the image tagged by commit SHA
+      - name: Build and push
+        run: |
+          docker build -t registry.example.com/payments-api:${GITHUB_SHA} .
+          docker push registry.example.com/payments-api:${GITHUB_SHA}
+
+      # Deploy to production, no gates
+      - name: Deploy prod
+        run: |
+          kubectl set image deployment/payments-api \
+            payments-api=registry.example.com/payments-api:${GITHUB_SHA}
+          kubectl rollout status deployment/payments-api --timeout=90s
+</code></pre>
+                <p class="mt-2">
+                    <strong>Problèmes :</strong>
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Aucun test ou vérification avant le déploiement.</li>
+                    <li>Aucune validation humaine.</li>
+                    <li>Pas de staging, tout va directement en prod.</li>
+                    <li>Pas de déploiement canary ou blue-green.</li>
+                    <li>Timeout trop court (90s), risquant un faux “succès”.</li>
+                </ul>
+                <h3 class="font-semibold mt-4">2. L’absence de tests automatiques</h3>
+                <p class="mt-2">
+                    Déployer sans tests, c’est comme signer un contrat sans le lire. Les scripts doivent inclure des tests unitaires et d’intégration.
+                </p>
+                <h3 class="font-semibold mt-4">3. Aucun contrôle manuel</h3>
+                <p class="mt-2">
+                    Même avec des tests, certains changements nécessitent une approbation humaine pour éviter les erreurs critiques.
+                </p>
+                <h3 class="font-semibold mt-4">4. Pas de stratégie de rollback ni de “kill switch”</h3>
+                <p class="mt-2">
+                    Sans plan de secours, un incident peut durer trop longtemps, affectant les utilisateurs.
+                </p>
+                <img src="../img/blog/blog-19-2.jpeg" alt="Erreurs d'automatisation" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> Une version améliorée du pipeline
+                </h2>
+                <p class="mt-2">
+                    Voici un pipeline plus sûr, avec tests, staging, validation manuelle et kill switch :
+                </p>
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code>name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      promote:
+        description: 'Promouvoir l’image de staging en production'
+        required: true
+        default: 'false'
+
+jobs:
+  build_test_stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests
+        run: |
+          echo "Running tests..."
+          ./run_tests.sh
+
+      - name: Build and push image
+        run: |
+          IMAGE=registry.example.com/payments-api:${GITHUB_SHA}
+          docker build -t "${IMAGE}" .
+          docker push "${IMAGE}"
+          echo "IMAGE=${IMAGE}" >> $GITHUB_ENV
+
+      - name: Deploy to staging
+        run: |
+          kubectl -n staging set image deployment/payments-api payments-api=${IMAGE}
+          kubectl -n staging rollout status deployment/payments-api --timeout=180s
+
+  promote_to_prod:
+    needs: build_test_stage
+    if: ${{ github.event.inputs.promote == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check kill switch annotation
+        id: kill_switch_check
+        run: |
+          kill_switch=$(kubectl -n production get deployment payments-api -o jsonpath="{.metadata.annotations.devops-daily\.com/kill-switch}")
+          echo "Kill switch is: $kill_switch"
+          echo "::set-output name=enabled::$kill_switch"
+
+      - name: Fail if kill switch enabled
+        if: steps.kill_switch_check.outputs.enabled == 'true'
+        run: |
+          echo "Kill switch enabled, stopping deployment to production."
+          exit 1
+
+      - name: Deploy to production
+        run: |
+          kubectl -n production set image deployment/payments-api payments-api=${{ env.IMAGE }}
+          kubectl -n production rollout status deployment/payments-api --timeout=300s
+</code></pre>
+                <p class="mt-2">
+                    <strong>Améliorations :</strong>
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Tests obligatoires avant le build. ( checkout action (<a href="#ref-3" class="text-blue-600 hover:underline">*3</a>))</li>
+                    <li>Déploiement initial en staging.</li>
+                    <li>Approbation manuelle avant la production.</li>
+                    <li>Kill switch pour arrêter si nécessaire.</li>
+                    <li>Timeout plus long (300s) pour valider le rollout.</li>
+                </ul>
+                <img src="../img/blog/blog-19-4.jpeg" alt="Déploiement kill switch" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cloud mr-2 text-purple-500"></i> Guide simple : Déploiement Canary avec rollback instantané
+                </h2>
+                <p class="mt-2">
+                    Déployer une nouvelle version à 100% des utilisateurs d’un coup est risqué. Le déploiement canary (<a href="#ref-2" class="text-blue-600 hover:underline">*2</a>) expose la nouvelle version à une petite partie du trafic (par exemple, 10%). Si tout va bien, on passe à 100%. Si ça casse, on revient en arrière immédiatement.
+                </p>
+                <p class="mt-2">
+                    <strong>Attention :</strong> Un canary ne fonctionne que si vous avez de bons contrôles, comme :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Des tests synthétiques (requêtes factices pour vérifier les endpoints).</li>
+                    <li>Des alertes d’erreurs (logs et métriques surveillés en temps réel).</li>
+                </ul>
+                <h3 class="font-semibold mt-4">Étape 1 : Déployer le canary (10% du trafic)</h3>
+                <p class="mt-2">
+                    Voici un exemple avec Kustomize (<a href="#ref-5" class="text-blue-600 hover:underline">*5</a>) :
+                </p>
+                <img src="../img/blog/blog-19-5.jpeg" alt="Déploiement Kustomize" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code># overlays/production/kustomization.yaml
+resources:
+  - ../../base
+patches:
+  - target:
+      kind: Deployment
+      name: payments-api
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 10
+      - op: add
+        path: /spec/template/metadata/labels/canary
+        value: "true"
+</code></pre>
+                <p class="mt-2">
+                    Cela déploie 10 réplicas avec le label “canary”, soit environ 10% du trafic sur la nouvelle version.
+                </p>
+                <h3 class="font-semibold mt-4">Étape 2 : Promouvoir en production complète</h3>
+                <p class="mt-2">
+                    Si tout va bien, passez à 100% du trafic :
+                </p>
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code>kubectl -n production scale deployment/payments-api --replicas=30
+</code></pre>
+                <h3 class="font-semibold mt-4">Étape 3 : Rollback instantané (si problème)</h3>
+                <p class="mt-2">
+                    En cas d’erreurs, revenez immédiatement à la version précédente :
+                </p>
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code>kubectl -n production rollout undo deployment/payments-api
+</code></pre>
+                <h3 class="font-semibold mt-4">Étape 4 : Mettre en pause (optionnel)</h3>
+                <p class="mt-2">
+                    Si vous n’êtes pas sûr, mettez en pause le déploiement et coupez le trafic vers la mauvaise version (si supporté par votre ingress) :
+                </p>
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code>kubectl -n production rollout pause deployment/payments-api
+</code></pre>
+                <img src="../img/blog/blog-19-3.jpeg" alt="Déploiement Canary" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-bell mr-2 text-purple-500"></i> Alerter et communiquer en phase avec vos déploiements
+                </h2>
+                <p class="mt-2">
+                    Les déploiements vont vite. Pour rester en sécurité, deux pratiques sont essentielles :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Alerter au moment des déploiements pour détecter les problèmes immédiatement.</li>
+                    <li>Partager les résultats des déploiements dans un chat (Slack, Teams, etc.) pour informer l’équipe.</li>
+                </ul>
+                <p class="mt-2">
+                    Ces approches permettent une détection rapide, une réaction rapide et moins de confusion.
+                </p>
+                <h3 class="font-semibold mt-4">1. Alerter au moment des déploiements (exemple Prometheus)</h3>
+                <p class="mt-2">
+                    Vos alertes doivent :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Se déclencher rapidement après un déploiement.</li>
+                    <li>Ne pas attendre plusieurs heures (quand le mal est déjà fait).</li>
+                    <li>Se concentrer sur les taux d’erreurs ou budgets d’erreurs, pas seulement sur un échec isolé.</li>
+                </ul>
+                <p class="mt-2">
+                    Exemple de règle d’alerte Prometheus :
+                </p>
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code>- alert: PaymentsHighErrorRate
+  expr: sum(rate(http_requests_total{app="payments-api", status=~"5.."}[5m]))
+    / sum(rate(http_requests_total{app="payments-api"}[5m])) > 0.05
+  for: 4m
+  labels:
+    severity: page
+  annotations:
+    summary: 'payments-api 5xx au-dessus de 5%'
+    description: 'Vérifiez le dernier déploiement et les logs du canary. Envisagez un rollback.'
+</code></pre>
+                <p class="mt-2">
+                    <strong>Ce que fait cette règle :</strong>
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Surveille les erreurs 5xx supérieures à 5% sur 5 minutes.</li>
+                    <li>Déclenche seulement si le problème dure au moins 4 minutes (réduction du bruit).</li>
+                    <li>Étiquette <code>severity: page</code> → alerte urgente à l’ingénieur d’astreinte.</li>
+                    <li>Message clair : “Regardez les logs du dernier déploiement, rollback si nécessaire.”</li>
+                </ul>
+                <p class="mt-2">
+                    <strong>Résultat :</strong> Les problèmes liés à un déploiement sont repérés rapidement, permettant un rollback ou une investigation immédiate.
+                </p>
+                <h3 class="font-semibold mt-4">2. Partager les résultats des déploiements (Slack ou Teams)</h3>
+                <p class="mt-2">
+                    Après chaque déploiement, prévenez l’équipe via un chat pour améliorer la visibilité.
+                </p>
+                <p class="mt-2">
+                    Exemple de webhook Slack :
+                </p>
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code>curl -X POST -H 'Content-type: application/json' \
+  --data "{\"text\":\"payments-api déployé en production: ${GITHUB_SHA} ✅\"}" \
+  "$SLACK_WEBHOOK_URL"
+</code></pre>
+                <p class="mt-2">
+                    <strong>Pourquoi c’est important :</strong>
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Tout le monde sait quelle version est en ligne.</li>
+                    <li>En cas d’incident, il est facile de voir ce qui a changé.</li>
+                    <li>Évite les enquêtes redondantes par plusieurs personnes.</li>
+                    <li>Renforce la confiance dans l’automatisation tout en gardant les humains informés.</li>
+                </ul>
+                <h3 class="font-semibold mt-4">Pourquoi c’est essentiel ?</h3>
+                <p class="mt-2">
+                    Alerter dès le déploiement permet une détection et un rollback rapides. Communiquer sur les déploiements réduit la confusion et favorise la collaboration. Ensemble, ces pratiques permettent d’aller vite sans compromettre la sécurité opérationnelle.
+                </p>
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-tools mr-2 text-purple-500"></i> 11. Note Terraform : ne pas automatiser l’intention
+                </h2>
+                <p class="mt-2">
+                    Avec Terraform, il est tentant de lancer un “auto-apply” à chaque merge. C’est rapide, mais cela cache plusieurs risques :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>L’intention disparaît : personne ne voit vraiment les changements appliqués.</li>
+                    <li>Le drift (écart entre le code et l’infra réelle) peut passer inaperçu.</li>
+                    <li>Des suppressions surprises peuvent arriver sans validation humaine.</li>
+                </ul>
+                <h3 class="font-semibold mt-4">Un flux plus sûr</h3>
+                <p class="mt-2">
+                    La bonne pratique est :
+                </p>
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code>terraform plan # commentaire sur la PR
+# revue humaine
+terraform apply # via CI runner, sur commit approuvé
+</code></pre>
+                <p class="mt-2">
+                    <strong>Avantages :</strong>
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Tout le monde voit les changements avant exécution.</li>
+                    <li>Les reviewers peuvent repérer une suppression involontaire ou un mauvais paramètre.</li>
+                    <li>L’apply reste automatisé depuis un environnement propre, pas depuis une machine locale.</li>
+                </ul>
+                <h3 class="font-semibold mt-4">Si vous devez absolument auto-appliquer</h3>
+                <p class="mt-2">
+                    Dans certains cas, l’auto-apply est nécessaire. Dans ce cas :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Limitez-le aux environnements peu risqués (dev, sandbox).</li>
+                    <li>Publiez toujours l’artifact du plan pour audit et transparence.</li>
+                </ul>
+                <h3 class="font-semibold mt-4">Exemple utile (stocker un plan pour revue)</h3>
+                <p class="mt-2">
+                    Voici comment stocker un plan Terraform pour revue :
+                </p>
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code>terraform init
+terraform plan -out=tfplan.bin
+terraform show -json tfplan.bin > tfplan.json
+# Upload tfplan.json comme artifact de build pour revue dans la PR
+</code></pre>
+                <p class="mt-2">
+                    Cela permet d’afficher clairement le plan dans vos PR ou logs CI. (<a href="#ref-8" class="text-blue-600 hover:underline">*8</a>) Les reviewers voient exactement ce qui va changer avant l’application.
+                </p>
+                <img src="../img/blog/blog-19-6.jpeg" alt="Terraform best practices" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> En résumé
+                </h2>
+                <p class="mt-2">
+                    L’automatisation est essentielle en DevOps, mais une sur-automatisation sans garde-fous peut causer des pannes critiques. Pour éviter les pièges :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Automatisez les tâches fréquentes et peu risquées.</li>
+                    <li>Gardez des contrôles humains pour les actions critiques.</li>
+                    <li>Incluez des tests automatiques et un environnement de staging.</li>
+                    <li>Prévoyez un kill switch et une stratégie de rollback.</li>
+                    <li>Documentez vos scripts et réévaluez régulièrement leur pertinence.</li>
+                </ul>
+            </section>
+            
+            <!-- Astuces -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-tools mr-2 text-blue-500"></i> Astuces
+                </h2>
+                <ul class="list-disc pl-6 mt-2">    
+                    <li> 
+                        <p class="mt-2">
+                            Github action runs-on (<a href="#ref-4" class="text-blue-600 hover:underline"></a>), La plupart des workflows GitHub Actions utilisent ubuntu-latest comme runner, mais vous pouvez choisir d'autres runners en fonction de vos besoins : windows-latest si votre construction ou déploiement nécessite des outils ou scripts spécifiques à Windows, ou macos-latest si vous devez construire ou tester des applications Mac/iOS sur macOS
+                        </p>
+                    </li>
+                    <li> 
+                        <p class="mt-2">
+                            Le dossier ../../base dans Kustomize (<a href="#ref-5" class="text-blue-600 hover:underline">*5</a>), Le dossier base contient des fichiers YAML de base pour l’installation des ressources Kubernetes. Vous pouvez l’utiliser comme base pour vos propres ressources.
+                        </p>
+                    </li>
+                    <li> 
+                        <p class="mt-2">
+                            Sur le nombre de pods (réplicas) dans le déploiement, 
+                            Vous pouvez définir n’importe quel nombre selon vos besoins, ressources et trafic. 
+                            Le nombre de pods par défaut est 1. Pour un environnement de test, 5 pods peuvent suffire. 
+                            En production, vous pouvez mettre 10, 30, 100 selon la charge. Vous pouvez aussi gérer la montée et descente automatique des pods avec un Horizontal Pod Autoscaler (HPA) (<a href="#ref-6" class="text-blue-600 hover:underline">*6</a>) dans Kubernetes.
+                        </p>
+                    </li>
+                    <li> 
+                        <p class="mt-2">
+                            Pour en savoir plus sur la structure interne des ressources Kubernetes (comme /spec/template/metadata/labels) (<a href="#ref-7" class="text-blue-600 hover:underline">*7</a>), C’est la manière dont Kubernetes décrit et organise ses ressources dans des fichiers YAML. Vous pouvez consulter la documentation officielle qui détaille la structure de chaque type de ressource Kubernetes.
+                        </p>
+                    </li>
+                    <li> 
+                        <p class="mt-2">
+                            L’option -out=tfplan.bin sauvegarde ce plan dans un fichier binaire nommé tfplan.bin au lieu de l’afficher dans la console. (<a href="#ref-8" class="text-blue-600 hover:underline">*8</a>), Ce fichier de plan sauvegardé peut être utilisé plus tard, par exemple avec la commande terraform apply tfplan.bin pour appliquer exactement ce plan.
+                        </p>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li id="ref-1">(<a href="#ref-1" class="text-blue-600 hover:underline">*1</a>) <a href="https://kubernetes.io/docs/reference/labels-annotations-taints/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">kubernetes - Labels, Annotations and Taints</a></li>
+                    <li id="ref-2">(<a href="#ref-2" class="text-blue-600 hover:underline">*2</a>) <a href="https://notes.kodekloud.com/docs/Certified-Kubernetes-Application-Developer-CKAD/POD-Design/Deployment-Strategy-Canary" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">kubernetes - Deployment Strategy Canary</a></li>
+                    <li id="ref-3">(<a href="#ref-3" class="text-blue-600 hover:underline">*3</a>) <a href="https://github.com/actions/checkout" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">github - Checkout action</a></li>
+                    <li id="ref-4">(<a href="#ref-4" class="text-blue-600 hover:underline">*4</a>) <a href="https://docs.github.com/en/enterprise-cloud@latest/actions/concepts/runners/larger-runners" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">github - Larger standard Github-hosted runners</a></li>
+                    <li id="ref-5">(<a href="#ref-5" class="text-blue-600 hover:underline">*5</a>) <a href="https://github.com/kubernetes-sigs/kustomize" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">kubernetes - Kustomize templating in kubernetes </a></li>
+                    <li id="ref-6">(<a href="#ref-6" class="text-blue-600 hover:underline">*6</a>) <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">kubernetes - HorizontalPodAutoscaler Walkthrough </a></li>
+                    <li id="ref-7">(<a href="#ref-7" class="text-blue-600 hover:underline">*7</a>) <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">kubernetes - Deployment resource definition labels </a></li>
+                    <li id="ref-8">(<a href="#ref-8" class="text-blue-600 hover:underline">*8</a>) <a href="https://developer.hashicorp.com/sentinel/docs/features/terraform/tfplan-v1" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">terraform - CLI commands tfplan/v1 </a></li>
+                </ul>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-18.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="/blogs/blog-20.html" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
