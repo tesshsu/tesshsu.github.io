@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Préparation et retour d’expérience – AWS Certified Cloud Practitioner (CLF-C02)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-cloud mr-2 text-purple-500"></i> Préparation et retour d’expérience – AWS Certified Cloud Practitioner (CLF-C02)
+                </h1>
+                <p class="text-gray-600 mb-2">28 Août 2025, 10:45 CEST</p>
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">Cloud</span>
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Guide pratique pour réussir la certification AWS CLF-C02
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    En 2025, les outils d’IA et les infrastructures cloud font partie intégrante du quotidien professionnel. Qu’il s’agisse d’écrire du code, de déployer une application ou d’apprendre une nouvelle technologie, tout semble presque magique. Mais je me surprends souvent à être un « magicien qui lance des sorts sans comprendre les principes » — j’utilise les services sans toujours bien saisir les bases qui se cachent derrière.
+                </p>
+                <p class="mt-2">
+                    Lorsque j’ai découvert le programme d’accompagnement AWS Educate, avec 50% de réduction pour l’examen (grâce à une invitation reçue via un groupe DevOps), j’ai sauté sur l’occasion. Cela me permettait de réviser les fondamentaux du cloud de manière structurée et de relever un défi de carrière. Plutôt que de commencer par une certification orientée IA, j’ai opté pour l’AWS Certified Cloud Practitioner (CLF-C02), une certification de base couvrant les concepts cloud, la tarification, la sécurité, la conformité et les services clés AWS. C’est une excellente porte d’entrée pour toute spécialisation future (DevOps, Cloud Architect ou ingénieur en sécurité).
+                </p>
+                <p class="mt-2">
+                    J’ai eu moins d’un mois pour me préparer, soit environ trois semaines à temps plein. Avant de commencer, j’ai consulté différents blogs sur les meilleures pratiques d’apprentissage efficaces (<a href="#ref-1" class="text-blue-600 hover:underline">*1</a>).
+                </p>
+                <img src="../img/blog/blog-20.jpeg" alt="Introduction" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cloud mr-2 text-purple-500"></i> Pourquoi AWS et pas Azure ou GCP ?
+                </h2>
+                <p class="mt-2">
+                    Beaucoup de collègues m’ont demandé : « Pourquoi AWS ? Pourquoi pas Azure ou GCP ? » Voici mes trois raisons principales :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><strong>Plus de flexibilité :</strong> Contrairement à Azure et GCP, qui demandent souvent un compte entreprise ou un plan payant pour débloquer certaines fonctions, AWS permet une personnalisation granulaire au niveau de l’infrastructure (VPC, Security Groups, IAM Policies). Parfait pour pratiquer en profondeur.</li>
+                    <li><strong>Part de marché dominante :</strong> Selon une étude de marché en France (2024) : AWS 48%, Azure 16%, GCP 8%. Avec une telle avance, AWS est le choix logique pour une trajectoire DevOps ou Cloud Engineering.</li>
+                    <li><strong>Expérience Free-Tier plus sereine :</strong> AWS offre 12 mois gratuits (j’ai dépensé ~7$). Azure propose 3 mois gratuits, mais une facture de 121$ pour une application équivalente. GCP offre un crédit de 300$, mais une fois épuisé, j’ai reçu une facture de 183$. Chez AWS, le risque de coût est bien plus faible (<a href="#ref-2" class="text-blue-600 hover:underline">*2</a>).</li>
+                </ul>
+                <p class="mt-2">
+                    Bref : AWS s’imposait naturellement.
+                </p>
+                <img src="../img/blog/blog-20-1.jpeg" alt="Pourquoi AWS" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-info-circle mr-2 text-purple-500"></i> Infos sur l’examen
+                </h2>
+                <p class="mt-2">
+                    <strong>Nom :</strong> AWS Certified Cloud Practitioner (CLF-C02) (<a href="#ref-3" class="text-blue-600 hover:underline">*3</a>)<br>
+                    <strong>Niveau :</strong> Fondamental<br>
+                    <strong>Durée :</strong> 90 minutes<br>
+                    <strong>Nombre de questions :</strong> 65 (QCM et multi-réponses)<br>
+                    <strong>Scores :</strong> 100–1000 points, seuil de réussite = 700 points<br>
+                    <strong>Prix :</strong> 100$ (–50% via AWS Educate = 50$)<br>
+                    <strong>Langue :</strong> Anglais ou Chinois Traditionnel
+                </p>
+                <p class="mt-2">
+                    <strong>Domaines évalués :</strong>
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Concepts cloud – 24%</li>
+                    <li>Sécurité et conformité – 30%</li>
+                    <li>Technologies et services AWS – 34%</li>
+                    <li>Tarification et facturation – 12%</li>
+                </ul>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-graduation-cap mr-2 text-purple-500"></i> Expérience en conditions d’examen
+                </h2>
+                <p class="mt-2">
+                    <strong>Temps supplémentaire :</strong> Extension de +30 minutes possible si l’anglais n’est pas votre langue maternelle.<br>
+                    <strong>Identification :</strong> Présenter deux pièces officielles avec photo.<br>
+                    <strong>Environnement :</strong>
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><strong>En centre :</strong> Plus simple et tranquille.</li>
+                    <li><strong>À domicile :</strong> Bureau totalement vide, pas de papiers, pas de deuxième écran. Installation de OnVue et test de l’environnement la veille.</li>
+                </ul>
+                <p class="mt-2">
+                    <strong>Pendant l’examen :</strong> Format proche des simulations CloudWolf. Possibilité de revoir toutes les réponses avant envoi.<br>
+                    <strong>Résultats :</strong> Affichés immédiatement après validation, badge Credly reçu le lendemain.
+                </p>
+                <img src="../img/blog/blog-20-2.jpeg" alt="Conditions d'examen" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-book mr-2 text-purple-500"></i> Ma méthode de préparation
+                </h2>
+                <h3 class="font-semibold mt-4">1. Consolider les concepts</h3>
+                <p class="mt-2">
+                    Comprendre les modèles IaaS / PaaS / SaaS.<br>
+                    Maîtriser les avantages du cloud (élasticité, paiement à l’usage…).<br>
+                    Services clés AWS : EC2, S3, RDS, IAM, VPC, CloudFront.<br>
+                    Assimiler les modèles de facturation, TCO et Well-Architected Framework.
+                </p>
+                <h3 class="font-semibold mt-4">2. Pratique concrète (Hands-on)</h3>
+                <p class="mt-2">
+                    Créer un compte Free-Tier et pratiquer.<br>
+                    Supprimer systématiquement les ressources pour éviter des coûts.<br>
+                    Exercices réseau : VPC, NAT Gateway, Security Groups, Internet Gateway, peering.
+                </p>
+                <h3 class="font-semibold mt-4">3. S’entraîner avec des examens blancs</h3>
+                <p class="mt-2">
+                    AWS Skill Builder – examen officiel blanc.<br>
+                    CloudWolf simulations CLF-C02 – répéter jusqu’à avoir moins de 15% d’erreurs.<br>
+                    Ne pas apprendre « par cœur », mais comprendre pourquoi un service correspond à un cas concret.
+                </p>
+                <h3 class="font-semibold mt-4">4. Prendre des notes structurées</h3>
+                <p class="mt-2">
+                    Utiliser Trello pour organiser les notions en arbres.<br>
+                    Révision active : se poser des questions à soi-même, demander des explications à une IA (comme ChatGPT ou Perplexity).<br>
+                    La veille : révision rapide, pas de cours longs.
+                </p>
+                <img src="../img/blog/blog-20-3.jpeg" alt="Méthode de préparation" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-purple-500"></i> Ressources recommandées
+                </h2>
+                <h3 class="font-semibold mt-4">Officielles</h3>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>AWS Certified Cloud Practitioner Exam Guide (CLF-C02)</li>
+                    <li>AWS Skill Builder – Exam Prep CLF-C02</li>
+                    <li>Practice Questions officielles CLF-C02</li>
+                </ul>
+                <h3 class="font-semibold mt-4">Formations et vidéos</h3>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Introduction aux services AWS (2025) – Chetan (<a href="#ref-4" class="text-blue-600 hover:underline">*4</a>)</li>
+                    <li>CloudWolf – Certified Cloud Practitioner (<a href="#ref-5" class="text-blue-600 hover:underline">*5</a>) : Garantie de remboursement si échec, nombreux labs pratiques en courtes vidéos, examens blancs détaillés.</li>
+                </ul>
+                <h3 class="font-semibold mt-4">Examens pratiques</h3>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Exercices gratuits par Fabricio Félix (<a href="#ref-6" class="text-blue-600 hover:underline">*6</a>)</li>
+                    <li>Udemy – Practice Exams AWS CLF-C02 (payant, mais analyses très utiles).</li>
+                </ul>
+                <p class="mt-2">
+                    Voici un schéma (mindmap) que vous pouvez utiliser pour illustrer votre préparation à la certification CLF-C02.
+                </p>
+                <img src="../img/blog/blog-20-4.jpeg" alt="Mindmap préparation" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> Conclusion
+                </h2>
+                <p class="mt-2">
+                    <strong>Coût total :</strong> Examen + cours + exercices = ~69,99$ (promo CloudWolf à 19,99$ + examen AWS 50$). Beaucoup plus rentable comparé à Azure (~99$ sans cours ni exercices) ou GCP (~125$ sans cours ni exercices).<br>
+                    Cette certification m’a permis de vraiment comprendre l’architecture AWS et les fondamentaux du cloud, au lieu de simplement « réciter » des services.<br>
+                    Pour ceux qui veulent entamer une carrière en cloud, DevOps ou IA/ML, la Cloud Practitioner est un point de départ idéal.
+                </p>
+            </section>
+
+            <!-- Références -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li id="ref-1">(<a href="#ref-1" class="text-blue-600 hover:underline">*1</a>) <a href="https://www.whizlabs.com/blog/how-to-pass-aws-certified-cloud-practitioner-exam/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Whizlabs – Pass AWS CLF-C02 exam</a></li>
+                    <li id="ref-2">(<a href="#ref-2" class="text-blue-600 hover:underline">*2</a>) <a href="https://www.devcloudjourney.com/aws-free-tier" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Devcloudjourney – AWS Free Tier explication</a></li>
+                    <li id="ref-3">(<a href="#ref-3" class="text-blue-600 hover:underline">*3</a>) <a href="https://aws.amazon.com/certification/certified-cloud-practitioner/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AWS – Cloud Practitioner Certification</a></li>
+                    <li id="ref-4">(<a href="#ref-4" class="text-blue-600 hover:underline">*4</a>) <a href="https://www.youtube.com/watch?v=example_aws_2025" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">YouTube – Intro services AWS 2025</a></li>
+                    <li id="ref-5">(<a href="#ref-5" class="text-blue-600 hover:underline">*5</a>) <a href="https://www.cloudwolf.com/courses/aws-certified-cloud-practitioner" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">CloudWolf – Formation CLF-C02</a></li>
+                    <li id="ref-6">(<a href="#ref-6" class="text-blue-600 hover:underline">*6</a>) <a href="https://www.awspracticenow.com/free-exams" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AWS Practice Now – Exercices gratuits QCM</a></li>
+                </ul>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-19.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="/blogs/blog-21.html" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
