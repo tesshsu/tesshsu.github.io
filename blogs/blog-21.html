@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ne considérez plus le DNS comme un simple annuaire téléphonique du réseau !</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-shield-alt mr-2 text-purple-500"></i> Ne considérez plus le DNS comme un simple annuaire téléphonique du réseau !
+                </h1>
+                <p class="text-gray-600 mb-2">08 Septembre 2025, 14:30 CEST</p>
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">Cyber</span>
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Il est désormais l'arsenal et le champ de bataille des hackers. Votre configuration DNS est-elle sécurisée ?
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    Qu'est-ce que le DNS ? Le système de noms de domaine (Domain Name System) est un système qui traduit le nom d'un site web en une adresse IP. Il comprend une architecture à quatre couches : Résolveur, Racine, TLD (Domaine de premier niveau) et Autoritaire. Nous l'utilisons tous les jours, mais c'est en fait un protocole établi il y a des décennies qui n'a pas pris en compte l'évolution des menaces de cybersécurité, c'est pourquoi j'aime avoir cet article de blog.
+                </p>
+                <p class="mt-2">
+                    Le service DNS est très populaire et nous pouvons le toucher occasionnellement lorsque nous devons ajouter de la production pour des applications, des micro-services, du SaaS ou même simplement tester la QA, l'UAT pour les tests. Nous avons utilisé le DNS soit avec un serveur fournisseur, soit avec un cloud comme Cloudflare, AWS Route 53, Azure DNS, GCP Cloud DNS et de nombreux fournisseurs DNS en ligne différents.
+                </p>
+                <p class="mt-2">
+                    J'ai donc essayé de rassembler les nouvelles d'attaques liées au DNS de l'année dernière, et de lister les techniques d'attaque de base, comment les éviter en tant que responsable informatique ou en charge de la cybersécurité. Encore une fois, je ne suis pas un expert mais j'aime écrire au fur et à mesure que j'apprends, donc si vous trouvez des points qui ne sont pas absolument corrects, <a href="mailto:tess.hsu@gmail.com">n'hésitez pas à m'écrire</a>
+                    .
+                </p>
+                <img src="../img/blog/blog-21.jpeg" alt="Introduction DNS" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2 text-purple-500"></i> Cas n°1 : Commandes C2 cachées dans les enregistrements DNS TXT
+                </h2>
+                <p class="mt-2">
+                    Comme les équipes rouges utilisent le contrôle à distance comme Covenant C2 (<a href="#ref-1" class="text-blue-600 hover:underline">*1</a>) pour tester légalement les défenses, Covenant prend en charge les communications chiffrées et furtives, ce qui rend son trafic difficile à détecter. Les attaquants peuvent automatiser des tâches, surveiller les systèmes compromis en temps réel et personnaliser les attaques sur les cibles. Voici un cas qui s'est produit :
+                </p>
+                <p class="mt-2">
+                    Date : 16/07/2025<br>
+                    Incident : Des hackers ont caché les commandes du contrôleur Covenant C2 dans les enregistrements TXT du DNS. Tout ordinateur interrogeant ce domaine recevrait un code malveillant chiffré et serait contrôlé à distance.<br>
+                    Sources : DomainTools, Tom’s Hardware (<a href="#ref-2" class="text-blue-600 hover:underline">*2</a>)
+                </p>
+                <p class="mt-2">
+                    Recommandation : Les entreprises devraient surveiller le contenu et la fréquence des requêtes DNS, et mettre en place des tunnels de sécurité DNS.
+                </p>
+                <p class="mt-2">
+                    Si vous êtes en charge de la cybersécurité informatique et que vous voulez éviter les attaques où Covenant C2 ou d'autres malwares cachent des commandes dans les enregistrements DNS TXT (comme les serveurs DNS publics 168.95.1 ou 8.8.8.8)
+                </p>
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code>sudo nano /etc/dnsmasq.conf</code></pre>
+                <p class="mt-2">
+                    Ensuite, ajoutez ou décommentez ces lignes pour configurer dnsmasq :
+                    <img src="../img/blog/blog-21-3.jpeg" alt="dnsmasq" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                </p>
+                <p class="mt-2">
+                    Parce qu'il utilise très peu de ressources, dnsmasq est couramment utilisé sur les routeurs, les petits serveurs, ou comme solution DNS/DHCP locale pour les réseaux internes. Il peut également être configuré pour bloquer les sites malveillants en redirigeant leurs requêtes DNS.
+                </p>
+                <p class="mt-2">
+                    En résumé, dnsmasq facilite la gestion du DNS et du DHCP au sein des petits réseaux ou des réseaux domestiques, améliorant les performances et le contrôle.
+                </p>
+                <img src="../img/blog/blog-21-1.jpeg" alt="Cas n°1" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2 text-purple-500"></i> Cas n°2 : Cloudflare a atténué une attaque DDoS de 7,3 Tbps
+                </h2>
+                <p class="mt-2">
+                    Date : 20/06/2025<br>
+                    Incident : Le trafic d'attaque a culminé à 7,3 Tbps, la majeure partie étant causée par des attaques par amplification DNS, avec un trafic provenant de plus de 120 000 adresses IP.<br>
+                    Source : The Hacker News (<a href="#ref-3" class="text-blue-600 hover:underline">*3</a>)
+                </p>
+                <p class="mt-2">
+                    Recommandation : Utiliser le DNS Anycast ; la protection DDoS et l'analyse du trafic sont des défenses essentielles.
+                </p>
+                <p class="mt-2">
+                    Exemple (sur Linux utilisant FRRouting avec BGP) :
+                </p>
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code># Attribuer une IP Anycast sur la boucle locale
+sudo ip addr add 192.0.2.1/32 dev lo
+
+# Configurer le démon BGP (FRR ou Quagga) pour annoncer le préfixe IP 192.0.2.1/32 aux pairs.
+# Répéter sur d'autres serveurs à différents emplacements.
+# Assurez-vous que les serveurs DNS écoutent sur l'IP Anycast.
+</code></pre>
+                <p class="mt-2">
+                    Avantages :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Latence réduite en utilisant le serveur le plus proche</li>
+                    <li>Haute disponibilité et tolérance aux pannes</li>
+                    <li>Absorption DDoS distribuée (le trafic d'attaque se répartit sur de nombreux nœuds)</li>
+                </ul>
+                <p class="mt-2">
+                    Le DNS Anycast (<a href="#ref-4" class="text-blue-600 hover:underline">*4</a>) est largement utilisé par les serveurs racine DNS mondiaux, Cloudflare, Google DNS et de nombreux fournisseurs CDN pour une plus grande fiabilité et performance.
+                </p>
+                <img src="../img/blog/blog-21-2.jpeg" alt="Cas n°2" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> Conclusion
+                </h2>
+                <p class="mt-2">
+                    Qu'ai-je appris aujourd'hui ? DNS : Ce n'est pas seulement l'annuaire du réseau ; c'est une vulnérabilité que les hackers peuvent exploiter. Des exemples concrets incluent une attaque de 7,3 Tbps, des commandes C2 cachées et le détournement de sous-domaines de sites web gouvernementaux.
+                </p>
+                <p class="mt-2">
+                    Tendance/Phénomène : Le DNS est passé d'un simple rôle de service à un champ de bataille principal pour les attaques et l'infiltration. Les protocoles de chiffrement tels que DoH (DNS over HTTPS) et DoT (DNS over TLS) rendent la surveillance extrêmement difficile. L'utilisation intensive des enregistrements CNAME dans les architectures cloud et avec les services tiers augmente le risque de « dangling records ».
+                </p>
+                <p class="mt-2">
+                    Une stratégie de défense en trois étapes pour le DNS comprend :
+                </p>
+                <ol class="list-decimal pl-6 mt-2">
+                    <li>Spécifier un fournisseur DNS.</li>
+                    <li>Déployer des outils de surveillance et d'observation.</li>
+                    <li>Utiliser la détection des points d'exexfiltration (EDR) pour identifier les menaces.</li>
+                </ol>
+                <p class="mt-2">
+                    Le contenu est un peu technique, mais c'est absolument un guide de défense incontournable pour le personnel informatique/de cybersécurité.
+                </p>
+                <p class="mt-2">
+                    #SécuritéInformatique #SécuritéDNS #Cyberattaque #DétournementDeDomaine #Cybersécurité #C2 #DOH #DéfenseCybersécurité #SecBriefCybersecurityBriefingRoom
+                </p>
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li id="ref-1">(<a href="#ref-1" class="text-blue-600 hover:underline">*1</a>) <a href="https://github.com/cobbr/Covenant" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Commande et contrôle Covenant C2</a></li>
+                    <li id="ref-2">(<a href="#ref-2" class="text-blue-600 hover:underline">*2</a>) <a href="https://dig.watch/updates/hackers-hide-malware-using-dns-txt-records" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Les hackers cachent des malwares à l'aide des enregistrements DNS TXT</a></li>
+                    <li id="ref-3">(<a href="#ref-3" class="text-blue-600 hover:underline">*3</a>) <a href="https://securitybrief.asia/story/cloudflare-thwarts-record-7-3-tbps-ddos-attack-with-automation" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">CloudFlare déjoue des attaques DDoS record de 7,3 TBPS grâce à l'automatisation</a></li>
+                    <li id="ref-4">(<a href="#ref-4" class="text-blue-600 hover:underline">*4</a>) <a href="https://www.cloudflare.com/fr-fr/learning/dns/what-is-anycast-dns/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Qu'est-ce que le DNS Anycast</a></li>
+                </ul>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-20.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="/blogs/blog-22.html" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
