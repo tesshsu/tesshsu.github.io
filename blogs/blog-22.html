@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éviter les mauvaises surprises de facture avec les outils AWS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-dollar-sign mr-2 text-purple-500"></i> Éviter les mauvaises surprises de facture avec les outils AWS
+                </h1>
+                <p class="text-gray-600 mb-2">12 Septembre 2025, 15:00 CEST</p>
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">DevOps</span>
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Outils AWS pour maîtriser vos factures cloud et optimiser vos coûts
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    Le modèle Pay-as-you-go du cloud est comme une lame à double tranchant : la flexibilité du « payer ce que l’on consomme » est très séduisante, mais un pic de trafic, une explosion des données de monitoring ou une erreur de configuration peuvent rapidement faire grimper la facture. Aujourd’hui, nous allons présenter les outils de gestion des coûts AWS pour vous aider à éviter les mauvaises surprises à la fin du mois !
+                </p>
+                <img src="../img/blog/blog-22.jpeg" alt="Introduction coûts AWS" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-chart-line mr-2 text-purple-500"></i> Les trois grands axes de facturation AWS
+                </h2>
+                <p class="mt-2">
+                    L’impact de l’utilisation des ressources sur les coûts varie selon la catégorie :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><strong>Calcul :</strong> la part la plus élevée</li>
+                    <li><strong>Stockage :</strong> intermédiaire</li>
+                    <li><strong>Transfert sortant de données :</strong> relativement bon marché</li>
+                </ul>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-cloud mr-2 text-purple-500"></i> Pourquoi la gestion des coûts est essentielle en cloud natif ?
+                </h2>
+                <p class="mt-2">
+                    Les systèmes cloud natifs (microservices, conteneurs, serverless) reposent fortement sur l’Auto Scaling et les outils de monitoring (CloudWatch, X-Ray). Ces outils améliorent la performance mais peuvent aussi augmenter les coûts.
+                </p>
+                <p class="mt-2">
+                    Exemples :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><strong>Coûts de monitoring :</strong> CloudWatch Logs facture au volume de données (ex. 0,50 $/Go). Trop de logs peuvent rapidement alourdir la facture.</li>
+                    <li><strong>Coûts liés à l’Auto Scaling :</strong> EC2 Auto Scaling ou Lambda augmentent automatiquement le nombre d’instances en cas de pic de trafic, ce qui peut entraîner des dépenses imprévues.</li>
+                    <li><strong>Architecture distribuée :</strong> les traces (X-Ray) et les appels inter-services (API Gateway) génèrent aussi des coûts supplémentaires.</li>
+                </ul>
+                <p class="mt-2">
+                    Grâce aux outils de gestion des coûts AWS, on peut atteindre l’objectif « visualiser, contrôler, optimiser » pour aligner performance opérationnelle et maîtrise budgétaire. Même le Free Tier, censé être gratuit, peut devenir coûteux : si l’utilisation dépasse les limites prévues, la facturation commence.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-tools mr-2 text-purple-500"></i> Les outils AWS de gestion des coûts et leurs usages pratiques
+                </h2>
+
+                <h3 class="font-semibold mt-4">1. Visualisation – AWS Cost Explorer</h3>
+                <p class="mt-2">
+                    Fonctionnalités :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Suivre les dépenses par service (Lambda, DynamoDB) ou par période (jour/mois).</li>
+                    <li>Utiliser les tags pour suivre les coûts d’un projet ou d’une équipe.</li>
+                    <li>Obtenir des prévisions pour les 12 mois à venir.</li>
+                </ul>
+                <p class="mt-2">
+                    Exemples pratiques :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Découverte que CloudWatch Logs représente 30 % du total (150 $/mois) car les logs Lambda n’ont pas de politique de rétention.</li>
+                    <li>Filtrage des coûts par Environment=Dev pour identifier des instances EC2 non arrêtées.</li>
+                </ul>
+                <p class="mt-2">
+                    <strong>Cost Explorer vs CUR</strong><br>
+                    Cost Explorer : visualisation rapide et analyses de base.<br>
+                    CUR (Cost and Usage Report) : données brutes très détaillées, adaptées aux analyses poussées et aux rapports personnalisés. Avec CUR 2.0, il est possible de sélectionner uniquement les colonnes utiles, réduisant considérablement la taille des fichiers.
+                </p>
+                <img src="../img/blog/blog-22-1.jpeg" alt="AWS Cost Explorer" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h3 class="font-semibold mt-4">2. Budgets – AWS Budgets</h3>
+                <p class="mt-2">
+                    Définir un budget global (ex. 900 $/mois) ou par service (ex. S3 limité à 100 Go).<br>
+                    Recevoir des alertes par email ou SNS en cas de dépassement ou d’approche des seuils.
+                </p>
+                <img src="../img/blog/blog-22-2.jpeg" alt="AWS Budgets" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h3 class="font-semibold mt-4">3. Conseiller – AWS Trusted Advisor</h3>
+                <p class="mt-2">
+                    Détecte les ressources inutilisées (ex. Elastic IP non libérées, instances RDS peu utilisées).<br>
+                    Fournit des recommandations de réduction de coûts.<br>
+                    Version gratuite : vérifications de base. Version Business : recommandations détaillées.
+                </p>
+                <img src="../img/blog/blog-22-3.jpeg" alt="AWS Trusted Advisor" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h3 class="font-semibold mt-4">4. Optimisation – AWS Compute Optimizer</h3>
+                <p class="mt-2">
+                    Analyse l’utilisation CPU/mémoire des EC2, Lambda, ECS.<br>
+                    Recommande des tailles ou types d’instances moins coûteux.
+                </p>
+                <p class="mt-2">
+                    Exemples :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Réduction de la mémoire Lambda de 1024 Mo à 512 Mo car l’utilisation moyenne est de 20 %.</li>
+                    <li>Passage d’une tâche ECS de c5.xlarge à c6g.large, économie de 10 %.</li>
+                </ul>
+                <img src="../img/blog/blog-22-4.jpeg" alt="AWS Compute Optimizer" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h3 class="font-semibold mt-4">5. Engagements longue durée – Savings Plans & Reserved Instances</h3>
+                <p class="mt-2">
+                    Savings Plans : engagement flexible sur 1 ou 3 ans, réductions jusqu’à 72 %.<br>
+                    Reserved Instances : réductions spécifiques pour EC2, RDS, etc.
+                </p>
+                <p class="mt-2">
+                    Exemples :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Achat d’un Compute Savings Plan pour un cluster ECS permanent : -30 %.</li>
+                    <li>Achat d’une Reserved Instance RDS 1 an : -200 $/mois.</li>
+                </ul>
+                <img src="../img/blog/blog-22-5.jpeg" alt="Savings Plans" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-table mr-2 text-purple-500"></i> Tableau récapitulatif
+                </h2>
+                <table class="min-w-full border-collapse border border-gray-300 mt-4">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border border-gray-300 px-4 py-2 text-left">Outil</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Usage</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Exemple</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Gain</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">AWS Cost Explorer</td>
+                            <td class="border border-gray-300 px-4 py-2">Suivi et analyse des coûts</td>
+                            <td class="border border-gray-300 px-4 py-2">Filtrer Environment=Dev et identifier des EC2 inactives</td>
+                            <td class="border border-gray-300 px-4 py-2">Arrêt immédiat des ressources inutiles → économies directes</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="border border-gray-300 px-4 py-2">AWS Budgets</td>
+                            <td class="border border-gray-300 px-4 py-2">Définir budget & alertes</td>
+                            <td class="border border-gray-300 px-4 py-2">Budget 900 $/mois, alerte à 80 %</td>
+                            <td class="border border-gray-300 px-4 py-2">Contrôle proactif, pas de surprises</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">AWS Trusted Advisor</td>
+                            <td class="border border-gray-300 px-4 py-2">Optimisation, sécurité, coûts</td>
+                            <td class="border border-gray-300 px-4 py-2">Détection Elastic IP non libérée</td>
+                            <td class="border border-gray-300 px-4 py-2">Petites économies cumulées sur le long terme</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="border border-gray-300 px-4 py-2">AWS Compute Optimizer</td>
+                            <td class="border border-gray-300 px-4 py-2">Recommandations de tailles optimisées</td>
+                            <td class="border border-gray-300 px-4 py-2">Lambda 1024 Mo → 512 Mo</td>
+                            <td class="border border-gray-300 px-4 py-2">Maintien des perfs, réduction des coûts</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">Savings Plans / Reserved Instances</td>
+                            <td class="border border-gray-300 px-4 py-2">Réductions long terme</td>
+                            <td class="border border-gray-300 px-4 py-2">1 an Savings Plan + RDS Reserved</td>
+                            <td class="border border-gray-300 px-4 py-2">-20 à -30 % sur charges stables</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> Conclusion
+                </h2>
+                <p class="mt-2">
+                    Dans un système cloud natif, chaque aspect lié aux coûts est concret et spécifique au contexte de l’entreprise. Ces outils et bonnes pratiques permettent de mieux anticiper et d’aligner besoins métier, performance et optimisation budgétaire.
+                </p>
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><a href="https://aws.amazon.com/fr/aws-cost-management/aws-cost-explorer/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AWS Cost Explorer</a></li>
+                    <li><a href="https://aws.amazon.com/fr/aws-cost-management/aws-budgets/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AWS Budgets</a></li>
+                    <li><a href="https://aws.amazon.com/fr/premiumsupport/technology/trusted-advisor/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AWS Trusted Advisor</a></li>
+                    <li><a href="https://aws.amazon.com/fr/compute-optimizer/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AWS Compute Optimizer</a></li>
+                    <li><a href="https://aws.amazon.com/fr/savingsplans/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AWS Savings Plans</a></li>
+                </ul>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-21.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="/blogs/blog-23.html" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
