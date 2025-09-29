@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sécuriser le Vibe Coding : Protégez vos projets novices avec Code-Guardian-Aegis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-shield-alt mr-2 text-purple-500"></i> Sécuriser le Vibe Coding : Protégez vos projets novices contre les vulnérabilités catastrophiques
+                </h1>
+                <p class="text-gray-600 mb-2">29 Septembre 2025, 15:00 CEST</p>
+                <span class="category bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded">Cyber</span>
+                <p class="sub-title text-lg flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Intégrez la sécurité dès la phase créative pour respecter les normes GDPR et éviter les risques majeurs
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+                <p class="mt-2">
+                    Le Vibe Coding, cette approche de développement rapide et intuitif souvent assistée par des IA, est une révolution pour les novices ou les non-ingénieurs. Mais comme une épée à double tranchant, sa vitesse et sa créativité peuvent masquer des erreurs de sécurité graves : fuites de données, injections SQL ou authentifications faibles. Imaginez travailler pour une entreprise soumise à la GDPR – une seule brèche pourrait entraîner des amendes colossales et une perte de confiance.
+                    Cela pourrait être complexe puisqu’il y a tellement de règles à respecter, comme l’OWASP Top 10, la sécurité des infrastructures DevOps, la sécurité des tiers, ainsi que la sécurité des requêtes API et des solutions EDR.
+                    Aujourd’hui, nous explorons comment intégrer la sécurité dès le départ avec un outil open-source génial : Code-Guardian-Aegis (<a href="#ref-1" class="text-blue-600 hover:underline">*1</a>). Ce repo GitHub transforme vos prompts IA en gardiens de sécurité, évitant les "erreurs impossibles" que les débutants commettent souvent par commodité.
+                </p>
+                <img src="../img/blog/blog-23.jpeg" alt="Sécurité Vibe Coding" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-shield-alt mr-2 text-purple-500"></i> Introduction à la sécurité en Vibe Coding
+                </h2>
+                <p class="mt-2">
+                    Pourquoi la sécurité est cruciale dès la phase "Vibe" ? Le Vibe Coding priorise l'inspiration et la rapidité, mais sans garde-fous, il expose à des risques comme les fuites de secrets (clés API codées en dur) ou les configurations permissives. Pour une conformité GDPR, il faut traiter les données personnelles avec chiffrement, validation et logs sécurisés.
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><strong>Fuites de données :</strong> Secrets exposés dans le code frontend.</li>
+                    <li><strong>Mauvaises configurations :</strong> Permissions 777 ou CORS mal réglés.</li>
+                    <li><strong>Logique métier faible :</strong> Authentification basée sur des usernames sans tokens.</li>
+                </ul>
+                <p class="mt-2">
+                    En adoptant des outils comme Code-Guardian-Aegis, on passe d'un développement "fun" à un processus professionnel, alignant créativité et sécurité sans alourdir le workflow.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-toolbox mr-2 text-purple-500"></i> Découverte de l’outil Code-Guardian-Aegis
+                </h2>
+                <p class="mt-2">
+                    Repo GitHub : <a href="https://github.com/cyesuta/Code-Guardian-Aegis/tree/main" target="_blank" class="text-blue-600 hover:underline">Code-Guardian-Aegis</a><br>
+                    Ce projet agit comme un bouclier de sécurité pour le Vibe Coding, conçu pour prévenir les vulnérabilités chez les novices utilisant des générateurs de code IA.
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Dossier <code>security-guidelines-documents/</code> : Checklists de bonnes pratiques sécurisées, multilingues, pour la prévention des erreurs. ( pour la phrase développement du code )</li>
+                    <li>Dossier <code>security-audit-meta-prompt/</code> : Meta-prompts pour audits automatisés, pour analyser le code avant déploiement selon OWASP Top 10 et autres règles. ( pour la phrase deployment du code )</li>
+                </ul>
+
+                <h3 class="font-semibold mt-4">Étapes pratiques avec VSCode et Continue</h3>
+                <p class="mt-2">Voici un guide pas à pas pour intégrer la sécurité dans un projet comme CrecheManagement :</p>
+
+                <h4 class="font-semibold mt-4">1. Installation et configuration de Continue</h4>
+                <img src="../img/blog/blog-23-1.jpeg" alt="Installation plugin AI" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Installer VSCode et l’extension Continue.</li>
+                    <li>Configurer un modèle local Ollama pour un LLM offline.</li>
+                    <li>Modifier <code>config.json</code> pour pointer vers Ollama. (<a href="#ref-2" class="text-blue-600 hover:underline">*2</a>)</li>
+                </ul>
+                <img src="../img/blog/blog-23-2.jpeg" alt="repo security" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <h4 class="font-semibold mt-4">2. Préparez votre projet</h4>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Cloner le repo Code-Guardian-Aegis dans ./security/.</li>
+                    <li>Vérifier la présence des fichiers de guidelines et prompts. voici example promp : </li>
+                </ul>
+                <code class="mt-4">Please scanning all the file in this repo under crecheManagement, used principal guidemeine from @file ./security/guidelines/Security-Guidelines_English.md , then Analyze and highlight all potential security issues in the entire CrecheManagement codebase, following these security guidelines. Focus on: - No hardcoded secrets (e.g., API keys, URLs). - Proper error handling (e.g., catch Axios errors, user-friendly messages). - HTTPS usage everywhere (no HTTP). - OWASP Top 10 risks like injection, broken auth. For each issue, highlight the file, line numbers, and suggest fixes with code examples. Generate a report in Markdown format, then suggest inline comments or edits to "highlight" them in the code.</code>
+                
+                <img src="../img/blog/blog-23-3.jpeg" alt="repo security" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <h4 class="font-semibold mt-4">3. Lancez l’audit développement via Continue (<a href="#ref-4" class="text-blue-600 hover:underline">*1</a>)</h4>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Ouvrir le chat Continue et inclure le projet et les guidelines.</li>
+                    <img src="../img/blog/blog-23-3.jpeg" alt="repo security" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                    <li>Entrer un prompt détaillé pour scanner les fichiers et générer un rapport Markdown avec corrections suggérées. ( example sur security/security-fixes.md )</li>
+                </ul>
+
+                <h4 class="font-semibold mt-4">4. Audit avant déploiement</h4>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Utiliser le meta-prompt <code>Security-Audit-Prompt_English.md</code> pour analyser l’ensemble du code et générer <code>security-deplyment-advice.md</code> avec recommandations CI/CD, RBAC et chiffrement.</li>
+                    <code class="mt-4">"Apply the Security Guidelines from ./security/prompts/Security-Audit-prompt_English.md, to check all code from @workspace all file from crecheManagement , and generate the roles and improvement for deployment to /crecheManagement/security/security-deplyment-advice.md"</code>
+                </ul>
+
+                <h4 class="font-semibold mt-4">5. Génération de la liste de fixes</h4>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>Demander à Continue de créer <code>security-deployment-fixes.md</code> pour une checklist priorisée des correctifs à appliquer.</li>
+                </ul>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-table mr-2 text-purple-500"></i> Tableau récapitulatif des étapes
+                </h2>
+                <table class="min-w-full border-collapse border border-gray-300 mt-4">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border border-gray-300 px-4 py-2 text-left">Étape</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Outil</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Action</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Résultat Attendu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">Préparation</td>
+                            <td class="border border-gray-300 px-4 py-2">VSCode + Continue</td>
+                            <td class="border border-gray-300 px-4 py-2">Installer extension et Ollama</td>
+                            <td class="border border-gray-300 px-4 py-2">IA locale prête pour audits sécurisés</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="border border-gray-300 px-4 py-2">Intégration guidelines</td>
+                            <td class="border border-gray-300 px-4 py-2">Code-Guardian-Aegis</td>
+                            <td class="border border-gray-300 px-4 py-2">Copier fichiers dans projet</td>
+                            <td class="border border-gray-300 px-4 py-2">Checklists multilingues pour prompts IA</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">Audit développement</td>
+                            <td class="border border-gray-300 px-4 py-2">Continue Chat</td>
+                            <td class="border border-gray-300 px-4 py-2">Entrer le prompt d'analyse</td>
+                            <td class="border border-gray-300 px-4 py-2">Rapport Markdown avec highlights et fixes</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="border border-gray-300 px-4 py-2">Audit déploiement</td>
+                            <td class="border border-gray-300 px-4 py-2">Continue avec Audit-Prompt</td>
+                            <td class="border border-gray-300 px-4 py-2">Appliquer le meta-prompt pour infrastructure</td>
+                            <td class="border border-gray-300 px-4 py-2">Conseils dans security-deplyment-advice.md : rôles RBAC, CI/CD sécurisé</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">Génération fixes</td>
+                            <td class="border border-gray-300 px-4 py-2">Continue</td>
+                            <td class="border border-gray-300 px-4 py-2">Demander création de security-fixes.md</td>
+                            <td class="border border-gray-300 px-4 py-2">Liste priorisée : .env, .gitignore, JWT, etc.</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="border border-gray-300 px-4 py-2">Application</td>
+                            <td class="border border-gray-300 px-4 py-2">VSCode</td>
+                            <td class="border border-gray-300 px-4 py-2">Appliquer suggestions</td>
+                            <td class="border border-gray-300 px-4 py-2">Code sécurisé, conforme GDPR</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-purple-500"></i> Conclusion
+                </h2>
+                <p class="mt-2">
+                    Dans le monde du Vibe Coding, intégrer la sécurité via Code-Guardian-Aegis et Continue transforme les risques en opportunités. Plus de surprises catastrophiques : vos projets deviennent robustes, conformes GDPR, et prêts pour une mise en production professionnelle.
+                </p>
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li id="ref-1">(<a href="#ref-1" class="text-blue-600 hover:underline">*1</a>) <a href="https://github.com/cyesuta/Code-Guardian-Aegis/tree/main" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Repo Code-Guardian-Aegis</a></li>
+                    <li id="ref-2">(<a href="#ref-2" class="text-blue-600 hover:underline">*2</a>) <a href="https://marketplace.visualstudio.com/items?itemName=Continue.continue" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Extension Continue pour VSCode</a></li>
+                    <li id="ref-3">(<a href="#ref-3" class="text-blue-600 hover:underline">*3</a>) <a href="https://ollama.ai/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Ollama pour modèles IA locaux</a></li>
+                    <li id="ref-4">(<a href="#ref-4" class="text-blue-600 hover:underline">*4</a>) <a href="https://owasp.org/www-project-top-ten/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">OWASP Top 10</a></li>
+                    <li id="ref-5">(<a href="#ref-5" class="text-blue-600 hover:underline">*5</a>) <a href="https://docs.continue.dev/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Doc vibe coding AI continue</a></li>
+                    <li id="ref-6">(<a href="#ref-6" class="text-blue-600 hover:underline">*6</a>) <a href="https://github.com/tesshsu/crecheManagement" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Example repo</a></li>
+                </ul>
+            </section>
+
+            <!-- Share Buttons -->
+            <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+                <p class="text-lg font-semibold mb-2 flex items-center">
+                    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                    </a>
+                    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fab fa-reddit mr-2"></i> Reddit
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+                        <i class="fab fa-x-twitter mr-2"></i> X
+                    </a>
+                    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                    </a>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+                <a href="/blogs/blog-22.html" class="text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Précédent blog
+                </a>
+                <a href="/blogs/blog-24.html" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" disabled>
+                    Suivant : Prochain article <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </nav>
+        </article>
+    </main>
+
+    <script src="../assets/js/script.js" defer></script>
+</body>
+</html>
