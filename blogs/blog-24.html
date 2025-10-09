@@ -121,171 +121,308 @@
                     <p class="mt-2">Exemples de morceaux de <code>deployment.yml</code> (schéma simplifié) :</p>
                     <pre class="bg-gray-100 p-4 rounded overflow-x-auto"><code>apiVersion: apps/v1
                         kind: Deployment
-metadata:
-name: fastapi-deployment
-spec:
-replicas: 2
-selector:
-matchLabels:
-app: fastapi
-template:
-metadata:
-labels:
-app: fastapi
-spec:
-containers:
-- name: fastapi
-image: fastapi-app:latest
-ports:
-- containerPort: 80
+        metadata:
+        name: fastapi-deployment
+        spec:
+        replicas: 2
+        selector:
+        matchLabels:
+        app: fastapi
+        template:
+        metadata:
+        labels:
+        app: fastapi
+        spec:
+        containers:
+        - name: fastapi
+        image: fastapi-app:latest
+        ports:
+        - containerPort: 80
 
-apiVersion: v1
-kind: Service
-metadata:
-name: fastapi-service
-spec:
-selector:
-app: fastapi
-ports:
-- protocol: TCP
-port: 80
-targetPort: 80
-type: NodePort</code></pre>
-<h2 class="font-semibold mt-4 flex items-center">
-    <i class="fas fa-rocket mr-2 text-sky-600"></i> Déployer sur Minikube et vérifier
-</h2>
-<ol class="list-decimal pl-6 mt-2">
-    <img src="../img/blog/blog-24-6.jpeg" alt="applyURL" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
-    
-    <li>Appliquer le YAML : <code>minikube kubectl -- apply -f deployment.yml</code></li>
-    <li>Voir l'état des pods : <code>minikube kubectl -- get pods</code></li>
-    <li>Vérifier les services : <code>minikube kubectl -- get svc</code></li>
-    <li>Ouvrir l'URL du service local : <code>minikube service fastapi-service --url</code></li>
-</ol>
-<p class="mt-2 text-green-600">✅ Si les Pods passent en <code>Running</code> : succès !</p>
+        apiVersion: v1
+        kind: Service
+        metadata:
+        name: fastapi-service
+        spec:
+        selector:
+        app: fastapi
+        ports:
+        - protocol: TCP
+        port: 80
+        targetPort: 80
+        type: NodePort</code></pre>
+        <h2 class="font-semibold mt-4 flex items-center">
+            <i class="fas fa-rocket mr-2 text-sky-600"></i> Déployer sur Minikube et vérifier
+        </h2>
+        <ol class="list-decimal pl-6 mt-2">
+            <img src="../img/blog/blog-24-6.jpeg" alt="applyURL" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+            
+            <li>Appliquer le YAML : <code>minikube kubectl -- apply -f deployment.yml</code></li>
+            <li>Voir l'état des pods : <code>minikube kubectl -- get pods</code></li>
+            <li>Vérifier les services : <code>minikube kubectl -- get svc</code></li>
+            <li>Ouvrir l'URL du service local : <code>minikube service fastapi-service --url</code></li>
+        </ol>
+        <p class="mt-2 text-green-600">✅ Si les Pods passent en <code>Running</code> : succès !</p>
 
-<h2 class="font-semibold mt-4 flex items-center">
-    <i class="fas fa-project-diagram mr-2 text-sky-600"></i> Principaux composants et comment ils s'articulent
-</h2>
-<p class="mt-2">Trois composants principaux forment le flux d'accès complet :</p>
-<ul class="list-disc pl-6 mt-2">
-    <img src="../img/blog/blog-24-7.jpeg" alt="UML" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
-    
-    <li><strong>Deployment</strong> — définit l'état désiré des Pods (réplicas, image, stratégie de mise à jour).</li>
-    <li><strong>Service</strong> — expose un ensemble de Pods via un point d'accès stable (ClusterIP, NodePort, LoadBalancer).</li>
-    <li><strong>Ingress</strong> — route le trafic HTTP/HTTPS externe vers les services appropriés (requiert un Ingress Controller).</li>
-</ul>
+        <h2 class="font-semibold mt-4 flex items-center">
+            <i class="fas fa-project-diagram mr-2 text-sky-600"></i> Principaux composants et comment ils s'articulent
+        </h2>
+        <p class="mt-2">Trois composants principaux forment le flux d'accès complet :</p>
+        <ul class="list-disc pl-6 mt-2">
+            <img src="../img/blog/blog-24-7.jpeg" alt="UML" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+            
+            <li><strong>Deployment</strong> — définit l'état désiré des Pods (réplicas, image, stratégie de mise à jour).</li>
+            <li><strong>Service</strong> — expose un ensemble de Pods via un point d'accès stable (ClusterIP, NodePort, LoadBalancer).</li>
+            <li><strong>Ingress</strong> — route le trafic HTTP/HTTPS externe vers les services appropriés (requiert un Ingress Controller).</li>
+        </ul>
 
-<p class="mt-2">Schématiquement :</p>
-<pre class="bg-gray-100 p-4 rounded overflow-x-auto"><code>Utilisateur externe → Ingress → Service → Pod (géré par Deployment)</code></pre>
+        <p class="mt-2">Schématiquement :</p>
+        <pre class="bg-gray-100 p-4 rounded overflow-x-auto"><code>Utilisateur externe → Ingress → Service → Pod (géré par Deployment)</code></pre>
 
-<h3 class="font-semibold mt-4">Notes et bonnes pratiques</h3>
-<ul class="list-disc pl-6 mt-2">
-    <li>Définissez <code>readinessProbe</code> et <code>livenessProbe</code> pour éviter les interruptions pendant les mises à jour.</li>
-    <li>Pour les tests d'Ingress sur Minikube : <code>minikube addons enable ingress</code>.</li>
-    <li>Favorisez <code>ClusterIP</code> + <code>Ingress</code> pour simuler un routage réaliste en production.</li>
-    <li>Ne codez jamais en dur des secrets dans l'image — utilisez <code>Secret</code> et <code>ConfigMap</code>.</li>
-</ul>
+        <h3 class="font-semibold mt-4">Notes et bonnes pratiques</h3>
+        <ul class="list-disc pl-6 mt-2">
+            <li>Définissez <code>readinessProbe</code> et <code>livenessProbe</code> pour éviter les interruptions pendant les mises à jour.</li>
+            <li>Pour les tests d'Ingress sur Minikube : <code>minikube addons enable ingress</code>.</li>
+            <li>Favorisez <code>ClusterIP</code> + <code>Ingress</code> pour simuler un routage réaliste en production.</li>
+            <li>Ne codez jamais en dur des secrets dans l'image — utilisez <code>Secret</code> et <code>ConfigMap</code>.</li>
+        </ul>
 
-<h2 class="font-semibold mt-4 flex items-center">
-    <i class="fas fa-table mr-2 text-sky-600"></i> Tableau récapitulatif des étapes
-</h2>
-<table class="min-w-full border-collapse border border-gray-300 mt-4">
-    <thead>
-        <tr class="bg-gray-100">
-            <th class="border border-gray-300 px-4 py-2 text-left">Étape</th>
-            <th class="border border-gray-300 px-4 py-2 text-left">Commande / Outil</th>
-            <th class="border border-gray-300 px-4 py-2 text-left">But</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td class="border border-gray-300 px-4 py-2">Préparation</td>
-            <td class="border border-gray-300 px-4 py-2">Docker, Minikube</td>
-            <td class="border border-gray-300 px-4 py-2">Assurer la disponibilité du runtime</td>
-        </tr>
-        <tr class="bg-gray-50">
-            <td class="border border-gray-300 px-4 py-2">Démarrage cluster</td>
-            <td class="border border-gray-300 px-4 py-2"><code>minikube start --driver=docker</code></td>
-            <td class="border border-gray-300 px-4 py-2">Créer un cluster local</td>
-        </tr>
-        <tr>
-            <td class="border border-gray-300 px-4 py-2">Builder image</td>
-            <td class="border border-gray-300 px-4 py-2"><code>docker build -t fastapi-app:latest .</code></td>
-            <td class="border border-gray-300 px-4 py-2">Préparer l'image pour le déploiement</td>
-        </tr>
-        <tr class="bg-gray-50">
-            <td class="border border-gray-300 px-4 py-2">Déploiement</td>
-            <td class="border border-gray-300 px-4 py-2"><code>minikube kubectl -- apply -f deployment.yml</code></td>
-            <td class="border border-gray-300 px-4 py-2">Créer Deployment + Service</td>
-        </tr>
-        <tr>
-            <td class="border border-gray-300 px-4 py-2">Exposition</td>
-            <td class="border border-gray-300 px-4 py-2"><code>minikube service fastapi-service --url</code></td>
-            <td class="border border-gray-300 px-4 py-2">Obtenir l'URL locale pour tester</td>
-        </tr>
-    </tbody>
-</table>
+        <h2 class="font-semibold mt-4 flex items-center">
+            <i class="fas fa-table mr-2 text-sky-600"></i> Tableau récapitulatif des étapes
+        </h2>
+    <table class="min-w-full border-collapse border border-gray-300 mt-4">
+        <thead>
+            <tr class="bg-gray-100">
+                <th class="border border-gray-300 px-4 py-2 text-left">Étape</th>
+                <th class="border border-gray-300 px-4 py-2 text-left">Commande / Outil</th>
+                <th class="border border-gray-300 px-4 py-2 text-left">But</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="border border-gray-300 px-4 py-2">Préparation</td>
+                <td class="border border-gray-300 px-4 py-2">Docker, Minikube</td>
+                <td class="border border-gray-300 px-4 py-2">Assurer la disponibilité du runtime</td>
+            </tr>
+            <tr class="bg-gray-50">
+                <td class="border border-gray-300 px-4 py-2">Démarrage cluster</td>
+                <td class="border border-gray-300 px-4 py-2"><code>minikube start --driver=docker</code></td>
+                <td class="border border-gray-300 px-4 py-2">Créer un cluster local</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 px-4 py-2">Builder image</td>
+                <td class="border border-gray-300 px-4 py-2"><code>docker build -t fastapi-app:latest .</code></td>
+                <td class="border border-gray-300 px-4 py-2">Préparer l'image pour le déploiement</td>
+            </tr>
+            <tr class="bg-gray-50">
+                <td class="border border-gray-300 px-4 py-2">Déploiement</td>
+                <td class="border border-gray-300 px-4 py-2"><code>minikube kubectl -- apply -f deployment.yml</code></td>
+                <td class="border border-gray-300 px-4 py-2">Créer Deployment + Service</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 px-4 py-2">Exposition</td>
+                <td class="border border-gray-300 px-4 py-2"><code>minikube service fastapi-service --url</code></td>
+                <td class="border border-gray-300 px-4 py-2">Obtenir l'URL locale pour tester</td>
+            </tr>
+        </tbody>
+    </table>
 
-<h2 class="font-semibold mt-4 flex items-center">
-    <i class="fas fa-lock mr-2 text-sky-600"></i> Configuration & Secrets
-</h2>
-<p class="mt-2">
-    Kubernetes propose <code>ConfigMap</code> (config non sensible) et <code>Secret</code> (données sensibles) pour séparer la configuration du code. Évitez les variables codées en dur et utilisez les mécanismes de K8s pour injecter la configuration à runtime.
-</p>
+    <section class="mt-10">
+        <h2 class="font-semibold mt-4 flex items-center text-xl">
+          <i class="fas fa-lock mr-2 text-sky-600"></i> Configuration & Secrets
+        </h2>
+        <p class="mt-2">
+          Kubernetes propose <code class="bg-gray-100 px-1 rounded text-sm">ConfigMap</code> (config non sensible)
+          et <code class="bg-gray-100 px-1 rounded text-sm">Secret</code> (données sensibles) pour séparer la configuration
+          du code. Évitez les variables codées en dur et utilisez les mécanismes de K8s pour injecter la configuration
+          à <em>runtime</em>.
+        </p>
+      
+        <h3 class="font-semibold mt-6 text-lg text-gray-800">📁 Ajouter le fichier ConfigMap / Secret</h3>
+        <p class="mt-2">
+          Créez un fichier <code class="bg-gray-100 px-1 rounded text-sm">fastapi-minikube/k8s/configmap-secret.yml</code> :
+        </p>
+      
+        <pre class="bg-gray-900 text-green-300 text-sm p-4 rounded mt-3 overflow-x-auto">
+      <code>
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: demo-config
+      data:
+        DEMO_MESSAGE: "Bonjour depuis ConfigMap"
+      ---
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: demo-secret
+      type: Opaque
+      data:
+        SECRET_KEY: c3VwZXItc2VjcmV0   # "super-secret" en base64
+      ---
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: demo-deployment
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: demo-app
+        template:
+          metadata:
+            labels:
+              app: demo-app
+          spec:
+            containers:
+            - name: busybox
+              image: busybox
+              command: ["/bin/sh", "-c", "sleep 3600"]
+              envFrom:
+              - configMapRef:
+                  name: demo-config
+              - secretRef:
+                  name: demo-secret
+              volumeMounts:
+              - name: config-volume
+                mountPath: /etc/demo
+            volumes:
+            - name: config-volume
+              configMap:
+                name: demo-config
+      ---
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: demo-service
+      spec:
+        selector:
+          app: demo-app
+        ports:
+        - port: 8080
+          targetPort: 80
+          protocol: TCP
+      </code>
+        </pre>
+      
+        <h3 class="font-semibold mt-6 text-lg text-gray-800">⚡ Exécuter le script pour tester</h3>
+        <p class="mt-2">
+          Placez le script suivant dans <code class="bg-gray-100 px-1 rounded text-sm">fastapi-minikube/scripts/configmap-secret-demo.sh</code> :
+        </p>
+      
+        <pre class="bg-gray-900 text-green-300 text-sm p-4 rounded mt-3 overflow-x-auto">
+      <code>
+      #!/bin/bash
+      set -e
+      
+      echo "🚀 [Step 1] Apply ConfigMap & Secret resources"
+      minikube kubectl -- apply -f k8s/configmap-secret.yml
+      
+      echo "🕓 Attente du pod..."
+      sleep 5
+      
+      POD_NAME=$(minikube kubectl -- get pods -l app=demo-app -o jsonpath="{.items[0].metadata.name}")
+      
+      echo "🔍 [Step 2] Vérification des variables d'environnement"
+      minikube kubectl -- exec -it $POD_NAME -- printenv | grep DEMO
+      
+      echo "🔍 [Step 3] Vérification des fichiers montés"
+      minikube kubectl -- exec -it $POD_NAME -- ls /etc/demo
+      
+      echo "🔑 [Step 4] Vérification de la Secret décodée"
+      minikube kubectl -- exec -it $POD_NAME -- printenv | grep SECRET_KEY
+      
+      read -p "🧹 Voulez-vous nettoyer les ressources ? (y/N): " yn
+      if [[ $yn == "y" || $yn == "Y" ]]; then
+          echo "🧹 Suppression des ConfigMap / Secret / Deployment / Service..."
+          minikube kubectl -- delete -f k8s/configmap-secret.yml
+      fi
+      </code>
+        </pre>
+       
+        <p class="mt-3">
+          Puis rendez-le exécutable et lancez-le :
+        </p>
+        <pre class="bg-gray-900 text-green-300 text-sm p-4 rounded mt-2 overflow-x-auto">
+      <code>
+      chmod +x scripts/configmap-secret-demo.sh
+      ./scripts/configmap-secret-demo.sh
+      </code>
+      <img src="../img/blog/blog-24-8.jpeg" alt="sh script" class="w-full max-w-3xl mt-4 mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+            
+        </pre>
+      
+        <h3 class="font-semibold mt-6 text-lg text-gray-800">💤 Économiser la batterie et CPU</h3>
+        <p class="mt-2">
+          Minikube continue de tourner en arrière-plan même après la suppression des ressources. Pour économiser
+          la batterie et libérer du CPU sur votre Mac :
+        </p>
+      
+        <pre class="bg-gray-900 text-green-300 text-sm p-4 rounded mt-3 overflow-x-auto">
+      <code>
+      # Pour simplement l'arrêter (recommandé)
+      minikube stop
+      
+      # Pour tout supprimer (réinitialisation complète)
+      minikube delete
+      </code>
+      <img src="../img/blog/blog-24-9.jpeg" alt="sh script" class="w-full max-w-3xl mt-4 mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+            
+        </pre>
+      </section>      
 
-<h2 class="font-semibold mt-4 flex items-center">
-    <i class="fas fa-check-circle mr-2 text-sky-600"></i> Conclusion
-</h2>
-<p class="mt-2">
-    Minikube est un outil puissant et léger pour se familiariser avec Kubernetes sans coûts cloud. En maîtrisant Deployment, Service et Ingress, vous apprendrez à orchestrer, exposer et sécuriser vos microservices localement avant d'aller en production.
-</p>
+    <h2 class="font-semibold mt-4 flex items-center">
+        <i class="fas fa-check-circle mr-2 text-sky-600"></i> Conclusion
+    </h2>
+    <p class="mt-2">
+        Minikube est un outil puissant et léger pour se familiariser avec Kubernetes sans coûts cloud. En maîtrisant Deployment, Service et Ingress, vous apprendrez à orchestrer, exposer et sécuriser vos microservices localement avant d'aller en production.
+    </p>
 
-</section>
+    </section>
 
-<!-- References -->
-<section class="mt-8">
-<h2 class="font-semibold mt-4 flex items-center">
-    <i class="fas fa-link mr-2 text-blue-500"></i> Références
-</h2>
-<ul class="list-disc pl-6 mt-2">
-    <li><a href="https://minikube.sigs.k8s.io/docs/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Minikube — documentation officielle</a></li>
-    <li><a href="https://github.com/tesshsu/fastapi-minikube" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Exemple de repo : fastapi-minikube</a></li>
-    <li><a href="https://kubernetes.io/docs/reference/kubectl/kubectl/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">kubectl — référence CLI Kubernetes</a></li>
-</ul>
-</section>
+    <!-- References -->
+    <section class="mt-8">
+    <h2 class="font-semibold mt-4 flex items-center">
+        <i class="fas fa-link mr-2 text-blue-500"></i> Références
+    </h2>
+    <ul class="list-disc pl-6 mt-2">
+        <li><a href="https://minikube.sigs.k8s.io/docs/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Minikube — documentation officielle</a></li>
+        <li><a href="https://github.com/tesshsu/fastapi-minikube" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Exemple de repo : fastapi-minikube</a></li>
+        <li><a href="https://kubernetes.io/docs/reference/kubectl/kubectl/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">kubectl — référence CLI Kubernetes</a></li>
+    </ul>
+    </section>
 
-<!-- Share Buttons -->
-<section class="mt-8 bg-gray-100 p-4 rounded-lg">
-<p class="text-lg font-semibold mb-2 flex items-center">
-    <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
-</p>
-<div class="flex flex-wrap gap-4">
-    <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        <i class="fab fa-linkedin mr-2"></i> LinkedIn
+    <!-- Share Buttons -->
+    <section class="mt-8 bg-gray-100 p-4 rounded-lg">
+    <p class="text-lg font-semibold mb-2 flex items-center">
+        <i class="fas fa-share-alt mr-2 text-blue-600"></i> Partagez cet article :
+    </p>
+    <div class="flex flex-wrap gap-4">
+        <a href="#" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            <i class="fab fa-linkedin mr-2"></i> LinkedIn
+        </a>
+        <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+            <i class="fab fa-reddit mr-2"></i> Reddit
+        </a>
+        <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
+            <i class="fab fa-x-twitter mr-2"></i> X
+        </a>
+        <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
+            <i class="fab fa-facebook-f mr-2"></i> Facebook
+        </a>
+    </div>
+    </section>
+
+    <!-- Navigation -->
+    <nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
+    <a href="/blogs/blog-previous.html" class="text-blue-600 hover:underline">
+        <i class="fas fa-arrow-left mr-1"></i> Article précédent
     </a>
-    <a href="#" class="flex items-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-        <i class="fab fa-reddit mr-2"></i> Reddit
+    <a href="/blogs/blog-next.html" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" aria-disabled="true">
+        Article suivant <i class="fas fa-arrow-right ml-1"></i>
     </a>
-    <a href="#" class="flex items-center bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500">
-        <i class="fab fa-x-twitter mr-2"></i> X
-    </a>
-    <a href="#" class="flex items-center bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900">
-        <i class="fab fa-facebook-f mr-2"></i> Facebook
-    </a>
-</div>
-</section>
-
-<!-- Navigation -->
-<nav class="mt-8 flex justify-between items-center bg-gray-100 p-4 rounded-lg text-blue-600">
-<a href="/blogs/blog-previous.html" class="text-blue-600 hover:underline">
-    <i class="fas fa-arrow-left mr-1"></i> Article précédent
-</a>
-<a href="/blogs/blog-next.html" class="text-blue-600 hover:underline cursor-not-allowed text-gray-400" aria-disabled="true">
-    Article suivant <i class="fas fa-arrow-right ml-1"></i>
-</a>
-</nav>
-</article>
+    </nav>
+    </article>
 </main>
 
 <script src="../assets/js/script.js" defer></script>
