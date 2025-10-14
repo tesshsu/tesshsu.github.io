@@ -65,7 +65,6 @@
                 <p class="mt-2">Voici un guide pas à pas pour intégrer la sécurité dans un projet comme CrecheManagement :</p>
 
                 <h4 class="font-semibold mt-4">1. Installation et configuration de Continue</h4>
-                <img src="../img/blog/blog-23-1.jpeg" alt="Installation plugin AI" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
                 <ul class="list-disc pl-6 mt-2">
                     <li>Installer VSCode et l’extension Continue.</li>
                     <li>Configurer un modèle local Ollama pour un LLM offline.</li>
@@ -79,16 +78,17 @@
                 </ul>
                 <code class="mt-4">Please scanning all the file in this repo under crecheManagement, used principal guidemeine from @file ./security/guidelines/Security-Guidelines_English.md , then Analyze and highlight all potential security issues in the entire CrecheManagement codebase, following these security guidelines. Focus on: - No hardcoded secrets (e.g., API keys, URLs). - Proper error handling (e.g., catch Axios errors, user-friendly messages). - HTTPS usage everywhere (no HTTP). - OWASP Top 10 risks like injection, broken auth. For each issue, highlight the file, line numbers, and suggest fixes with code examples. Generate a report in Markdown format, then suggest inline comments or edits to "highlight" them in the code.</code>
                 
-                <img src="../img/blog/blog-23-3.jpeg" alt="repo security" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
                 <h4 class="font-semibold mt-4">3. Lancez l’audit développement via Continue (<a href="#ref-4" class="text-blue-600 hover:underline">*1</a>)</h4>
                 <ul class="list-disc pl-6 mt-2">
                     <li>Ouvrir le chat Continue et inclure le projet et les guidelines.</li>
                     <img src="../img/blog/blog-23-3.jpeg" alt="repo security" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
-                    <li>Entrer un prompt détaillé pour scanner les fichiers et générer un rapport Markdown avec corrections suggérées. ( example sur security/security-fixes.md )</li>
+                    <img src="../img/blog/blog-23-5.jpeg" alt="repo security" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                    <li>Entrer un prompt détaillé pour scanner les fichiers et générer un rapport Markdown avec corrections suggérées. (<a href="#ref-7" class="text-blue-600 hover:underline">*7</a>)( example sur security/security-fixes.md )</li>
                 </ul>
 
                 <h4 class="font-semibold mt-4">4. Audit avant déploiement</h4>
                 <ul class="list-disc pl-6 mt-2">
+                   
                     <li>Utiliser le meta-prompt <code>Security-Audit-Prompt_English.md</code> pour analyser l’ensemble du code et générer <code>security-deplyment-advice.md</code> avec recommandations CI/CD, RBAC et chiffrement.</li>
                     <code class="mt-4">"Apply the Security Guidelines from ./security/prompts/Security-Audit-prompt_English.md, to check all code from @workspace all file from crecheManagement , and generate the roles and improvement for deployment to /crecheManagement/security/security-deplyment-advice.md"</code>
                 </ul>
@@ -170,6 +170,7 @@
                     <li id="ref-4">(<a href="#ref-4" class="text-blue-600 hover:underline">*4</a>) <a href="https://owasp.org/www-project-top-ten/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">OWASP Top 10</a></li>
                     <li id="ref-5">(<a href="#ref-5" class="text-blue-600 hover:underline">*5</a>) <a href="https://docs.continue.dev/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Doc vibe coding AI continue</a></li>
                     <li id="ref-6">(<a href="#ref-6" class="text-blue-600 hover:underline">*6</a>) <a href="https://github.com/tesshsu/crecheManagement" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Example repo</a></li>
+                    <li id="ref-7">(<a href="#ref-7" class="text-blue-600 hover:underline">*7</a>) <a href="https://github.com/tesshsu/crecheManagement/blob/master/security/security-fixes.md" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Security-fixes</a></li>
                 </ul>
             </section>
 
