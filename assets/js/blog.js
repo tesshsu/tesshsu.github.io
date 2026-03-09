@@ -200,6 +200,7 @@ function displayLazyLoadPosts() {
     // Reset pagination
     currentPage = 0;
     displayedPosts = [];
+    hasMore = true;
     blogContainer.innerHTML = '';
 
     loadMorePosts();
@@ -320,6 +321,23 @@ function setupBlogNavigation() {
     }
 }
 
+async function loadBlogArticleFooter() {
+    const article = document.querySelector('article') || document.querySelector('main');
+    if (article) {
+        try {
+            const response = await fetch('/assets/partials/blog-article-footer.html');
+            if (response.ok) {
+                const content = await response.text();
+                const div = document.createElement('div');
+                div.innerHTML = content;
+                article.appendChild(div);
+            }
+        } catch (error) {
+            console.error('Error loading blog article footer:', error);
+        }
+    }
+}
+
 async function loadVisitCounterBlock() {
     const mainContent = document.querySelector('main');
     if (mainContent && window.location.pathname.includes('blogs/blog-')) {
@@ -345,7 +363,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (window.location.pathname.includes('blogs/blog-')) {
-        Promise.all([loadVisitCounterBlock(), setupBlogNavigation()])
-            .catch(error => console.error('Error:', error));
+        loadBlogArticleFooter()
+            .then(() => {
+                setupBlogNavigation();
+                initializeShareButtons();
+            })
+            .catch(error => console.error('Error loading blog article footer:', error));
+        loadVisitCounterBlock();
     }
 });
