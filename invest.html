@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculateur Rendement - Assurance Vie Luxembourg</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/invest.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
+  <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+  <main role="main" class="flex-1 ml-16">
+
+    <!-- DARK HEADER + FORM -->
+    <div class="text-white px-6 py-5" style="background: linear-gradient(160deg,#0a2d42 0%,#0f4060 100%);">
+      <div class="max-w-7xl mx-auto">
+
+        <!-- Top bar -->
+        <div class="flex items-start justify-between mb-5">
+          <div class="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-2">
+            <i class="fas fa-wallet text-xl"></i>
+            <div>
+              <div class="text-xs text-gray-300">Investissement total</div>
+              <div class="font-bold text-lg" id="display-capital">— €</div>
+            </div>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-gray-400 mb-1">Amélioration du rendement</p>
+            <p class="font-bold text-xl" id="display-product-name">Athena sur vos sous-jacents</p>
+            <p class="text-sm text-gray-300">EUR</p>
+          </div>
+          <div class="flex flex-col gap-1.5 text-sm text-gray-300">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Documents</span>
+            <a href="#" class="hover:text-white flex items-center gap-1.5"><i class="fas fa-file-alt text-xs w-3"></i>Fiche produit</a>
+            <a href="#" class="hover:text-white flex items-center gap-1.5"><i class="fas fa-file-contract text-xs w-3"></i>Termsheet</a>
+            <a href="#" class="hover:text-white flex items-center gap-1.5"><i class="fas fa-file-invoice text-xs w-3"></i>KID</a>
+          </div>
+        </div>
+
+        <!-- Input grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+          <!-- Stocks panel -->
+          <div class="lg:col-span-2 bg-white/10 rounded-xl p-4">
+            <h3 class="text-xs font-semibold text-gray-300 mb-3 uppercase tracking-widest flex items-center gap-2">
+              <i class="fas fa-chart-line"></i>Sous-jacents — Worst-of (3 actions)
+            </h3>
+            <div class="grid grid-cols-12 gap-2 mb-1.5 text-xs text-gray-400 uppercase tracking-wide">
+              <span class="col-span-4">Nom du titre</span>
+              <span class="col-span-2 text-right">Niv. initial</span>
+              <span class="col-span-2 text-right">Prix actuel</span>
+              <span class="col-span-3">Ticker Yahoo</span>
+              <span class="col-span-1"></span>
+            </div>
+            <!-- Row template repeated 3 times -->
+            <div id="stock-rows" class="space-y-2">
+              <!-- Stock 1 -->
+              <div class="grid grid-cols-12 gap-2 items-center">
+                <input type="text" id="s1-name" value="LVMH" class="col-span-4 input-dark">
+                <input type="number" id="s1-init" value="492" step="0.01" class="col-span-2 input-dark text-right">
+                <input type="number" id="s1-cur"  placeholder="— fetch →" step="0.01" class="col-span-2 input-dark text-right">
+                <input type="text"   id="s1-tick" value="MC.PA" class="col-span-3 input-dark">
+                <button onclick="fetchPrice(1)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Récupérer le prix en temps réel">
+                  <i class="fas fa-sync-alt" id="s1-icon"></i>
+                </button>
+              </div>
+              <!-- Stock 2 -->
+              <div class="grid grid-cols-12 gap-2 items-center">
+                <input type="text" id="s2-name" value="STMicro" class="col-span-4 input-dark">
+                <input type="number" id="s2-init" value="22.26" step="0.01" class="col-span-2 input-dark text-right">
+                <input type="number" id="s2-cur"  placeholder="— fetch →" step="0.01" class="col-span-2 input-dark text-right">
+                <input type="text"   id="s2-tick" value="STMPA.PA" class="col-span-3 input-dark">
+                <button onclick="fetchPrice(2)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Récupérer le prix en temps réel">
+                  <i class="fas fa-sync-alt" id="s2-icon"></i>
+                </button>
+              </div>
+              <!-- Stock 3 -->
+              <div class="grid grid-cols-12 gap-2 items-center">
+                <input type="text" id="s3-name" value="Sanofi" class="col-span-4 input-dark">
+                <input type="number" id="s3-init" value="79.26" step="0.01" class="col-span-2 input-dark text-right">
+                <input type="number" id="s3-cur"  placeholder="— fetch →" step="0.01" class="col-span-2 input-dark text-right">
+                <input type="text"   id="s3-tick" value="SAN.PA" class="col-span-3 input-dark">
+                <button onclick="fetchPrice(3)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Récupérer le prix en temps réel">
+                  <i class="fas fa-sync-alt" id="s3-icon"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right col: params -->
+          <div class="flex flex-col gap-3">
+            <!-- Dates & Capital -->
+            <div class="bg-white/10 rounded-xl p-4">
+              <h3 class="text-xs font-semibold text-gray-300 mb-3 uppercase tracking-widest flex items-center gap-2">
+                <i class="fas fa-calendar-alt"></i>Dates & Capital
+              </h3>
+              <div class="space-y-2">
+                <div>
+                  <label class="text-xs text-gray-400">Date d'émission</label>
+                  <input type="date" id="emission-date" value="2025-10-14" class="w-full input-dark mt-0.5">
+                </div>
+                <div>
+                  <label class="text-xs text-gray-400">Observation finale (maturité)</label>
+                  <input type="date" id="final-date" value="2030-09-23" class="w-full input-dark mt-0.5">
+                </div>
+                <div>
+                  <label class="text-xs text-gray-400">Date de simulation <span class="text-blue-300">(voir résultat à cette date)</span></label>
+                  <input type="date" id="sim-date" class="w-full input-dark mt-0.5">
+                </div>
+                <div>
+                  <label class="text-xs text-gray-400">Capital initial (€)</label>
+                  <input type="number" id="initial-capital" value="248000" step="1000" class="w-full input-dark mt-0.5">
+                </div>
+              </div>
+            </div>
+
+            <!-- Product structure -->
+            <div class="bg-white/10 rounded-xl p-4">
+              <h3 class="text-xs font-semibold text-gray-300 mb-3 uppercase tracking-widest flex items-center gap-2">
+                <i class="fas fa-sliders-h"></i>Structure
+              </h3>
+              <div class="space-y-2">
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="text-xs text-gray-400">Coupon annuel (%)</label>
+                    <input type="number" id="annual-coupon" value="7.35" step="0.01" class="w-full input-dark mt-0.5">
+                  </div>
+                  <div>
+                    <label class="text-xs text-gray-400">Barrière capital (%)</label>
+                    <input type="number" id="cap-barrier" value="60" step="1" class="w-full input-dark mt-0.5">
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="text-xs text-gray-400">Autocall T1 (%)</label>
+                    <input type="number" id="autocall-t1" value="100" step="1" class="w-full input-dark mt-0.5">
+                  </div>
+                  <div>
+                    <label class="text-xs text-gray-400">Autocall T2+ (%)</label>
+                    <input type="number" id="autocall-t2" value="85" step="1" class="w-full input-dark mt-0.5">
+                  </div>
+                </div>
+                <div>
+                  <label class="text-xs text-gray-400">Émetteur</label>
+                  <input type="text" id="issuer" value="Barclays Bank PLC" class="w-full input-dark mt-0.5">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="flex justify-center mt-5">
+          <button onclick="calculate()"
+            class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-bold px-10 py-3 rounded-xl text-base shadow-xl transition-all">
+            <i class="fas fa-calculator mr-2"></i>Calculer le rendement
+          </button>
+        </div>
+
+      </div>
+    </div>
+    <!-- /DARK HEADER -->
+
+
+    <!-- RESULTS (hidden until calculate()) -->
+    <div id="results" class="hidden max-w-7xl mx-auto px-6 py-6 space-y-5">
+
+      <!-- Metric cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="metric-card">
+          <div class="metric-header">Coupon</div>
+          <div class="px-3 py-3">
+            <div class="text-2xl font-bold" id="r-coupon-rate">—</div>
+            <div class="grid grid-cols-3 gap-1 mt-2 text-xs text-gray-500">
+              <div><div class="font-medium text-gray-700">Occurrence</div><div>Conditionnel</div></div>
+              <div><div class="font-medium text-gray-700">Fréquence</div><div>Trimestriel</div></div>
+              <div><div class="font-medium text-gray-700">Par trimestre</div><div id="r-quarter-coupon">—</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">Dates clés</div>
+          <div class="px-3 py-3">
+            <div class="text-lg font-bold text-center" id="r-maturity">—</div>
+            <div class="grid grid-cols-3 gap-1 mt-2 text-xs text-gray-500">
+              <div><div class="font-medium text-gray-700">Émission</div><div id="r-emission">—</div></div>
+              <div><div class="font-medium text-gray-700">Simulation</div><div id="r-simdate" class="text-blue-600 font-semibold">—</div></div>
+              <div><div class="font-medium text-gray-700">Obs. finale</div><div id="r-final">—</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">Protection du capital</div>
+          <div class="px-3 py-3">
+            <div class="text-xl font-bold text-center" id="r-protection">—</div>
+            <div class="grid grid-cols-2 gap-1 mt-2 text-xs text-gray-500">
+              <div><div class="font-medium text-gray-700">Type de panier</div><div>Worst of</div></div>
+              <div><div class="font-medium text-gray-700">Statut actuel</div><div id="r-barrier-status" class="font-semibold">—</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">Émetteur</div>
+          <div class="px-3 py-3">
+            <div class="text-lg font-bold text-center" id="r-issuer">—</div>
+            <div class="grid grid-cols-2 gap-1 mt-2 text-xs text-gray-500">
+              <div><div class="font-medium text-gray-700">Règlement</div><div>Espèces</div></div>
+              <div><div class="font-medium text-gray-700">Protection</div><div>Européenne</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sous-jacents table -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="result-header">Sous-jacents</div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-gray-50 border-b border-gray-200 text-xs text-gray-600 uppercase tracking-wide">
+                <th class="px-4 py-3 text-left">Titre</th>
+                <th class="px-4 py-3 text-right">Niveau initial</th>
+                <th class="px-4 py-3 text-right">Performance</th>
+                <th class="px-4 py-3 text-right">Dernier prix</th>
+                <th class="px-4 py-3 text-right">Barrière de Capital</th>
+                <th class="px-4 py-3 text-right">Distance à la barrière</th>
+                <th class="px-4 py-3 text-right">Barrière de coupon</th>
+              </tr>
+            </thead>
+            <tbody id="stocks-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Chart + Chronologie -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div class="result-header">Performance historique (simulation linéaire)</div>
+          <div class="p-4">
+            <canvas id="perf-chart" height="300"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div class="result-header flex items-center justify-between">
+            <span>Chronologie</span>
+            <div class="flex gap-3 text-xs font-normal">
+              <span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full bg-yellow-400"></span>Passé</span>
+              <span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full bg-blue-400"></span>À venir</span>
+              <span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full bg-purple-400"></span>Maturité</span>
+            </div>
+          </div>
+          <div class="overflow-y-auto" style="max-height:360px;">
+            <table class="w-full text-xs">
+              <thead class="sticky top-0 bg-gray-50 border-b border-gray-200">
+                <tr class="text-gray-600 uppercase tracking-wide">
+                  <th class="px-2 py-2 w-6"></th>
+                  <th class="px-2 py-2 text-left">Date obs.</th>
+                  <th class="px-2 py-2 text-left">Date paiement</th>
+                  <th class="px-2 py-2 text-right">Niv. rappel</th>
+                  <th class="px-2 py-2 text-right">Barrière</th>
+                  <th class="px-2 py-2 text-left">Statut coupon</th>
+                  <th class="px-2 py-2 text-right">Montant</th>
+                </tr>
+              </thead>
+              <tbody id="chrono-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="result-header">Résumé du Rendement Total</div>
+        <div class="p-6">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center mb-6">
+            <div>
+              <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Capital investi</div>
+              <div class="text-2xl font-bold text-gray-800" id="sum-capital">—</div>
+            </div>
+            <div>
+              <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Coupons totaux (maturité)</div>
+              <div class="text-2xl font-bold text-emerald-600" id="sum-coupons">—</div>
+            </div>
+            <div>
+              <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Rendement brut total</div>
+              <div class="text-2xl font-bold text-blue-600" id="sum-total">—</div>
+            </div>
+            <div>
+              <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Rendement annualisé</div>
+              <div class="text-2xl font-bold text-purple-600" id="sum-annual">—</div>
+            </div>
+          </div>
+
+          <h4 class="text-sm font-semibold text-gray-700 mb-3">Scénarios</h4>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+            <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+              <div class="text-xs font-semibold text-emerald-700 uppercase mb-2">Favorable — Autocall à T2 (6 mois)</div>
+              <div class="text-sm text-gray-600 mb-1">Capital récupéré + 2 coupons mémoire</div>
+              <div class="text-xl font-bold text-emerald-700" id="scen-fav">—</div>
+            </div>
+            <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <div class="text-xs font-semibold text-blue-700 uppercase mb-2">Neutre — Jusqu'à maturité</div>
+              <div class="text-sm text-gray-600 mb-1">Capital récupéré + tous les coupons</div>
+              <div class="text-xl font-bold text-blue-700" id="scen-neu">—</div>
+            </div>
+            <div class="rounded-lg border border-red-200 bg-red-50 p-4">
+              <div class="text-xs font-semibold text-red-700 uppercase mb-2">Défavorable — Barrière franchie</div>
+              <div class="text-sm text-gray-600 mb-1">Perte basée sur le worst-of à maturité</div>
+              <div class="text-xl font-bold text-red-700" id="scen-def">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /RESULTS -->
+
+  </main>
+
+  <script src="/assets/js/script.js" defer></script>
+  <script src="/assets/js/invest.js" defer></script>
+</body>
+</html>

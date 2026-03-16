@@ -1,0 +1,36 @@
+.input-dark {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  color: white;
+  outline: none;
+  width: 100%;
+}
+.input-dark::placeholder { color: rgba(255,255,255,0.4); }
+.input-dark:focus { border-color: rgba(96,165,250,0.8); }
+
+.metric-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.metric-header, .result-header {
+  background: #0a2d42;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+}
+
+/* Datepicker dark */
+input[type="date"].input-dark::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.6);
+  cursor: pointer;
+}
