@@ -160,6 +160,7 @@ function calculate() {
   const obs = obsSchedule(emDate, fnDate);
   let memCoupons = 0;
   let simQtrs = 0;
+  let lastObsDate = null;   // last observation date reached by simDate
   let chronoHTML = '';
 
   obs.forEach((d, idx) => {
@@ -169,7 +170,7 @@ function calculate() {
     const acLevel    = idx === 0 ? acT1 : acT2;
     const payD       = paymentDate(d);
     memCoupons      += qCoupon;
-    if (isReached) simQtrs++;
+    if (isReached) { simQtrs++; lastObsDate = d; }
 
     let icon, rowBg, statut, statColor, amount;
 
@@ -211,7 +212,7 @@ function calculate() {
   });
   document.getElementById('chrono-tbody').innerHTML = chronoHTML;
 
-  // ── Summary — based on simDate cutoff ──
+  // ── Summary — based on last reached observation date ──
   const totalQtrs     = obs.length;
   const totalCouponR  = qCoupon * totalQtrs;
   const simCouponR    = qCoupon * simQtrs;
@@ -219,13 +220,17 @@ function calculate() {
   const simCouponE    = capital * simCouponR;
   const totalReturnE  = capital + totalCouponE;
   const simReturnE    = capital + simCouponE;
-  const annualReturn  = simQtrs > 0 && simYears > 0
-    ? simCouponR / simYears
+  // Use elapsed time to last observation date (not arbitrary sim date) for annualised return
+  const lastObsYears  = lastObsDate ? (lastObsDate - emDate) / (365.25 * 86400000) : simYears;
+  const annualReturn  = simQtrs > 0 && lastObsYears > 0
+    ? simCouponR / lastObsYears
     : totalCouponR / years;
 
-  const simLabel2 = simDate < fnDate ? `à la simulation (${fmt(simDate)})` : 'à maturité';
+  const obsLabel = lastObsDate && simDate < fnDate
+    ? `obs. du ${fmt(lastObsDate)}`
+    : 'à maturité';
   document.getElementById('sum-capital').textContent = fmtEur(capital);
-  document.getElementById('sum-coupons').textContent = `${fmtEur(simCouponE)} (${(simCouponR * 100).toFixed(1)}%) ${simLabel2}`;
+  document.getElementById('sum-coupons').textContent = `${fmtEur(simCouponE)} (${(simCouponR * 100).toFixed(1)}%) — ${obsLabel}`;
   document.getElementById('sum-total').textContent   = `${fmtEur(simReturnE)} (${fmtPct(simCouponR * 100)})`;
   document.getElementById('sum-annual').textContent  = `~${(annualReturn * 100).toFixed(2)}% / an`;
 
