@@ -34,41 +34,106 @@
 
         <!-- About Section -->
         <section id="about" class="pt-20 pb-10">
-            <div class="container mx-auto px-4">
+            <div class="container mx-auto px-4 max-w-4xl">
                 <img src="favicon-512x512.png" alt="Yating Chatiron Logo" class="w-30 h-30 mb-4">
-                <h2 class="text-3xl font-bold mb-4">À propos de moi</h2>
-                <p class="text-lg">
-                    Bonjour, je suis Yating Chatiron, ingénieur logiciel senior avec plus de 15 ans d'expérience dans le
-                    développement full-stack, le DevOps et les technologies cloud. Je me consacre désormais à la
-                    cybersécurité et au DevOps, avec une expertise dans le commerce électronique, l'optimisation des
-                    performances, la sécurité, la blockchain et l'IA. Je suis passionné par la création de solutions
-                    évolutives et par l'intégration de la sécurité dans le cycle de vie DevOps.
+                <h2 class="text-3xl font-bold mb-2">À propos de moi</h2>
+                <p class="text-xl font-semibold text-gray-600 mb-6">Ingénieur DevOps &amp; Infrastructure Cloud — Spécialisée E-Santé</p>
+
+                <p class="text-lg mb-8">
+                    Bonjour, je suis <strong>Yating Chatiron</strong>, ingénieur DevOps senior avec <strong>16+ ans d’expérience</strong> en full-stack engineering et infrastructure cloud. Depuis 2022, je me suis spécialisée dans le DevOps et les architectures pour le secteur santé — environnement où la criticité, la conformité et la continuité de service ne laissent aucune place à l’erreur.
                 </p>
-                <!-- New Block: My Journey -->
-                <div class="mt-6 p-6 border border-gray-300 rounded-lg bg-gray-50">
-                    <h3 class="text-xl font-semibold mb-3 flex items-center">
-                        <i class="fas fa-road mr-2 text-gray-600"></i> Un parcours atypique
+
+                <!-- Ce que je fais aujourd’hui -->
+                <div class="mb-8 p-6 border border-gray-200 rounded-xl bg-gray-50">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-server text-blue-600"></i> Ce que je fais aujourd’hui
                     </h3>
-                    <p class="text-lg">
-                        🎓 J’ai commencé mes études en construction civile à Taïwan, avant de me réorienter vers le
-                        design graphique.<br>
-                        🇺🇸 J’ai ensuite passé 5 ans à Boston, aux États-Unis, où j’ai travaillé comme designer. C’est
-                        là que tout a changé : en voulant automatiser certaines tâches créatives, j’ai découvert la
-                        programmation.<br>
-                        💻 Ce qui a commencé comme un outil est vite devenu une passion. J’ai accumulé 10 ans
-                        d’expérience en développement logiciel, avant d’évoluer naturellement vers le DevOps.<br>
-                        🇫🇷 Aujourd’hui en France, un nouvel événement m’a fait franchir une étape de plus : avoir été
-                        victime d’attaques cybernétiques. Cela m’a poussé à me spécialiser en cybersécurité, pour mieux
-                        comprendre et prévenir ce type de menaces.<br>
-                        ✍️ Désormais, je partage mes connaissances à travers des blogs sur la cybersécurité et le
-                        DevOps, avec l’envie d’informer, de sensibiliser et de contribuer.<br>
-                        <br>
-                        Mon parcours, entre Taïwan, les États-Unis et la France, m’a offert une vision globale, une
-                        adaptabilité forte et une compréhension interculturelle que j’applique chaque jour dans mon
-                        métier.<br>
-                        🔁 Rien n’était prévu. Mais tout a pris sens.
+                    <p class="font-semibold text-gray-700 mb-3">Infrastructure as Code | Kubernetes &amp; GitOps | Multi-Cloud (AWS/GCP/Azure)</p>
+                    <p class="text-gray-700 mb-3">
+                        Je conçois et pilote des infrastructures cloud hautement disponibles pour des plateformes de santé complexes. Chez Biogroup, j’ai orchestré une infrastructure Kubernetes multitenants supportant 28+ laboratoires (20M+ patients) avec :
+                    </p>
+                    <ul class="space-y-1 text-gray-700 mb-4">
+                        <li>✅ Zéro downtime deployments (Blue/Green, GitOps via ArgoCD)</li>
+                        <li>✅ Sécurité en shift-left (Prisma Cloud, Trivy, SBOM scanning)</li>
+                        <li>✅ Observabilité critique (Grafana, RabbitMQ alerting N1/N2/N3)</li>
+                        <li>✅ Conformité HDS/ISO27001 tout au long du cycle de déploiement</li>
+                    </ul>
+                    <p class="text-sm text-gray-500">
+                        <span class="font-semibold">Stack core :</span> Kubernetes · Terraform · Helm · ArgoCD · GitHub Actions · Vault · PostgreSQL · Go/Node.js/Python
                     </p>
                 </div>
+
+                <!-- Pourquoi la santé -->
+                <div class="mb-8 p-6 border border-blue-100 rounded-xl bg-blue-50">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-heartbeat text-blue-600"></i> Pourquoi la santé ?
+                    </h3>
+                    <p class="text-gray-700 mb-3">
+                        En 2023, j’ai découvert que <strong>la santé n’est pas "juste" de la tech</strong>.<br>
+                        Chaque déploiement affecte directement les médecins, les patients, les décisions médicales. Un incident = une chirurgie reprogrammée, un diagnostic en retard. Cette responsabilité m’a fascinée — et transformée.
+                    </p>
+                    <ul class="space-y-1 text-gray-700">
+                        <li>• <strong>5+ ans d’expérience e-santé</strong> (Biogroup, ITEKCOM, Livemed’s)</li>
+                        <li>• Profonde compréhension du <strong>domaine</strong> (HDS, GDPR, données sensibles, SLA critique)</li>
+                        <li>• Expertise en <strong>coordination transverse</strong> entre dev, infra, data, et équipes cliniques</li>
+                    </ul>
+                </div>
+
+                <!-- Parcours atypique -->
+                <div class="mb-8 p-6 border border-gray-200 rounded-xl bg-gray-50">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-route text-gray-600"></i> Un parcours atypique (mais logique)
+                    </h3>
+                    <div class="space-y-2 text-gray-700 mb-4">
+                        <p>🇹🇼 <strong>Taiwan</strong> → Design Graphique</p>
+                        <p>🇺🇸 <strong>Boston (5 ans)</strong> → Full-Stack Engineer (créativité → automation → code)</p>
+                        <p>🇫🇷 <strong>France (depuis 2021)</strong> → DevOps + Healthcare Infrastructure</p>
+                    </div>
+                    <p class="text-gray-700 mb-3">Entre ces trois mondes, j’ai accumulé :</p>
+                    <ul class="space-y-1 text-gray-700 mb-4">
+                        <li>• <strong>Adaptabilité extrême</strong> (startups, scale-ups, régulation lourde)</li>
+                        <li>• <strong>Multilinguisme</strong> (Chinois natif · Anglais · Français · Japonais N1)</li>
+                        <li>• <strong>Vision cross-culturelle</strong> appliquée à l’engineering (pas d’une seule "bonne façon")</li>
+                    </ul>
+                    <p class="text-gray-600 italic">
+                        Ce qui a vraiment changé : réaliser que la <strong>vraie complexité n’est pas le code</strong> — c’est les enjeux humains, les contraintes métier, la confiance. Le reste c’est des détails.
+                    </p>
+                </div>
+
+                <!-- En construction + Ce que je cherche -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="p-6 border border-yellow-200 rounded-xl bg-yellow-50">
+                        <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
+                            <i class="fas fa-shield-alt text-yellow-600"></i> En construction
+                        </h3>
+                        <p class="text-gray-700 text-sm">
+                            <strong>Cybersécurité</strong> (Certifications : AWS CLF, NRS6092 Pentesting, ISC2)<br><br>
+                            Je reconnais que la sécurité n’est pas un "ajout" à l’infra — c’est le fondement. D’où mon intérêt croissant pour le pentest et les threat models.
+                        </p>
+                    </div>
+                    <div class="p-6 border border-green-200 rounded-xl bg-green-50">
+                        <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
+                            <i class="fas fa-search text-green-600"></i> Ce que je cherche
+                        </h3>
+                        <ol class="space-y-1 text-gray-700 text-sm list-decimal list-inside">
+                            <li><strong>Piloter l’infrastructure</strong> (pas juste déployer)</li>
+                            <li><strong>Mentorer</strong> des junior en DevOps/SRE</li>
+                            <li><strong>Travailler sur du concret</strong> (santé, fintech, données critiques)</li>
+                            <li><strong>Continuer à apprendre</strong> (data platforms, observabilité avancée)</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Le reste -->
+                <div class="p-5 border border-gray-200 rounded-xl bg-white flex flex-wrap gap-4 text-sm text-gray-600">
+                    <span>📚 Blogueur occasionnel sur DevOps + santé</span>
+                    <span>🔐 Pentest hobbyist (Cyberini certified)</span>
+                    <span>🎤 Speaker (PHPCONF Taiwan 2016)</span>
+                    <span>🌍 Passionnée par les équipes distribuées et asynchrones</span>
+                </div>
+                <p class="mt-4 text-gray-500 italic text-sm">
+                    Je crois à : infra simple, code boring, culture strong, humilité technique.
+                </p>
             </div>
         </section>
 
