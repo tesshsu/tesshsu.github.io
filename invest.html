@@ -65,9 +65,10 @@
                 <input type="number" id="s1-init" value="492" step="0.01" class="col-span-2 input-dark text-right">
                 <input type="number" id="s1-cur"  placeholder="— fetch →" step="0.01" class="col-span-2 input-dark text-right">
                 <input type="text"   id="s1-tick" value="MC.PA" class="col-span-3 input-dark">
-                <button onclick="fetchPrice(1)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Récupérer le prix en temps réel">
+                <button onclick="fetchPrice(1)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Charger tout l'historique (1 appel API)">
                   <i class="fas fa-sync-alt" id="s1-icon"></i>
                 </button>
+                <div id="s1-cache-status" class="col-span-12 text-xs text-yellow-400 mt-0.5"></div>
               </div>
               <!-- Stock 2 -->
               <div class="grid grid-cols-12 gap-2 items-center">
@@ -75,9 +76,10 @@
                 <input type="number" id="s2-init" value="22.26" step="0.01" class="col-span-2 input-dark text-right">
                 <input type="number" id="s2-cur"  placeholder="— fetch →" step="0.01" class="col-span-2 input-dark text-right">
                 <input type="text"   id="s2-tick" value="STMPA.PA" class="col-span-3 input-dark">
-                <button onclick="fetchPrice(2)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Récupérer le prix en temps réel">
+                <button onclick="fetchPrice(2)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Charger tout l'historique (1 appel API)">
                   <i class="fas fa-sync-alt" id="s2-icon"></i>
                 </button>
+                <div id="s2-cache-status" class="col-span-12 text-xs text-yellow-400 mt-0.5"></div>
               </div>
               <!-- Stock 3 -->
               <div class="grid grid-cols-12 gap-2 items-center">
@@ -85,9 +87,10 @@
                 <input type="number" id="s3-init" value="79.26" step="0.01" class="col-span-2 input-dark text-right">
                 <input type="number" id="s3-cur"  placeholder="— fetch →" step="0.01" class="col-span-2 input-dark text-right">
                 <input type="text"   id="s3-tick" value="SAN.PA" class="col-span-3 input-dark">
-                <button onclick="fetchPrice(3)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Récupérer le prix en temps réel">
+                <button onclick="fetchPrice(3)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Charger tout l'historique (1 appel API)">
                   <i class="fas fa-sync-alt" id="s3-icon"></i>
                 </button>
+                <div id="s3-cache-status" class="col-span-12 text-xs text-yellow-400 mt-0.5"></div>
               </div>
             </div>
           </div>
@@ -103,6 +106,10 @@
                 <div>
                   <label class="text-xs text-gray-400">Date d'émission</label>
                   <input type="date" id="emission-date" value="2025-10-14" class="w-full input-dark mt-0.5">
+                </div>
+                <div>
+                  <label class="text-xs text-gray-400">Date de 1ère observation <span class="text-blue-300">(ex: 23/12/2025)</span></label>
+                  <input type="date" id="obs-start-date" value="2025-12-23" class="w-full input-dark mt-0.5">
                 </div>
                 <div>
                   <label class="text-xs text-gray-400">Observation finale (maturité)</label>
@@ -264,7 +271,7 @@
                   <th class="px-2 py-2 text-left">Date obs.</th>
                   <th class="px-2 py-2 text-left">Date paiement</th>
                   <th class="px-2 py-2 text-right">Niv. rappel</th>
-                  <th class="px-2 py-2 text-right">Barrière</th>
+                  <th class="px-2 py-2 text-right">Worst-of réel</th>
                   <th class="px-2 py-2 text-left">Statut coupon</th>
                   <th class="px-2 py-2 text-right">Montant</th>
                 </tr>

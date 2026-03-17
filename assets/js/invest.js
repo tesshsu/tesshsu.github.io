@@ -1,45 +1,49 @@
-// ── Persist inputs to localStorage (all except Prix actuel) ──
+// ── Persist inputs to localStorage ──────────────────────────
 const PERSIST_IDS = [
-  's1-name','s1-init','s1-tick',
-  's2-name','s2-init','s2-tick',
-  's3-name','s3-init','s3-tick',
-  'emission-date','final-date','initial-capital',
+  's1-name','s1-init','s1-cur','s1-tick',
+  's2-name','s2-init','s2-cur','s2-tick',
+  's3-name','s3-init','s3-cur','s3-tick',
+  'emission-date','obs-start-date','final-date','initial-capital',
   'annual-coupon','cap-barrier','autocall-t1','autocall-t2','issuer'
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
 
-  // Version bump clears stale localStorage from older code
-  const VERSION = '2';
+  // Version bump clears stale form values (NOT price history cache)
+  const VERSION = '4';
   if (localStorage.getItem('invest_version') !== VERSION) {
     PERSIST_IDS.forEach(id => localStorage.removeItem('invest_' + id));
     localStorage.setItem('invest_version', VERSION);
   }
 
-  // Restore saved values (only if non-empty)
   PERSIST_IDS.forEach(id => {
     const saved = localStorage.getItem('invest_' + id);
     if (saved !== null && saved !== '') document.getElementById(id).value = saved;
   });
 
-  // Set sim-date to today (always fresh, not persisted)
   document.getElementById('sim-date').value = today;
 
-  // Save on every change
   PERSIST_IDS.forEach(id => {
     document.getElementById(id).addEventListener('input', e => {
       localStorage.setItem('invest_' + id, e.target.value);
     });
   });
+
+  // Refresh cache badges on ticker change
+  [1, 2, 3].forEach(n => {
+    document.getElementById(`s${n}-tick`).addEventListener('input', () => updateCacheStatus(n));
+    updateCacheStatus(n);
+  });
 });
 
 let perfChart = null;
 
-// ── Utilities ──────────────────────────────────────────────
-const fmt = d => d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-const fmtEur = n => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
-const fmtPct = (n, digits = 2) => (n >= 0 ? '+' : '') + n.toFixed(digits) + '%';
+// ── Utilities ────────────────────────────────────────────────
+const fmt     = d => d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const fmtEur  = n => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+const fmtPct  = (n, digits = 2) => (n >= 0 ? '+' : '') + n.toFixed(digits) + '%';
+const toISO   = d => d.toISOString().split('T')[0];
 
 function paymentDate(obsDate) {
   const d = new Date(obsDate);
@@ -48,35 +52,125 @@ function paymentDate(obsDate) {
   return d;
 }
 
-function obsSchedule(emDate, fnDate) {
+function obsSchedule(firstObsDate, fnDate) {
+  // Starts FROM firstObsDate (inclusive), quarterly until fnDate.
+  // e.g. firstObs = 23/12/2025 → 23/12/2025, 23/03/2026, 23/06/2026, …, fnDate
   const list = [];
-  const cur = new Date(emDate);
-  const end = new Date(fnDate);
-  cur.setMonth(cur.getMonth() + 3);
+  const cur  = new Date(firstObsDate);
+  const end  = new Date(fnDate);
   while (cur <= end) { list.push(new Date(cur)); cur.setMonth(cur.getMonth() + 3); }
-  // Ensure final observation is exactly the final date
-  if (!list.length || list[list.length - 1].getTime() !== end.getTime()) {
-    if (list.length && list[list.length - 1].getTime() !== end.getTime()) list.push(end);
-    else if (!list.length) list.push(end);
+  if (!list.length) {
+    list.push(new Date(end));
+  } else if (list[list.length - 1].getTime() !== end.getTime()) {
+    list.push(new Date(end));
   }
   return list;
 }
 
-// ── Fetch price from Yahoo Finance via allorigins proxy ────
+// ── Price history cache ──────────────────────────────────────
+// Architecture: one bulk Yahoo Finance API call fetches the full OHLCV history
+// (period1 → period2) in a single request. Past prices are immutable so we cache
+// them permanently in localStorage. Only today's price may need a refresh.
+// Key: inv_ph_{TICKER}  Value: { ticker, fetched_at, prices: { "YYYY-MM-DD": close } }
+
+const cacheKey = ticker => `inv_ph_${ticker}`;
+
+function getHistory(ticker) {
+  const raw = localStorage.getItem(cacheKey(ticker));
+  return raw ? JSON.parse(raw) : null;
+}
+
+/**
+ * Lookup closing price for a given date.
+ * Falls back up to 5 prior trading days (covers long weekends & holidays).
+ */
+function getCachedPrice(ticker, isoDate) {
+  const cache = getHistory(ticker);
+  if (!cache) return null;
+  if (cache.prices[isoDate] != null) return cache.prices[isoDate];
+  const d = new Date(isoDate);
+  for (let i = 1; i <= 5; i++) {
+    d.setDate(d.getDate() - 1);
+    const s = toISO(d);
+    if (cache.prices[s] != null) return cache.prices[s];
+  }
+  return null;
+}
+
+function updateCacheStatus(n) {
+  const el = document.getElementById(`s${n}-cache-status`);
+  if (!el) return;
+  const ticker = document.getElementById(`s${n}-tick`).value.trim();
+  if (!ticker) { el.textContent = ''; return; }
+  const cache = getHistory(ticker);
+  if (!cache) {
+    el.textContent = 'Pas de cache — cliquez ↻ pour charger l\'historique';
+    el.className   = 'text-xs text-yellow-400 mt-1 col-span-12';
+  } else {
+    const count   = Object.keys(cache.prices).length;
+    const stale   = cache.fetched_at < toISO(new Date()); // fetched before today
+    const warning = stale ? ' ⚠ cours du jour peut être obsolète' : '';
+    el.textContent = `✓ ${count} séances en cache — actualisé le ${cache.fetched_at}${warning}`;
+    el.className   = `text-xs ${stale ? 'text-yellow-400' : 'text-emerald-400'} mt-1 col-span-12`;
+  }
+}
+
+// ── Fetch full price history — ONE API call per stock ────────
+// Uses Yahoo Finance v8 chart endpoint with period1/period2 Unix timestamps.
+// Returns daily OHLCV; we store only closing prices.
+// Rate limit impact: 1 call per stock (vs N calls for N observation dates).
 async function fetchPrice(n) {
   const ticker = document.getElementById(`s${n}-tick`).value.trim();
   if (!ticker) { alert('Entrez un ticker Yahoo Finance (ex: MC.PA)'); return; }
+
   const icon = document.getElementById(`s${n}-icon`);
   icon.className = 'fas fa-spinner fa-spin';
+
+  // Determine history start: use obs-start-date or 2 years back as fallback
+  const obsStartVal = document.getElementById('obs-start-date').value;
+  const fromDate    = obsStartVal
+    ? (() => { const d = new Date(obsStartVal); d.setMonth(d.getMonth() - 3); return d; })()
+    : (() => { const d = new Date(); d.setFullYear(d.getFullYear() - 2); return d; })();
+
+  const period1 = Math.floor(fromDate.getTime() / 1000);
+  const period2 = Math.floor(Date.now() / 1000);
+
   try {
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=1d&range=1d`;
-    const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}`
+              + `?interval=1d&period1=${period1}&period2=${period2}`;
+    const res  = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
     const data = await res.json();
-    const price = data?.chart?.result?.[0]?.meta?.regularMarketPrice;
-    if (!price) throw new Error('No price');
-    document.getElementById(`s${n}-cur`).value = price.toFixed(2);
+
+    const result = data?.chart?.result?.[0];
+    if (!result) throw new Error('No data');
+
+    const timestamps = result.timestamp || [];
+    const closes     = result.indicators?.quote?.[0]?.close || [];
+
+    // Build { "YYYY-MM-DD": close } — historical prices are immutable, safe to cache forever
+    const prices = {};
+    timestamps.forEach((ts, i) => {
+      if (closes[i] != null)
+        prices[toISO(new Date(ts * 1000))] = parseFloat(closes[i].toFixed(4));
+    });
+
+    localStorage.setItem(cacheKey(ticker), JSON.stringify({
+      ticker,
+      fetched_at: toISO(new Date()),
+      prices
+    }));
+
+    // Latest close → current price input + persist
+    const latestClose = closes.filter(Boolean).at(-1);
+    if (latestClose) {
+      const v = latestClose.toFixed(2);
+      document.getElementById(`s${n}-cur`).value = v;
+      localStorage.setItem(`invest_s${n}-cur`, v);
+    }
+
     icon.className = 'fas fa-check';
     setTimeout(() => { icon.className = 'fas fa-sync-alt'; }, 2500);
+    updateCacheStatus(n);
   } catch {
     icon.className = 'fas fa-times';
     setTimeout(() => { icon.className = 'fas fa-sync-alt'; }, 2500);
@@ -84,33 +178,38 @@ async function fetchPrice(n) {
   }
 }
 
-// ── Main calculation ───────────────────────────────────────
+// ── Main calculation ─────────────────────────────────────────
 function calculate() {
   const stocks = [1, 2, 3].map(n => ({
+    _n:      n,
     name:    document.getElementById(`s${n}-name`).value.trim() || `Stock ${n}`,
     initial: parseFloat(document.getElementById(`s${n}-init`).value),
     current: parseFloat(document.getElementById(`s${n}-cur`).value),
+    ticker:  document.getElementById(`s${n}-tick`).value.trim(),
   })).filter(s => !isNaN(s.initial) && !isNaN(s.current) && s.initial > 0);
 
-  if (!stocks.length) { alert('Veuillez renseigner au moins un sous-jacent (niveau initial + prix actuel).'); return; }
+  if (!stocks.length) {
+    alert('Veuillez renseigner au moins un sous-jacent (niveau initial + prix actuel).');
+    return;
+  }
 
-  const emDate     = new Date(document.getElementById('emission-date').value);
-  const fnDate     = new Date(document.getElementById('final-date').value);
-  const capital    = parseFloat(document.getElementById('initial-capital').value) || 248000;
-  const annRate    = parseFloat(document.getElementById('annual-coupon').value) / 100;
-  const capBarPct  = parseFloat(document.getElementById('cap-barrier').value) / 100;
-  const acT1       = parseFloat(document.getElementById('autocall-t1').value) / 100;
-  const acT2       = parseFloat(document.getElementById('autocall-t2').value) / 100;
-  const issuer     = document.getElementById('issuer').value || '—';
+  const emDate       = new Date(document.getElementById('emission-date').value);
+  const obsStartVal  = document.getElementById('obs-start-date').value;
+  const firstObsDate = obsStartVal ? new Date(obsStartVal) : emDate;
+  const fnDate       = new Date(document.getElementById('final-date').value);
+  const capital      = parseFloat(document.getElementById('initial-capital').value) || 248000;
+  const annRate      = parseFloat(document.getElementById('annual-coupon').value) / 100;
+  const capBarPct    = parseFloat(document.getElementById('cap-barrier').value) / 100;
+  const acT1         = parseFloat(document.getElementById('autocall-t1').value) / 100;
+  const acT2         = parseFloat(document.getElementById('autocall-t2').value) / 100;
+  const issuer       = document.getElementById('issuer').value || '—';
 
-  const qCoupon    = annRate / 4;
-  const todayReal  = new Date();
-  const simDateVal = document.getElementById('sim-date').value;
-  const simDate    = simDateVal ? new Date(simDateVal) : new Date(todayReal);
-  const years      = (fnDate - emDate) / (365.25 * 86400000);
-  const simYears   = (simDate - emDate) / (365.25 * 86400000);
+  const qCoupon   = annRate / 4;
+  const simDateV  = document.getElementById('sim-date').value;
+  const simDate   = simDateV ? new Date(simDateV) : new Date();
+  const years     = (fnDate - emDate)  / (365.25 * 86400000);
+  const simYears  = (simDate - emDate) / (365.25 * 86400000);
 
-  // Per-stock metrics
   stocks.forEach(s => {
     s.perf       = (s.current - s.initial) / s.initial;
     s.capBarrier = s.initial * capBarPct;
@@ -118,27 +217,27 @@ function calculate() {
   });
   const worstPerf = Math.min(...stocks.map(s => s.perf));
 
-  // ── Update header ──
+  // ── Header ──
   document.getElementById('display-capital').textContent      = fmtEur(capital);
   document.getElementById('display-product-name').textContent = `Athena sur ${stocks.map(s => s.name).join(' / ')}`;
 
   // ── Metric cards ──
-  document.getElementById('r-coupon-rate').textContent  = `${(annRate * 100).toFixed(2)}% p.a.`;
+  document.getElementById('r-coupon-rate').textContent    = `${(annRate * 100).toFixed(2)}% p.a.`;
   document.getElementById('r-quarter-coupon').textContent = `${(qCoupon * 100).toFixed(2)}%`;
   const simLabel = simDate < fnDate
     ? `Simulation : ${(simYears * 12).toFixed(0)} mois`
     : `Maturité : ${years.toFixed(0)} ans`;
-  document.getElementById('r-maturity').textContent    = simLabel;
-  document.getElementById('r-emission').textContent    = fmt(emDate);
-  document.getElementById('r-simdate').textContent     = fmt(simDate);
-  document.getElementById('r-final').textContent       = fmt(fnDate);
-  document.getElementById('r-protection').textContent  = `${(capBarPct * 100).toFixed(0)}% Européenne`;
-  document.getElementById('r-issuer').textContent      = issuer;
+  document.getElementById('r-maturity').textContent   = simLabel;
+  document.getElementById('r-emission').textContent   = fmt(emDate);
+  document.getElementById('r-simdate').textContent    = fmt(simDate);
+  document.getElementById('r-final').textContent      = fmt(fnDate);
+  document.getElementById('r-protection').textContent = `${(capBarPct * 100).toFixed(0)}% Européenne`;
+  document.getElementById('r-issuer').textContent     = issuer;
 
   const breached = stocks.some(s => s.current < s.capBarrier);
   const bStatus  = document.getElementById('r-barrier-status');
-  bStatus.textContent  = breached ? '⚠️ FRANCHIE' : '✓ Sécurisé';
-  bStatus.className    = breached ? 'font-semibold text-red-600' : 'font-semibold text-emerald-600';
+  bStatus.textContent = breached ? '⚠️ FRANCHIE' : '✓ Sécurisé';
+  bStatus.className   = breached ? 'font-semibold text-red-600' : 'font-semibold text-emerald-600';
 
   // ── Sous-jacents table ──
   const rowColors = ['bg-blue-50', 'bg-gray-50', 'bg-white'];
@@ -156,73 +255,109 @@ function calculate() {
     </tr>`;
   }).join('');
 
-  // ── Chronologie ──
-  const obs = obsSchedule(emDate, fnDate);
-  let memCoupons = 0;
-  let simQtrs = 0;
-  let lastObsDate = null;   // last observation date reached by simDate
-  let chronoHTML = '';
+  // ── Chronologie — real historical prices when available ──
+  const obs = obsSchedule(firstObsDate, fnDate);
+  let memCoupons   = 0;
+  let simQtrs      = 0;
+  let lastObsDate  = null;
+  let autocallIdx  = -1;   // first index at which an autocall was triggered
+  let chronoHTML   = '';
 
   obs.forEach((d, idx) => {
-    const isFinal    = idx === obs.length - 1;
-    const isReached  = d <= simDate;
-    const isSimEdge  = isReached && (idx === obs.length - 1 || obs[idx + 1] > simDate);
-    const acLevel    = idx === 0 ? acT1 : acT2;
-    const payD       = paymentDate(d);
-    memCoupons      += qCoupon;
+    // Once autocall fired, remaining dates are moot
+    if (autocallIdx >= 0 && idx > autocallIdx) return;
+
+    const isFinal   = idx === obs.length - 1;
+    const isReached = d <= simDate;
+    const acLevel   = idx === 0 ? acT1 : acT2;  // T1 uses stricter 100% barrier
+    const payD      = paymentDate(d);
+    const dateStr   = toISO(d);
+
+    memCoupons += qCoupon;
     if (isReached) { simQtrs++; lastObsDate = d; }
 
-    let icon, rowBg, statut, statColor, amount;
+    // ── Try real historical prices from localStorage cache ──
+    // All 3 stocks must have data for the date to be considered "real"
+    const actualPrices  = stocks.map(s => getCachedPrice(s.ticker, dateStr));
+    const hasRealData   = isReached && actualPrices.every(p => p !== null);
 
-    if (isReached && isFinal) {
-      icon = '<i class="fas fa-flag-checkered text-purple-500 text-base"></i>';
-      rowBg = 'bg-purple-50';
-      statut = 'Maturité';
-      statColor = 'text-purple-700 font-semibold';
-      amount = `${(memCoupons * 100).toFixed(2)}%`;
-    } else if (isReached) {
-      icon = '<i class="fas fa-play-circle text-gray-400 text-base"></i>';
-      rowBg = isSimEdge ? 'bg-blue-50 border-l-4 border-blue-400' : 'bg-gray-50';
-      statut = isSimEdge ? '◀ Simulation' : 'Mémoire';
-      statColor = isSimEdge ? 'text-blue-600 font-bold' : 'text-orange-500 font-medium';
-      amount = `${(memCoupons * 100).toFixed(2)}%`;
-    } else if (isFinal) {
-      icon = '<i class="fas fa-flag-checkered text-purple-500 text-base"></i>';
-      rowBg = 'bg-purple-50';
-      statut = 'Maturité';
-      statColor = 'text-purple-700 font-semibold';
-      amount = `${(memCoupons * 100).toFixed(2)}%`;
-    } else {
-      icon = '<i class="fas fa-play-circle text-blue-500 text-base"></i>';
-      rowBg = '';
-      statut = '—';
-      statColor = 'text-gray-400';
-      amount = `${(memCoupons * 100).toFixed(2)}%`;
+    let actualWorstPerf = null;
+    let wasAutocalled   = false;
+
+    if (hasRealData) {
+      const actualPerfs = stocks.map((s, i) => (actualPrices[i] - s.initial) / s.initial);
+      actualWorstPerf   = Math.min(...actualPerfs);
+      // Autocall: worst-of >= autocall level (expressed relative to initial = 1.0)
+      // acLevel=1.0 → all stocks at 100%+; acLevel=0.85 → all stocks at 85%+
+      wasAutocalled = !isFinal && (actualWorstPerf >= (acLevel - 1));
+      if (wasAutocalled) autocallIdx = idx;
     }
+
+    const isSimEdge = isReached && !wasAutocalled && (idx === obs.length - 1 || obs[idx + 1] > simDate);
+
+    // ── Row styling & status ──
+    let icon, rowBg, statut, statColor;
+
+    if (wasAutocalled) {
+      icon      = '<i class="fas fa-bolt text-blue-500 text-base"></i>';
+      rowBg     = 'bg-blue-100 border-l-4 border-blue-600';
+      statut    = '🔔 Autocall';
+      statColor = 'text-blue-700 font-bold';
+    } else if (isReached && isFinal) {
+      icon      = '<i class="fas fa-flag-checkered text-purple-500 text-base"></i>';
+      rowBg     = 'bg-purple-50';
+      statut    = 'Maturité';
+      statColor = 'text-purple-700 font-semibold';
+    } else if (isReached) {
+      icon      = '<i class="fas fa-play-circle text-gray-400 text-base"></i>';
+      rowBg     = isSimEdge ? 'bg-blue-50 border-l-4 border-blue-400' : 'bg-gray-50';
+      statut    = isSimEdge ? '◀ Simulation' : (hasRealData ? 'Payé ✓' : 'Mémoire');
+      statColor = isSimEdge ? 'text-blue-600 font-bold'
+                : hasRealData ? 'text-emerald-600 font-medium'
+                : 'text-orange-500 font-medium';
+    } else if (isFinal) {
+      icon      = '<i class="fas fa-flag-checkered text-purple-500 text-base"></i>';
+      rowBg     = 'bg-purple-50';
+      statut    = 'Maturité';
+      statColor = 'text-purple-700 font-semibold';
+    } else {
+      icon      = '<i class="fas fa-play-circle text-blue-500 text-base"></i>';
+      rowBg     = '';
+      statut    = '—';
+      statColor = 'text-gray-400';
+    }
+
+    // Worst-of column: real data badge or placeholder
+    const worstCell = hasRealData
+      ? `<span class="font-semibold ${actualWorstPerf >= 0 ? 'text-emerald-600' : 'text-red-500'}">${fmtPct(actualWorstPerf * 100)}</span>`
+      : `<span class="text-gray-300 text-xs italic">${isReached ? 'N/A' : '—'}</span>`;
+
+    const amountLabel = wasAutocalled
+      ? `${(memCoupons * 100).toFixed(2)}% + capital`
+      : `${(memCoupons * 100).toFixed(2)}%`;
 
     chronoHTML += `<tr class="border-b border-gray-100 ${rowBg} hover:bg-gray-50">
       <td class="px-2 py-1.5 text-center">${icon}</td>
       <td class="px-2 py-1.5">${fmt(d)}</td>
       <td class="px-2 py-1.5">${fmt(payD)}</td>
       <td class="px-2 py-1.5 text-right">${(acLevel * 100).toFixed(0)}%</td>
-      <td class="px-2 py-1.5 text-right">N/A</td>
+      <td class="px-2 py-1.5 text-right">${worstCell}</td>
       <td class="px-2 py-1.5 ${statColor}">${statut}</td>
-      <td class="px-2 py-1.5 text-right font-medium">${amount}</td>
+      <td class="px-2 py-1.5 text-right font-medium">${amountLabel}</td>
     </tr>`;
   });
   document.getElementById('chrono-tbody').innerHTML = chronoHTML;
 
-  // ── Summary — based on last reached observation date ──
-  const totalQtrs     = obs.length;
-  const totalCouponR  = qCoupon * totalQtrs;
-  const simCouponR    = qCoupon * simQtrs;
-  const totalCouponE  = capital * totalCouponR;
-  const simCouponE    = capital * simCouponR;
-  const totalReturnE  = capital + totalCouponE;
-  const simReturnE    = capital + simCouponE;
-  // Use elapsed time to last observation date (not arbitrary sim date) for annualised return
-  const lastObsYears  = lastObsDate ? (lastObsDate - emDate) / (365.25 * 86400000) : simYears;
-  const annualReturn  = simQtrs > 0 && lastObsYears > 0
+  // ── Summary ──
+  const totalQtrs    = obs.length;
+  const totalCouponR = qCoupon * totalQtrs;
+  const simCouponR   = qCoupon * simQtrs;
+  const totalCouponE = capital * totalCouponR;
+  const simCouponE   = capital * simCouponR;
+  const totalReturnE = capital + totalCouponE;
+  const simReturnE   = capital + simCouponE;
+  const lastObsYears = lastObsDate ? (lastObsDate - emDate) / (365.25 * 86400000) : simYears;
+  const annualReturn = simQtrs > 0 && lastObsYears > 0
     ? simCouponR / lastObsYears
     : totalCouponR / years;
 
@@ -234,33 +369,27 @@ function calculate() {
   document.getElementById('sum-total').textContent   = `${fmtEur(simReturnE)} (${fmtPct(simCouponR * 100)})`;
   document.getElementById('sum-annual').textContent  = `~${(annualReturn * 100).toFixed(2)}% / an`;
 
-  // Scenarios
-  const fav2  = capital * (1 + 2 * qCoupon);
-  const wRet  = capital * (1 + worstPerf);
+  const fav2 = capital * (1 + 2 * qCoupon);
+  const wRet = capital * (1 + worstPerf);
   document.getElementById('scen-fav').textContent = `${fmtEur(fav2)} (${fmtPct(2 * qCoupon * 100)} en 6 mois)`;
   document.getElementById('scen-neu').textContent = `${fmtEur(totalReturnE)} (${fmtPct(totalCouponR * 100)} en ${years.toFixed(0)} ans)`;
   document.getElementById('scen-def').textContent = `${fmtEur(wRet)} (${fmtPct(worstPerf * 100)} worst-of)`;
 
-  // ── Chart ──
   renderChart(stocks, emDate, fnDate, capBarPct, acT2, simDate);
 
-  // Show results
   document.getElementById('results').classList.remove('hidden');
   document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 }
 
-// ── Chart ──────────────────────────────────────────────────
+// ── Chart ────────────────────────────────────────────────────
 function renderChart(stocks, emDate, fnDate, capBarPct, acLevel, simDate) {
   const ctx = document.getElementById('perf-chart').getContext('2d');
   if (perfChart) { perfChart.destroy(); perfChart = null; }
 
-  const endD = simDate < fnDate ? simDate : fnDate;
-  const labels  = [];
-  const cur     = new Date(emDate);
-  while (cur <= endD) {
-    labels.push(fmt(new Date(cur)));
-    cur.setMonth(cur.getMonth() + 1);
-  }
+  const endD   = simDate < fnDate ? simDate : fnDate;
+  const labels = [];
+  const cur    = new Date(emDate);
+  while (cur <= endD) { labels.push(fmt(new Date(cur))); cur.setMonth(cur.getMonth() + 1); }
   const n = labels.length;
 
   const palette = [
@@ -270,22 +399,25 @@ function renderChart(stocks, emDate, fnDate, capBarPct, acLevel, simDate) {
   ];
 
   const datasets = stocks.map((s, i) => ({
-    label: s.name,
-    data: labels.map((_, j) => parseFloat((100 + s.perf * 100 * (j / (n - 1 || 1))).toFixed(2))),
-    borderColor: palette[i].border,
+    label:           s.name,
+    data:            labels.map((_, j) => parseFloat((100 + s.perf * 100 * (j / (n - 1 || 1))).toFixed(2))),
+    borderColor:     palette[i].border,
     backgroundColor: palette[i].bg,
-    borderWidth: 2,
-    pointRadius: 0,
-    tension: 0.4,
-    fill: false,
+    borderWidth:     2,
+    pointRadius:     0,
+    tension:         0.4,
+    fill:            false,
   }));
 
   datasets.push(
-    { label: `Barrière capital (${(capBarPct * 100).toFixed(0)}%)`, data: labels.map(() => capBarPct * 100),
+    { label: `Barrière capital (${(capBarPct * 100).toFixed(0)}%)`,
+      data: labels.map(() => capBarPct * 100),
       borderColor: 'rgba(239,68,68,0.7)', borderDash: [6,3], borderWidth: 1.5, pointRadius: 0, fill: false },
-    { label: `Autocall (${(acLevel * 100).toFixed(0)}%)`, data: labels.map(() => acLevel * 100),
+    { label: `Autocall (${(acLevel * 100).toFixed(0)}%)`,
+      data: labels.map(() => acLevel * 100),
       borderColor: 'rgba(59,130,246,0.7)', borderDash: [6,3], borderWidth: 1.5, pointRadius: 0, fill: false },
-    { label: 'Prix vente (100%)', data: labels.map(() => 100),
+    { label: 'Prix vente (100%)',
+      data: labels.map(() => 100),
       borderColor: 'rgba(0,0,0,0.5)', borderDash: [3,3], borderWidth: 1.5, pointRadius: 0, fill: false }
   );
 
