@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Résultats d'investissement — Assurance Vie Luxembourg</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/invest.css">
+  <link rel="stylesheet" href="/assets/css/result-invest.css">
+</head>
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
+  <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+  <main role="main" class="flex-1 ml-16">
+
+    <!-- DARK HEADER ──────────────────────────────────────────── -->
+    <div class="text-white px-6 py-5" style="background: linear-gradient(160deg,#0a2d42 0%,#0f4060 100%);">
+      <div class="max-w-7xl mx-auto">
+
+        <!-- Top navigation -->
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-3">
+            <a href="/invest.html"
+               class="flex items-center gap-2 bg-white/10 hover:bg-white/20 transition rounded-lg px-3 py-2 text-sm font-medium">
+              <i class="fas fa-arrow-left text-xs"></i>Simulateur
+            </a>
+            <div class="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+              <i class="fas fa-trophy text-yellow-400"></i>
+              <span class="text-sm font-semibold">Journal des résultats</span>
+            </div>
+          </div>
+
+          <div class="text-center hidden lg:block">
+            <p class="text-xs text-gray-400 mb-0.5">Assurance Vie Luxembourg</p>
+            <p class="font-bold text-xl">Produits Structurés — Événements</p>
+            <p class="text-sm text-gray-300">Rappels anticipés · Coupons · Maturités</p>
+          </div>
+
+          <button onclick="openModal()"
+            class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg">
+            <i class="fas fa-plus"></i>Nouveau résultat
+          </button>
+        </div>
+
+        <!-- KPI tiles -->
+        <div class="kpi-bar">
+          <div class="kpi-tile">
+            <span class="kpi-label">Événements</span>
+            <span class="kpi-value accent" id="kpi-count">—</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-label">Capital engagé</span>
+            <span class="kpi-value" id="kpi-capital">—</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-label">Gains cumulés</span>
+            <span class="kpi-value green" id="kpi-gain">—</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-label">Coupon moyen</span>
+            <span class="kpi-value accent" id="kpi-avgret">—</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- /DARK HEADER -->
+
+
+    <!-- TOOLBAR ──────────────────────────────────────────────── -->
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between flex-wrap gap-3">
+
+        <!-- Filter pills -->
+        <div class="filter-bar">
+          <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide mr-1">Filtrer :</span>
+          <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">
+            Tous
+          </button>
+          <button class="filter-btn" data-filter="rappel_anticipe" onclick="setFilter(this)">
+            <i class="fas fa-bell mr-1"></i>Rappels
+          </button>
+          <button class="filter-btn" data-filter="coupon_paye" onclick="setFilter(this)">
+            <i class="fas fa-coins mr-1"></i>Coupons
+          </button>
+          <button class="filter-btn" data-filter="maturity" onclick="setFilter(this)">
+            <i class="fas fa-flag-checkered mr-1"></i>Maturités
+          </button>
+          <button class="filter-btn" data-filter="perte_capital" onclick="setFilter(this)">
+            <i class="fas fa-exclamation mr-1"></i>Pertes
+          </button>
+        </div>
+
+        <!-- Sort / info -->
+        <div class="text-xs text-gray-400 flex items-center gap-1.5">
+          <i class="fas fa-info-circle"></i>
+          Données stockées localement dans votre navigateur
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- RESULTS BOARD ────────────────────────────────────────── -->
+    <div class="max-w-7xl mx-auto px-6 pb-10">
+      <div class="results-board" id="results-board">
+        <!-- Cards injected by result-invest.js -->
+      </div>
+    </div>
+
+
+    <!-- LEGAL FOOTNOTE ───────────────────────────────────────── -->
+    <div class="max-w-7xl mx-auto px-6 pb-8">
+      <div class="bg-white border border-gray-200 rounded-xl p-5 text-xs text-gray-500 leading-relaxed shadow-sm">
+        <p>
+          * Taux de Rendement bruts calculés sur la base de cette valeur nominale. Pour plus d'informations,
+          veuillez vous référer à la documentation de ce produit.
+        </p>
+        <p class="mt-1">
+          ** Date de paiement de l'émetteur. Les dates effectives peuvent varier selon les jours ouvrés.
+        </p>
+        <p class="mt-1 text-gray-400">
+          Les données affichées sont issues de vos saisies manuelles et sont conservées localement dans votre navigateur.
+          Elles ne constituent pas un relevé de compte officiel. Rapprochez-vous de votre conseiller pour toute confirmation.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+
+  <!-- ADD / EDIT MODAL ─────────────────────────────────────────── -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title" id="modal-title">Nouveau résultat</span>
+        <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+      </div>
+
+      <form id="result-form" novalidate>
+        <input type="hidden" id="form-id">
+
+        <div class="modal-body">
+          <div class="form-grid">
+
+            <!-- Type -->
+            <div class="form-group full">
+              <label class="form-label" for="form-type">Type d'événement</label>
+              <select id="form-type" class="form-input" required>
+                <option value="rappel_anticipe">Rappel anticipé</option>
+                <option value="coupon_paye">Coupon payé</option>
+                <option value="maturity">Maturité</option>
+                <option value="perte_capital">Perte partielle</option>
+              </select>
+            </div>
+
+            <!-- Product name -->
+            <div class="form-group full">
+              <label class="form-label" for="form-product-name">Nom du produit</label>
+              <input type="text" id="form-product-name" class="form-input"
+                     placeholder="ex: Athena on SAN FP, MC FP and STMPA FP" required>
+            </div>
+
+            <!-- ISIN & Issuer -->
+            <div class="form-group">
+              <label class="form-label" for="form-isin">ISIN</label>
+              <input type="text" id="form-isin" class="form-input" placeholder="ex: XS3111146380">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-issuer">Émetteur</label>
+              <input type="text" id="form-issuer" class="form-input" placeholder="ex: Barclays Bank PLC">
+            </div>
+
+            <!-- Dates -->
+            <div class="form-group">
+              <label class="form-label" for="form-start-date">Date d'émission / début</label>
+              <input type="date" id="form-start-date" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-obs-date">Date d'observation</label>
+              <input type="date" id="form-obs-date" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-pay-date">Date de paiement</label>
+              <input type="date" id="form-pay-date" class="form-input" required>
+            </div>
+            <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:0.1rem;">
+              <span id="form-duration-preview" style="font-size:0.72rem;color:#7c3aed;font-weight:600;"></span>
+            </div>
+
+            <!-- Pct fields -->
+            <div class="form-group">
+              <label class="form-label" for="form-total-pct">Total payé (%)</label>
+              <input type="number" id="form-total-pct" class="form-input"
+                     step="0.001" placeholder="ex: 103.675" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-coupon-pct">Coupon versé (%)</label>
+              <input type="number" id="form-coupon-pct" class="form-input"
+                     step="0.001" placeholder="ex: 3.675" required>
+            </div>
+
+            <!-- Capital & currency -->
+            <div class="form-group">
+              <label class="form-label" for="form-capital">Capital (montant)</label>
+              <input type="number" id="form-capital" class="form-input"
+                     step="1000" placeholder="ex: 248000" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-currency">Devise</label>
+              <select id="form-currency" class="form-input">
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+                <option value="CHF">CHF</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group full">
+              <label class="form-label" for="form-notes">Notes (optionnel)</label>
+              <textarea id="form-notes" class="form-input" rows="3"
+                        placeholder="Contexte, raison du rappel, sous-jacents concernés…"
+                        style="resize:vertical;"></textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn-save">
+            <i class="fas fa-save"></i>Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- /MODAL -->
+
+
+  <script src="/assets/js/script.js" defer></script>
+  <script src="/assets/js/result-invest.js" defer></script>
+</body>
+</html>
