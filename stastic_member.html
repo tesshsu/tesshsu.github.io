@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statistiques Membres — Groupe Tech FR 🇫🇷</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/invest.css">
+  <link rel="stylesheet" href="/assets/css/stastic_member.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- ── Lock screen styles ────────────────────────────────────── -->
+  <style>
+    #lock-screen {
+      position: fixed; inset: 0; z-index: 9999;
+      background: linear-gradient(160deg, #071d2b 0%, #0a2d42 60%, #0f3d5a 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: system-ui, sans-serif;
+    }
+    #lock-screen.unlocked { display: none; }
+    .lock-box {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      width: 100%; max-width: 360px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    }
+    .lock-icon {
+      width: 64px; height: 64px; border-radius: 18px;
+      background: rgba(251,191,36,0.15);
+      border: 1px solid rgba(251,191,36,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-size: 1.75rem; color: #fbbf24;
+    }
+    .lock-title { color: #fff; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .lock-subtitle { color: rgba(255,255,255,0.45); font-size: 0.78rem; margin-bottom: 1.75rem; }
+    .lock-input-wrap { position: relative; margin-bottom: 1rem; }
+    .lock-input {
+      width: 100%; padding: 0.75rem 2.75rem 0.75rem 1rem;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px; color: #fff;
+      font-size: 0.95rem; outline: none; box-sizing: border-box;
+      letter-spacing: 0.05em;
+      transition: border-color 0.2s;
+    }
+    .lock-input::placeholder { color: rgba(255,255,255,0.3); letter-spacing: 0; }
+    .lock-input:focus { border-color: rgba(96,165,250,0.7); }
+    .lock-input.error { border-color: rgba(248,113,113,0.8); animation: shake 0.3s ease; }
+    .lock-toggle {
+      position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: rgba(255,255,255,0.4);
+      cursor: pointer; font-size: 0.85rem; padding: 0.25rem;
+    }
+    .lock-toggle:hover { color: rgba(255,255,255,0.75); }
+    .lock-btn {
+      width: 100%; padding: 0.75rem;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border: none; border-radius: 10px;
+      color: #fff; font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; transition: opacity 0.2s, transform 0.1s;
+    }
+    .lock-btn:hover { opacity: 0.9; }
+    .lock-btn:active { transform: scale(0.98); }
+    .lock-error {
+      margin-top: 0.75rem; color: #f87171;
+      font-size: 0.75rem; min-height: 1rem;
+    }
+    .lock-footer { margin-top: 1.5rem; color: rgba(255,255,255,0.2); font-size: 0.65rem; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-6px); }
+      75%      { transform: translateX(6px); }
+    }
+  </style>
+
+  <!-- ── Auth gate script ──────────────────────────────────────── -->
+  <script>
+    const _V = '77737eea1c04b3d03fb472aabb2b1b531d53d80f8354e3724c3ac645166aa87b';
+    const _S = 'riv2026\x24lux';
+    const _K = 'grp_auth_ok';
+
+    async function _digest(str) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    async function _check() {
+      const inp = document.getElementById('_pw');
+      const v = inp.value;
+      if (!v) return;
+      const h = await _digest(_S + v);
+      if (h === _V) {
+        sessionStorage.setItem(_K, '1');
+        document.getElementById('lock-screen').classList.add('unlocked');
+      } else {
+        inp.classList.add('error');
+        document.getElementById('_err').textContent = 'Mot de passe incorrect.';
+        inp.value = '';
+        setTimeout(() => inp.classList.remove('error'), 400);
+      }
+    }
+
+    function _togglePw() {
+      const inp = document.getElementById('_pw');
+      const ico = document.getElementById('_eye');
+      if (inp.type === 'password') { inp.type = 'text'; ico.className = 'fas fa-eye-slash'; }
+      else { inp.type = 'password'; ico.className = 'fas fa-eye'; }
+    }
+
+    if (sessionStorage.getItem(_K) === '1') {
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('lock-screen').classList.add('unlocked');
+      });
+    }
+  </script>
+</head>
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
+
+  <!-- ── LOCK SCREEN ──────────────────────────────────────────── -->
+  <div id="lock-screen">
+    <div class="lock-box">
+      <div class="lock-icon"><i class="fas fa-lock"></i></div>
+      <div class="lock-title">Accès restreint</div>
+      <div class="lock-subtitle">Statistiques membres — Groupe Tech FR 🇫🇷</div>
+      <div class="lock-input-wrap">
+        <input id="_pw" type="password" class="lock-input"
+               placeholder="Mot de passe"
+               onkeydown="if(event.key==='Enter')_check()"
+               autocomplete="current-password">
+        <button class="lock-toggle" type="button" onclick="_togglePw()" tabindex="-1">
+          <i id="_eye" class="fas fa-eye"></i>
+        </button>
+      </div>
+      <button class="lock-btn" onclick="_check()">
+        <i class="fas fa-unlock-alt" style="margin-right:0.4rem;"></i>Déverrouiller
+      </button>
+      <div class="lock-error" id="_err"></div>
+      <div class="lock-footer">Accès sécurisé · Session locale</div>
+    </div>
+  </div>
+  <!-- /LOCK SCREEN -->
+
+  <!-- ── SIDEBAR ───────────────────────────────────────────────── -->
+  <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+
+  <!-- ── MAIN ─────────────────────────────────────────────────── -->
+  <main role="main" class="flex-1 ml-16">
+
+    <!-- ── DARK HEADER ───────────────────────────────────────── -->
+    <div class="text-white" style="background: linear-gradient(160deg,#0a2d42 0%,#0f4060 100%);">
+      <div class="max-w-screen-xl mx-auto px-5 py-5">
+
+        <!-- Top bar: back link | group name + KPIs | export/import -->
+        <div class="flex items-start justify-between gap-4 flex-wrap">
+
+          <!-- Left: back + group name -->
+          <div class="flex flex-col gap-2">
+            <a href="/invest.html"
+               class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 transition rounded-lg px-3 py-2 text-sm font-medium w-fit">
+              <i class="fas fa-arrow-left text-xs"></i>Simulateur
+            </a>
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center text-sm">
+                <i class="fab fa-whatsapp text-green-400"></i>
+              </div>
+              <div>
+                <div class="font-bold text-base leading-tight">Groupe Tech FR 🇫🇷</div>
+                <div class="text-xs text-gray-400">Taiwan Tech Pros · France</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Center: KPI tiles -->
+          <div class="sm-kpi-grid flex-1 justify-center">
+            <div class="sm-kpi-tile">
+              <span class="sm-kpi-label">Membres</span>
+              <span class="sm-kpi-value accent" id="kpi-members">—</span>
+            </div>
+            <div class="sm-kpi-tile">
+              <span class="sm-kpi-label">Sondages ouverts</span>
+              <span class="sm-kpi-value green" id="kpi-open">—</span>
+            </div>
+            <div class="sm-kpi-tile">
+              <span class="sm-kpi-label">Total réponses</span>
+              <span class="sm-kpi-value blue" id="kpi-responses">—</span>
+            </div>
+          </div>
+
+          <!-- Right: actions -->
+          <div class="flex flex-col gap-2 items-end">
+            <button id="export-btn" class="sm-btn sm-btn-ghost">
+              <i class="fas fa-download"></i>Export JSON
+            </button>
+            <button id="import-btn" class="sm-btn sm-btn-ghost">
+              <i class="fas fa-upload"></i>Import JSON
+            </button>
+            <input id="import-file" type="file" accept="application/json" class="hidden">
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── TAB BAR ─────────────────────────────────────────── -->
+      <div class="sm-tab-bar max-w-screen-xl mx-auto">
+        <button class="sm-tab active" data-tab="dashboard">
+          <i class="fas fa-chart-pie"></i>Tableau de bord
+        </button>
+        <button class="sm-tab" data-tab="members">
+          <i class="fas fa-users"></i>Membres
+        </button>
+        <button class="sm-tab" data-tab="surveys">
+          <i class="fas fa-poll"></i>Sondages
+        </button>
+        <button class="sm-tab create-tab" data-tab="create">
+          <i class="fas fa-plus-circle"></i>+ Créer sondage
+        </button>
+      </div>
+    </div>
+    <!-- /DARK HEADER -->
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- TAB PANE: DASHBOARD                                      -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <div class="tab-pane active" data-tab="dashboard">
+      <div class="sm-dashboard-grid">
+
+        <!-- Tech domains chart -->
+        <div class="sm-chart-card">
+          <div class="sm-chart-header">
+            <i class="fas fa-code" style="margin-right:0.4rem;"></i>
+            你的主要技術領域是？ — Domaines techniques (WhatsApp)
+          </div>
+          <div class="sm-chart-body">
+            <canvas id="chart-tech" height="320"></canvas>
+          </div>
+        </div>
+
+        <!-- Investment interest chart -->
+        <div class="sm-chart-card">
+          <div class="sm-chart-header">
+            <i class="fas fa-chart-pie" style="margin-right:0.4rem;"></i>
+            是否有興趣交流投資？ — Intérêt investissement (WhatsApp)
+          </div>
+          <div class="sm-chart-body">
+            <canvas id="chart-invest" height="320"></canvas>
+          </div>
+        </div>
+
+        <!-- City chart -->
+        <div class="sm-chart-card">
+          <div class="sm-chart-header">
+            <i class="fas fa-map-marker-alt" style="margin-right:0.4rem;"></i>
+            你目前主要所在城市是？ — Localisation des membres (WhatsApp)
+          </div>
+          <div class="sm-chart-body">
+            <canvas id="chart-city" height="280"></canvas>
+          </div>
+        </div>
+
+        <!-- Job status chart -->
+        <div class="sm-chart-card">
+          <div class="sm-chart-header">
+            <i class="fas fa-briefcase" style="margin-right:0.4rem;"></i>
+            你目前的狀態是？ — Statut professionnel (WhatsApp)
+          </div>
+          <div class="sm-chart-body">
+            <canvas id="chart-status" height="280"></canvas>
+          </div>
+        </div>
+
+        <!-- Summary box -->
+        <div class="sm-chart-card" style="grid-column:1/-1;">
+          <div class="sm-chart-header">
+            <i class="fas fa-info-circle" style="margin-right:0.4rem;"></i>
+            À propos de cet outil
+          </div>
+          <div class="sm-chart-body">
+            <p class="text-sm text-gray-600 leading-relaxed mb-2">
+              Cet outil centralise les sondages de la communauté WhatsApp de professionnels tech taïwanais en France.
+              Les données sont stockées localement dans votre navigateur et exportables au format JSON.
+            </p>
+            <p class="text-xs text-gray-400 leading-relaxed">
+              <strong>Processus recommandé :</strong>
+              Gardez WhatsApp pour la discussion informelle et utilisez cette page comme source unique de vérité pour les sondages de profil, compétences, investissement et présence géographique.
+              Exportez régulièrement le JSON pour sauvegarder et partager les données entre administrateurs.
+            </p>
+            <div class="mt-3 flex gap-2 flex-wrap">
+              <span class="inline-flex items-center gap-1 text-xs bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-full px-2.5 py-1 font-semibold">
+                <i class="fab fa-whatsapp"></i> Données WhatsApp importées
+              </span>
+              <span class="inline-flex items-center gap-1 text-xs bg-blue-50 border border-blue-200 text-blue-800 rounded-full px-2.5 py-1 font-semibold">
+                <i class="fas fa-database"></i> localStorage
+              </span>
+              <span class="inline-flex items-center gap-1 text-xs bg-green-50 border border-green-200 text-green-800 rounded-full px-2.5 py-1 font-semibold">
+                <i class="fas fa-shield-alt"></i> Accès sécurisé SHA-256
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- /DASHBOARD -->
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- TAB PANE: MEMBERS                                        -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <div class="tab-pane" data-tab="members">
+
+      <div class="sm-members-toolbar">
+        <input id="member-search" class="sm-search" type="text" placeholder="Rechercher un membre…">
+        <button id="add-member-btn" class="sm-btn sm-btn-emerald">
+          <i class="fas fa-user-plus"></i>+ Ajouter membre
+        </button>
+      </div>
+
+      <div class="sm-members-grid" id="members-grid">
+        <!-- Injected by JS -->
+      </div>
+
+    </div>
+    <!-- /MEMBERS -->
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- TAB PANE: SURVEYS                                        -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <div class="tab-pane" data-tab="surveys">
+      <div class="sm-surveys-wrap" id="surveys-list">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+    <!-- /SURVEYS -->
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- TAB PANE: CREATE SURVEY                                  -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <div class="tab-pane" data-tab="create">
+      <div class="sm-create-wrap">
+        <div class="sm-create-card">
+
+          <h2 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <i class="fas fa-plus-circle text-emerald-600"></i>
+            Créer un nouveau sondage
+          </h2>
+
+          <div class="sm-form-group">
+            <label class="sm-label" for="c-title">Titre (langue originale) *</label>
+            <input id="c-title" class="sm-input" type="text"
+                   placeholder="ex: 你目前的工作狀態是？">
+          </div>
+
+          <div class="sm-form-group">
+            <label class="sm-label" for="c-title-fr">Titre en français (optionnel)</label>
+            <input id="c-title-fr" class="sm-input" type="text"
+                   placeholder="ex: Quel est votre statut professionnel actuel ?">
+          </div>
+
+          <div class="sm-form-group">
+            <label class="sm-label" for="c-desc">Description (optionnel)</label>
+            <textarea id="c-desc" class="sm-input" rows="2"
+                      placeholder="Contexte ou instructions supplémentaires…"
+                      style="resize:vertical;"></textarea>
+          </div>
+
+          <div class="sm-input-grid">
+            <div class="sm-form-group">
+              <label class="sm-label" for="c-type">Mode de vote</label>
+              <select id="c-type" class="sm-input">
+                <option value="multi">Choix multiple (可複選)</option>
+                <option value="single">Choix unique (單選)</option>
+              </select>
+            </div>
+            <div class="sm-form-group">
+              <label class="sm-label" for="c-privacy">Visibilité des résultats</label>
+              <select id="c-privacy" class="sm-input">
+                <option value="count_only">Comptage seulement (anonyme)</option>
+                <option value="show_voters">Afficher les noms des votants</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sm-form-group">
+            <label class="sm-label">Options de réponse *</label>
+            <div id="option-builder" class="sm-option-builder">
+              <!-- Rows injected by JS -->
+            </div>
+            <button id="add-option-btn" class="sm-btn sm-btn-ghost"
+                    style="background:#f1f5f9;border:1px dashed #cbd5e1;color:#475569;margin-top:0.25rem;"
+                    type="button">
+              <i class="fas fa-plus"></i>Ajouter une option
+            </button>
+          </div>
+
+          <div style="margin-top:1.25rem;display:flex;gap:0.75rem;justify-content:flex-end;">
+            <button type="button" id="create-survey-btn" class="sm-btn sm-btn-emerald" style="padding:0.6rem 1.5rem;font-size:0.85rem;">
+              <i class="fas fa-check"></i>Créer le sondage
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Info note -->
+        <div class="mt-3 bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-800 flex gap-2">
+          <i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i>
+          <span>
+            Les nouvelles données sont sauvegardées dans <strong>localStorage</strong> de votre navigateur.
+            Pensez à exporter régulièrement le JSON pour sauvegarder et partager avec d'autres administrateurs.
+          </span>
+        </div>
+      </div>
+    </div>
+    <!-- /CREATE -->
+
+  </main>
+  <!-- /MAIN -->
+
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- VOTE MODAL                                                 -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="vote-modal" class="sm-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="vote-modal-title">
+    <div class="sm-modal-box">
+      <div class="sm-modal-header">
+        <span class="sm-modal-title" id="vote-modal-title">Voter</span>
+        <button id="vote-modal-close" class="sm-modal-close" type="button" aria-label="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="sm-modal-body">
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="vote-member-name">Votre nom *</label>
+          <input id="vote-member-name" class="sm-input" type="text"
+                 list="vote-member-datalist"
+                 placeholder="Entrez ou sélectionnez votre nom…"
+                 autocomplete="off">
+          <datalist id="vote-member-datalist"></datalist>
+          <div style="font-size:0.68rem;color:#94a3b8;margin-top:0.2rem;">
+            Commencez à taper pour filtrer les membres existants, ou entrez un nouveau nom.
+          </div>
+        </div>
+
+        <div class="sm-label" style="margin-bottom:0.4rem;">Options *</div>
+        <div id="vote-modal-options" class="sm-vote-options">
+          <!-- Injected by JS -->
+        </div>
+
+      </div>
+      <div class="sm-modal-footer">
+        <button id="vote-modal-cancel" type="button"
+                style="padding:0.5rem 1.1rem;border-radius:7px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:0.82rem;font-weight:600;cursor:pointer;">
+          Annuler
+        </button>
+        <button id="vote-modal-submit" type="button"
+                style="padding:0.5rem 1.25rem;border-radius:7px;border:none;background:#0a2d42;color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:0.4rem;">
+          <i class="fas fa-check"></i>Enregistrer mon vote
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- /VOTE MODAL -->
+
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- MEMBER MODAL                                               -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="member-modal" class="sm-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="member-modal-title">
+    <div class="sm-modal-box">
+      <div class="sm-modal-header">
+        <span class="sm-modal-title" id="member-modal-title">Ajouter un membre</span>
+        <button id="member-modal-close" class="sm-modal-close" type="button" aria-label="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="sm-modal-body">
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="m-name">Nom *</label>
+          <input id="m-name" class="sm-input" type="text" placeholder="ex: Wei-Chen Liu">
+        </div>
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="m-joined">Date d'arrivée dans le groupe</label>
+          <input id="m-joined" class="sm-input" type="date">
+        </div>
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="m-note">Note / Description (optionnel)</label>
+          <textarea id="m-note" class="sm-input" rows="3"
+                    placeholder="ex: Ingénieure Data chez Criteo, Paris…"
+                    style="resize:vertical;"></textarea>
+        </div>
+
+      </div>
+      <div class="sm-modal-footer">
+        <button id="member-modal-delete" type="button" class="hidden"
+                style="padding:0.5rem 1.1rem;border-radius:7px;border:1px solid #fecdd3;background:#fff1f2;color:#be123c;font-size:0.82rem;font-weight:600;cursor:pointer;margin-right:auto;">
+          <i class="fas fa-trash" style="margin-right:0.3rem;"></i>Supprimer
+        </button>
+        <button id="member-modal-cancel" type="button"
+                style="padding:0.5rem 1.1rem;border-radius:7px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:0.82rem;font-weight:600;cursor:pointer;">
+          Annuler
+        </button>
+        <button id="member-modal-save" type="button"
+                style="padding:0.5rem 1.25rem;border-radius:7px;border:none;background:#0a2d42;color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:0.4rem;">
+          <i class="fas fa-save"></i>Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- /MEMBER MODAL -->
+
+  <!-- Toast (injected by JS if needed) -->
+
+  <script src="/assets/js/script.js" defer></script>
+  <script src="/assets/js/stastic_member.js" defer></script>
+</body>
+</html>
