@@ -205,8 +205,8 @@ function ensureSeed() {
       ],
       votesByMember: {},
       legacyCounts: {
-        'CDI': 13, 'Freelance': 4, 'Searching': 16,
-        'Stable': 7, 'Hiring': 2, 'NewArrival': 1
+        'CDI': 20, 'Freelance': 4, 'Searching': 29,
+        'Stable': 7, 'Hiring': 2, 'NewArrival': 7
       }
     });
   }
