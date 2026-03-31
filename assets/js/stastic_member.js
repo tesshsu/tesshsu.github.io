@@ -54,15 +54,16 @@ function showToast(msg, ms = 2800) {
 function loadState() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return { members: [], surveys: [] };
+    if (!raw) return { members: [], surveys: [], sharings: [] };
     const p = JSON.parse(raw);
-    if (!p || typeof p !== 'object') return { members: [], surveys: [] };
+    if (!p || typeof p !== 'object') return { members: [], surveys: [], sharings: [] };
     return {
-      members: Array.isArray(p.members) ? p.members : [],
-      surveys: Array.isArray(p.surveys) ? p.surveys : []
+      members:  Array.isArray(p.members)  ? p.members  : [],
+      surveys:  Array.isArray(p.surveys)  ? p.surveys  : [],
+      sharings: Array.isArray(p.sharings) ? p.sharings : []
     };
   } catch (_) {
-    return { members: [], surveys: [] };
+    return { members: [], surveys: [], sharings: [] };
   }
 }
 
@@ -300,6 +301,7 @@ function setTab(name) {
   if (name === 'dashboard') renderDashboard();
   if (name === 'members')   renderMembers();
   if (name === 'surveys')   renderSurveys();
+  if (name === 'sharing')   renderSharings();
 }
 
 // ── Dashboard ─────────────────────────────────────────────────
@@ -885,6 +887,287 @@ function deleteMember() {
   showToast('Membre supprimé.');
 }
 
+// ── Sharing tab ────────────────────────────────────────────────
+const TAG_COLORS = {
+  'Finance':  { bg: '#d1fae5', color: '#065f46' },
+  'Tech':     { bg: '#dbeafe', color: '#1d4ed8' },
+  'Visa':     { bg: '#ede9fe', color: '#5b21b6' },
+  'Vie':      { bg: '#fef3c7', color: '#92400e' },
+  'Carrière': { bg: '#fce7f3', color: '#9d174d' },
+  'Autre':    { bg: '#f1f5f9', color: '#475569' }
+};
+
+function toEmbedUrl(url) {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    // Google Drive file: .../file/d/ID/view → .../file/d/ID/preview
+    const driveFile = u.pathname.match(/\/file\/d\/([^/]+)/);
+    if (driveFile) {
+      return `https://drive.google.com/file/d/${driveFile[1]}/preview`;
+    }
+    // Google Docs: /document/d/ID/...
+    const gDoc = u.pathname.match(/\/document\/d\/([^/]+)/);
+    if (gDoc) {
+      return `https://docs.google.com/document/d/${gDoc[1]}/preview`;
+    }
+    // Google Slides: /presentation/d/ID/...
+    const gSlides = u.pathname.match(/\/presentation\/d\/([^/]+)/);
+    if (gSlides) {
+      return `https://docs.google.com/presentation/d/${gSlides[1]}/preview`;
+    }
+    // Google Sheets: /spreadsheets/d/ID/...
+    const gSheets = u.pathname.match(/\/spreadsheets\/d\/([^/]+)/);
+    if (gSheets) {
+      return `https://docs.google.com/spreadsheets/d/${gSheets[1]}/preview`;
+    }
+    return null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function renderSharings() {
+  const container = document.getElementById('sharing-list');
+  if (!container) return;
+
+  if (state.sharings.length === 0) {
+    container.innerHTML = `
+      <div class="sm-empty">
+        <i class="fas fa-lightbulb"></i>
+        <h3>Aucun partage</h3>
+        <p>Cliquez sur « + Nouveau partage » pour ajouter une session.</p>
+      </div>`;
+    return;
+  }
+
+  const sorted = [...state.sharings].sort((a, b) => new Date(b.date) - new Date(a.date));
+  container.innerHTML = sorted.map(sh => buildSharingCard(sh)).join('');
+
+  // Bind edit buttons
+  container.querySelectorAll('[data-action="edit-sharing"]').forEach(btn => {
+    btn.addEventListener('click', () => openSharingModal(btn.dataset.sid));
+  });
+
+  // Notes auto-save on blur
+  container.querySelectorAll('.sm-sharing-notes-input').forEach(ta => {
+    ta.addEventListener('blur', () => {
+      const sh = state.sharings.find(s => s.id === ta.dataset.sid);
+      if (sh && sh.notes !== ta.value) {
+        sh.notes = ta.value;
+        saveState();
+        showToast('Notes sauvegardées.', 1500);
+      }
+    });
+  });
+
+  // Embed toggle buttons
+  container.querySelectorAll('[data-action="toggle-embed"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sid = btn.dataset.sid;
+      const frameWrap = document.getElementById('embed-' + sid);
+      if (!frameWrap) return;
+      const isHidden = frameWrap.style.display === 'none' || !frameWrap.style.display;
+      frameWrap.style.display = isHidden ? 'block' : 'none';
+      btn.innerHTML = isHidden
+        ? '<i class="fas fa-compress-alt"></i> Masquer l\'aperçu'
+        : '<i class="fas fa-expand-alt"></i> Aperçu';
+    });
+  });
+}
+
+function buildSharingCard(sh) {
+  const tagStyle = sh.tag && TAG_COLORS[sh.tag]
+    ? `background:${TAG_COLORS[sh.tag].bg};color:${TAG_COLORS[sh.tag].color};`
+    : 'background:#f1f5f9;color:#475569;';
+
+  const tagBadge = sh.tag
+    ? `<span class="sm-sharing-tag" style="${tagStyle}">${escHtml(sh.tag)}</span>`
+    : '';
+
+  const dateStr = sh.date
+    ? new Date(sh.date).toLocaleString('fr-FR', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })
+    : '—';
+
+  const descHtml = sh.description
+    ? `<div class="sm-sharing-desc">${escHtml(sh.description)}</div>`
+    : '';
+
+  // Doc section
+  let docSection = '';
+  if (sh.docUrl) {
+    const embedUrl = toEmbedUrl(sh.docUrl);
+    const embedBtn = embedUrl
+      ? `<button class="sm-sharing-embed-toggle" data-action="toggle-embed" data-sid="${sh.id}">
+           <i class="fas fa-expand-alt"></i> Aperçu
+         </button>`
+      : '';
+    const embedFrame = embedUrl
+      ? `<div id="embed-${sh.id}" class="sm-sharing-embed-frame" style="display:none;">
+           <iframe src="${escHtml(embedUrl)}" allowfullscreen loading="lazy"></iframe>
+         </div>`
+      : '';
+    docSection = `
+      <div class="sm-sharing-section">
+        <div class="sm-sharing-section-label"><i class="fas fa-file-alt"></i> Document</div>
+        <div class="sm-sharing-doc-row">
+          <a class="sm-sharing-doc-btn" href="${escHtml(sh.docUrl)}" target="_blank" rel="noopener">
+            <i class="fas fa-external-link-alt"></i> Ouvrir le document
+          </a>
+          ${embedBtn}
+        </div>
+        ${embedFrame}
+      </div>`;
+  }
+
+  // Notes section (always visible)
+  const notesSection = `
+    <div class="sm-sharing-section">
+      <div class="sm-sharing-section-label"><i class="fas fa-sticky-note"></i> Notes</div>
+      <textarea class="sm-sharing-notes-input" data-sid="${sh.id}"
+                placeholder="Ajouter des notes sur cette session… (sauvegarde automatique)"
+                rows="3">${escHtml(sh.notes || '')}</textarea>
+    </div>`;
+
+  return `
+    <div class="sm-sharing-card">
+      <div class="sm-sharing-head">
+        <div class="sm-sharing-meta">
+          <span class="sm-sharing-date"><i class="fas fa-calendar-alt"></i>${dateStr}</span>
+          <span class="sm-sharing-host"><i class="fas fa-user"></i>${escHtml(sh.host)}</span>
+          ${tagBadge}
+        </div>
+        <div class="sm-sharing-title">${escHtml(sh.title)}</div>
+        ${descHtml}
+      </div>
+      ${docSection}
+      ${notesSection}
+      <div class="sm-sharing-footer">
+        <span class="sm-sharing-created">Ajouté le ${fmtDate(sh.createdAt)}</span>
+        <button class="sm-btn-sm" data-action="edit-sharing" data-sid="${sh.id}">
+          <i class="fas fa-edit"></i> Modifier
+        </button>
+      </div>
+    </div>`;
+}
+
+// ── Sharing modal ──────────────────────────────────────────────
+let _sharingModalId = null;
+
+function openSharingModal(id = null) {
+  _sharingModalId = id;
+  const overlay = document.getElementById('sharing-modal');
+  const titleEl = document.getElementById('sharing-modal-title');
+  const delBtn  = document.getElementById('sharing-modal-delete');
+  const datalist = document.getElementById('sh-host-datalist');
+
+  // Populate member datalist for host field
+  if (datalist) {
+    datalist.innerHTML = state.members.map(m =>
+      `<option value="${escHtml(m.name)}">`
+    ).join('');
+  }
+
+  if (id) {
+    const sh = state.sharings.find(s => s.id === id);
+    if (!sh) return;
+    if (titleEl) titleEl.textContent = 'Modifier le partage';
+    if (delBtn)  delBtn.classList.remove('hidden');
+    _fillSharingForm(sh);
+  } else {
+    if (titleEl) titleEl.textContent = 'Nouveau partage';
+    if (delBtn)  delBtn.classList.add('hidden');
+    _clearSharingForm();
+  }
+
+  if (overlay) overlay.classList.remove('hidden');
+}
+
+function _fillSharingForm(sh) {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  set('sh-title', sh.title);
+  // datetime-local expects "YYYY-MM-DDTHH:MM"
+  set('sh-date', sh.date ? sh.date.slice(0, 16) : '');
+  set('sh-host', sh.host);
+  set('sh-tag',  sh.tag || '');
+  set('sh-desc', sh.description || '');
+  set('sh-doc',  sh.docUrl || '');
+}
+
+function _clearSharingForm() {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+  set('sh-title', '');
+  // Default to now
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  set('sh-date', local);
+  set('sh-host', '');
+  set('sh-tag', '');
+  set('sh-desc', '');
+  set('sh-doc', '');
+}
+
+function closeSharingModal() {
+  _sharingModalId = null;
+  const overlay = document.getElementById('sharing-modal');
+  if (overlay) overlay.classList.add('hidden');
+}
+
+function saveSharing() {
+  const get = id => document.getElementById(id)?.value.trim() || '';
+  const title = get('sh-title');
+  const date  = get('sh-date');
+  const host  = get('sh-host');
+  if (!title) { showToast('Veuillez saisir un titre.'); return; }
+  if (!date)  { showToast('Veuillez saisir une date.'); return; }
+  if (!host)  { showToast('Veuillez saisir un hôte.'); return; }
+
+  const docUrl = get('sh-doc');
+  const tag    = get('sh-tag');
+  const desc   = get('sh-desc');
+
+  if (_sharingModalId) {
+    const sh = state.sharings.find(s => s.id === _sharingModalId);
+    if (sh) {
+      sh.title       = title;
+      sh.date        = new Date(date).toISOString();
+      sh.host        = host;
+      sh.tag         = tag;
+      sh.description = desc;
+      sh.docUrl      = docUrl;
+    }
+    showToast('Partage mis à jour.');
+  } else {
+    state.sharings.unshift({
+      id:          uid(),
+      title,
+      date:        new Date(date).toISOString(),
+      host,
+      tag,
+      description: desc,
+      docUrl,
+      notes:       '',
+      createdAt:   new Date().toISOString()
+    });
+    showToast('Partage ajouté !');
+  }
+
+  saveState();
+  closeSharingModal();
+  renderSharings();
+}
+
+function deleteSharing() {
+  if (!_sharingModalId) return;
+  if (!confirm('Supprimer ce partage ?')) return;
+  const idx = state.sharings.findIndex(s => s.id === _sharingModalId);
+  if (idx >= 0) state.sharings.splice(idx, 1);
+  saveState();
+  closeSharingModal();
+  renderSharings();
+  showToast('Partage supprimé.');
+}
+
 // ── Import / Export JSON ───────────────────────────────────────
 function exportJSON() {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
@@ -911,8 +1194,9 @@ function handleImport(evt) {
     try {
       const data = JSON.parse(reader.result);
       if (!data || typeof data !== 'object') throw new Error('Format invalide');
-      if (Array.isArray(data.members)) state.members = data.members;
-      if (Array.isArray(data.surveys)) state.surveys = data.surveys;
+      if (Array.isArray(data.members))  state.members  = data.members;
+      if (Array.isArray(data.surveys))  state.surveys  = data.surveys;
+      if (Array.isArray(data.sharings)) state.sharings = data.sharings;
       saveState();
       setTab('dashboard');
       renderKPIs();
@@ -991,11 +1275,34 @@ function init() {
     });
   }
 
+  // Add sharing button
+  const addSharingBtn = document.getElementById('add-sharing-btn');
+  if (addSharingBtn) addSharingBtn.addEventListener('click', () => openSharingModal());
+
+  // Sharing modal buttons
+  const sharingClose  = document.getElementById('sharing-modal-close');
+  const sharingCancel = document.getElementById('sharing-modal-cancel');
+  const sharingSave   = document.getElementById('sharing-modal-save');
+  const sharingDelete = document.getElementById('sharing-modal-delete');
+  if (sharingClose)  sharingClose.addEventListener('click', closeSharingModal);
+  if (sharingCancel) sharingCancel.addEventListener('click', closeSharingModal);
+  if (sharingSave)   sharingSave.addEventListener('click', saveSharing);
+  if (sharingDelete) sharingDelete.addEventListener('click', deleteSharing);
+
+  // Sharing modal backdrop
+  const sharingOverlay = document.getElementById('sharing-modal');
+  if (sharingOverlay) {
+    sharingOverlay.addEventListener('click', e => {
+      if (e.target === sharingOverlay) closeSharingModal();
+    });
+  }
+
   // Close modals on Escape
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       closeVoteModal();
       closeMemberModal();
+      closeSharingModal();
     }
   });
 

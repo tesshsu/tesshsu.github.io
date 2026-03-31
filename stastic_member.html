@@ -218,6 +218,9 @@
         <button class="sm-tab" data-tab="surveys">
           <i class="fas fa-poll"></i>Sondages
         </button>
+        <button class="sm-tab" data-tab="sharing">
+          <i class="fas fa-lightbulb"></i>Partage
+        </button>
         <button class="sm-tab create-tab" data-tab="create">
           <i class="fas fa-plus-circle"></i>+ Créer sondage
         </button>
@@ -337,6 +340,29 @@
       </div>
     </div>
     <!-- /SURVEYS -->
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- TAB PANE: SHARING                                        -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <div class="tab-pane" data-tab="sharing">
+      <div class="sm-sharing-toolbar">
+        <div>
+          <div class="sm-sharing-toolbar-title">
+            <i class="fas fa-lightbulb"></i>Partage de connaissances
+          </div>
+          <div class="sm-sharing-toolbar-sub">
+            Sessions Google Meet, retours d'expérience, ressources partagées…
+          </div>
+        </div>
+        <button id="add-sharing-btn" class="sm-btn sm-btn-emerald">
+          <i class="fas fa-plus"></i>+ Nouveau partage
+        </button>
+      </div>
+      <div class="sm-sharing-list" id="sharing-list">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+    <!-- /SHARING -->
 
     <!-- ════════════════════════════════════════════════════════ -->
     <!-- TAB PANE: CREATE SURVEY                                  -->
@@ -516,6 +542,88 @@
     </div>
   </div>
   <!-- /MEMBER MODAL -->
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SHARING MODAL                                              -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="sharing-modal" class="sm-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="sharing-modal-title">
+    <div class="sm-modal-box" style="max-width:560px;">
+      <div class="sm-modal-header">
+        <span class="sm-modal-title" id="sharing-modal-title">Nouveau partage</span>
+        <button id="sharing-modal-close" class="sm-modal-close" type="button" aria-label="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="sm-modal-body">
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="sh-title">Titre du partage *</label>
+          <input id="sh-title" class="sm-input" type="text"
+                 placeholder="ex: France Taxes &amp; Costs Discussion">
+        </div>
+
+        <div class="sm-input-grid">
+          <div class="sm-form-group">
+            <label class="sm-label" for="sh-date">Date &amp; heure *</label>
+            <input id="sh-date" class="sm-input" type="datetime-local">
+          </div>
+          <div class="sm-form-group">
+            <label class="sm-label" for="sh-host">Hôte / Présentateur *</label>
+            <input id="sh-host" class="sm-input" type="text"
+                   list="sh-host-datalist"
+                   placeholder="ex: I-Chun"
+                   autocomplete="off">
+            <datalist id="sh-host-datalist"></datalist>
+          </div>
+        </div>
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="sh-tag">Catégorie</label>
+          <select id="sh-tag" class="sm-input">
+            <option value="">— Choisir une catégorie —</option>
+            <option value="Finance">Finance / Investissement</option>
+            <option value="Tech">Tech / IA</option>
+            <option value="Visa">Visa / Immigration</option>
+            <option value="Vie">Vie en France</option>
+            <option value="Carrière">Carrière / Emploi</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </div>
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="sh-desc">Description (optionnel)</label>
+          <textarea id="sh-desc" class="sm-input" rows="2"
+                    placeholder="Résumé du sujet abordé…"
+                    style="resize:vertical;"></textarea>
+        </div>
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="sh-doc">URL du document (optionnel)</label>
+          <input id="sh-doc" class="sm-input" type="url"
+                 placeholder="ex: https://docs.google.com/…">
+          <div style="font-size:0.68rem;color:#94a3b8;margin-top:0.2rem;">
+            Google Drive, Google Docs, PDF partagé, lien externe…
+          </div>
+        </div>
+
+      </div>
+      <div class="sm-modal-footer">
+        <button id="sharing-modal-delete" type="button" class="hidden"
+                style="padding:0.5rem 1.1rem;border-radius:7px;border:1px solid #fecdd3;background:#fff1f2;color:#be123c;font-size:0.82rem;font-weight:600;cursor:pointer;margin-right:auto;">
+          <i class="fas fa-trash" style="margin-right:0.3rem;"></i>Supprimer
+        </button>
+        <button id="sharing-modal-cancel" type="button"
+                style="padding:0.5rem 1.1rem;border-radius:7px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:0.82rem;font-weight:600;cursor:pointer;">
+          Annuler
+        </button>
+        <button id="sharing-modal-save" type="button"
+                style="padding:0.5rem 1.25rem;border-radius:7px;border:none;background:#0a2d42;color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:0.4rem;">
+          <i class="fas fa-save"></i>Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- /SHARING MODAL -->
 
   <!-- Toast (injected by JS if needed) -->
 
