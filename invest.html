@@ -61,34 +61,37 @@
             <div id="stock-rows" class="space-y-2">
               <!-- Stock 1 -->
               <div class="grid grid-cols-12 gap-2 items-center">
-                <input type="text" id="s1-name" value="LVMH" class="col-span-4 input-dark">
-                <input type="number" id="s1-init" value="492" step="0.01" class="col-span-2 input-dark text-right">
-                <input type="number" id="s1-cur"  placeholder="— fetch →" step="0.01" class="col-span-2 input-dark text-right">
-                <input type="text"   id="s1-tick" value="MC.PA" class="col-span-3 input-dark">
-                <button onclick="fetchPrice(1)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Charger tout l'historique (1 appel API)">
+                <input type="text"   id="s1-name" value="LVMH"  class="col-span-6 sm:col-span-4 input-dark">
+                <input type="number" id="s1-init" value="492"   step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="number" id="s1-cur"  placeholder="— fetch →" step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="text"   id="s1-tick" value="MC.PA" class="col-span-9 sm:col-span-3 input-dark">
+                <button onclick="fetchPrice(1)" class="col-span-3 sm:col-span-1 bg-blue-500 hover:bg-blue-600 active:scale-95 rounded p-3 sm:p-1.5 text-base sm:text-xs transition flex items-center justify-center gap-1.5" title="Charger tout l'historique (1 appel API)">
                   <i class="fas fa-sync-alt" id="s1-icon"></i>
+                  <span class="sm:hidden text-xs font-semibold">Sync</span>
                 </button>
                 <div id="s1-cache-status" class="col-span-12 text-xs text-yellow-400 mt-0.5"></div>
               </div>
               <!-- Stock 2 -->
               <div class="grid grid-cols-12 gap-2 items-center">
-                <input type="text" id="s2-name" value="STMicro" class="col-span-4 input-dark">
-                <input type="number" id="s2-init" value="22.26" step="0.01" class="col-span-2 input-dark text-right">
-                <input type="number" id="s2-cur"  placeholder="— fetch →" step="0.01" class="col-span-2 input-dark text-right">
-                <input type="text"   id="s2-tick" value="STMPA.PA" class="col-span-3 input-dark">
-                <button onclick="fetchPrice(2)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Charger tout l'historique (1 appel API)">
+                <input type="text"   id="s2-name" value="STMicro"  class="col-span-6 sm:col-span-4 input-dark">
+                <input type="number" id="s2-init" value="22.26"    step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="number" id="s2-cur"  placeholder="— fetch →" step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="text"   id="s2-tick" value="STMPA.PA" class="col-span-9 sm:col-span-3 input-dark">
+                <button onclick="fetchPrice(2)" class="col-span-3 sm:col-span-1 bg-blue-500 hover:bg-blue-600 active:scale-95 rounded p-3 sm:p-1.5 text-base sm:text-xs transition flex items-center justify-center gap-1.5" title="Charger tout l'historique (1 appel API)">
                   <i class="fas fa-sync-alt" id="s2-icon"></i>
+                  <span class="sm:hidden text-xs font-semibold">Sync</span>
                 </button>
                 <div id="s2-cache-status" class="col-span-12 text-xs text-yellow-400 mt-0.5"></div>
               </div>
               <!-- Stock 3 -->
               <div class="grid grid-cols-12 gap-2 items-center">
-                <input type="text" id="s3-name" value="Sanofi" class="col-span-4 input-dark">
-                <input type="number" id="s3-init" value="79.26" step="0.01" class="col-span-2 input-dark text-right">
-                <input type="number" id="s3-cur"  placeholder="— fetch →" step="0.01" class="col-span-2 input-dark text-right">
-                <input type="text"   id="s3-tick" value="SAN.PA" class="col-span-3 input-dark">
-                <button onclick="fetchPrice(3)" class="col-span-1 bg-blue-500 hover:bg-blue-600 rounded p-1.5 text-xs transition" title="Charger tout l'historique (1 appel API)">
+                <input type="text"   id="s3-name" value="Sanofi" class="col-span-6 sm:col-span-4 input-dark">
+                <input type="number" id="s3-init" value="79.26"  step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="number" id="s3-cur"  placeholder="— fetch →" step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="text"   id="s3-tick" value="SAN.PA" class="col-span-9 sm:col-span-3 input-dark">
+                <button onclick="fetchPrice(3)" class="col-span-3 sm:col-span-1 bg-blue-500 hover:bg-blue-600 active:scale-95 rounded p-3 sm:p-1.5 text-base sm:text-xs transition flex items-center justify-center gap-1.5" title="Charger tout l'historique (1 appel API)">
                   <i class="fas fa-sync-alt" id="s3-icon"></i>
+                  <span class="sm:hidden text-xs font-semibold">Sync</span>
                 </button>
                 <div id="s3-cache-status" class="col-span-12 text-xs text-yellow-400 mt-0.5"></div>
               </div>

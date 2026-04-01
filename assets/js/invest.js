@@ -108,74 +108,125 @@ function updateCacheStatus(n) {
     el.className   = 'text-xs text-yellow-400 mt-1 col-span-12';
   } else {
     const count   = Object.keys(cache.prices).length;
-    const stale   = cache.fetched_at < toISO(new Date()); // fetched before today
+    const stale   = cache.fetched_at < toISO(new Date());
     const warning = stale ? ' ⚠ cours du jour peut être obsolète' : '';
-    el.textContent = `✓ ${count} séances en cache — actualisé le ${cache.fetched_at}${warning}`;
+    const src     = cache.source ? ` · source : ${cache.source}` : '';
+    el.textContent = `✓ ${count} séances en cache — actualisé le ${cache.fetched_at}${src}${warning}`;
     el.className   = `text-xs ${stale ? 'text-yellow-400' : 'text-emerald-400'} mt-1 col-span-12`;
   }
 }
 
-// ── Fetch full price history — ONE API call per stock ────────
-// Uses Yahoo Finance v8 chart endpoint with period1/period2 Unix timestamps.
-// Returns daily OHLCV; we store only closing prices.
-// Rate limit impact: 1 call per stock (vs N calls for N observation dates).
+// ── Fetch full price history — fallback chain ────────────────
+// Source 1: Yahoo Finance v8 via allorigins.win
+// Source 2: Yahoo Finance v8 via corsproxy.io  (different proxy, avoids allorigins rate limit)
+// Source 3: Stooq CSV API                      (completely different provider, free, no key, supports .PA)
+
+async function _tryYahoo(ticker, period1, period2, proxyPrefix) {
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}`
+            + `?interval=1d&period1=${period1}&period2=${period2}`;
+  const res = await fetch(proxyPrefix + encodeURIComponent(url));
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  const result = data?.chart?.result?.[0];
+  if (!result) throw new Error('No chart result');
+  const timestamps = result.timestamp || [];
+  const closes     = result.indicators?.quote?.[0]?.close || [];
+  const prices = {};
+  timestamps.forEach((ts, i) => {
+    if (closes[i] != null)
+      prices[toISO(new Date(ts * 1000))] = parseFloat(closes[i].toFixed(4));
+  });
+  if (!Object.keys(prices).length) throw new Error('Empty result');
+  return { prices, latestClose: closes.filter(Boolean).at(-1) };
+}
+
+async function _tryStooq(ticker, fromDate, toDate) {
+  // Stooq uses lowercase tickers with dots (MC.PA → mc.pa) — same convention as Yahoo .PA
+  const d1  = toISO(fromDate).replace(/-/g, '');
+  const d2  = toISO(toDate).replace(/-/g, '');
+  const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(ticker.toLowerCase())}&d1=${d1}&d2=${d2}&i=d`;
+  // Use corsproxy for Stooq to keep it independent from allorigins rate bucket
+  const res = await fetch('https://corsproxy.io/?' + encodeURIComponent(url));
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const text = await res.text();
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) throw new Error('No CSV rows');
+  const header   = lines[0].toLowerCase().split(',');
+  const dateIdx  = header.indexOf('date');
+  const closeIdx = header.indexOf('close');
+  if (dateIdx < 0 || closeIdx < 0) throw new Error('Unexpected CSV format');
+  const prices = {};
+  let latestClose = null;
+  // Stooq returns oldest→newest; iterate in order so latestClose ends up as the last entry
+  for (let i = 1; i < lines.length; i++) {
+    const cols  = lines[i].split(',');
+    const date  = cols[dateIdx]?.trim();
+    const close = parseFloat(cols[closeIdx]);
+    if (date && !isNaN(close)) {
+      prices[date] = parseFloat(close.toFixed(4));
+      latestClose  = close;
+    }
+  }
+  if (!Object.keys(prices).length) throw new Error('No valid rows');
+  return { prices, latestClose };
+}
+
 async function fetchPrice(n) {
   const ticker = document.getElementById(`s${n}-tick`).value.trim();
-  if (!ticker) { alert('Entrez un ticker Yahoo Finance (ex: MC.PA)'); return; }
+  if (!ticker) { alert('Entrez un ticker (ex: MC.PA)'); return; }
 
   const icon = document.getElementById(`s${n}-icon`);
   icon.className = 'fas fa-spinner fa-spin';
 
-  // Determine history start: use obs-start-date or 2 years back as fallback
   const obsStartVal = document.getElementById('obs-start-date').value;
   const fromDate    = obsStartVal
     ? (() => { const d = new Date(obsStartVal); d.setMonth(d.getMonth() - 3); return d; })()
     : (() => { const d = new Date(); d.setFullYear(d.getFullYear() - 2); return d; })();
-
+  const toDate  = new Date();
   const period1 = Math.floor(fromDate.getTime() / 1000);
-  const period2 = Math.floor(Date.now() / 1000);
+  const period2 = Math.floor(toDate.getTime()   / 1000);
 
-  try {
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}`
-              + `?interval=1d&period1=${period1}&period2=${period2}`;
-    const res  = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
-    const data = await res.json();
+  const sources = [
+    { label: 'Yahoo/allorigins',  fn: () => _tryYahoo(ticker, period1, period2, 'https://api.allorigins.win/raw?url=') },
+    { label: 'Yahoo/corsproxy',   fn: () => _tryYahoo(ticker, period1, period2, 'https://corsproxy.io/?') },
+    { label: 'Stooq',             fn: () => _tryStooq(ticker, fromDate, toDate) },
+  ];
 
-    const result = data?.chart?.result?.[0];
-    if (!result) throw new Error('No data');
-
-    const timestamps = result.timestamp || [];
-    const closes     = result.indicators?.quote?.[0]?.close || [];
-
-    // Build { "YYYY-MM-DD": close } — historical prices are immutable, safe to cache forever
-    const prices = {};
-    timestamps.forEach((ts, i) => {
-      if (closes[i] != null)
-        prices[toISO(new Date(ts * 1000))] = parseFloat(closes[i].toFixed(4));
-    });
-
-    localStorage.setItem(cacheKey(ticker), JSON.stringify({
-      ticker,
-      fetched_at: toISO(new Date()),
-      prices
-    }));
-
-    // Latest close → current price input + persist
-    const latestClose = closes.filter(Boolean).at(-1);
-    if (latestClose) {
-      const v = latestClose.toFixed(2);
-      document.getElementById(`s${n}-cur`).value = v;
-      localStorage.setItem(`invest_s${n}-cur`, v);
+  let result = null;
+  let usedSource = '';
+  for (const src of sources) {
+    try {
+      result     = await src.fn();
+      usedSource = src.label;
+      break;
+    } catch (err) {
+      console.warn(`[fetchPrice] ${src.label} failed for ${ticker}:`, err.message);
     }
+  }
 
-    icon.className = 'fas fa-check';
-    setTimeout(() => { icon.className = 'fas fa-sync-alt'; }, 2500);
-    updateCacheStatus(n);
-  } catch {
+  if (!result) {
     icon.className = 'fas fa-times';
     setTimeout(() => { icon.className = 'fas fa-sync-alt'; }, 2500);
-    alert(`Prix non disponible pour ${ticker}. Entrez-le manuellement.`);
+    alert(`Prix non disponible pour ${ticker} (Yahoo + Stooq ont échoué).\nEntrez le cours manuellement.`);
+    return;
   }
+
+  localStorage.setItem(cacheKey(ticker), JSON.stringify({
+    ticker,
+    fetched_at: toISO(new Date()),
+    source: usedSource,
+    prices: result.prices
+  }));
+
+  if (result.latestClose) {
+    const v = result.latestClose.toFixed(2);
+    document.getElementById(`s${n}-cur`).value = v;
+    localStorage.setItem(`invest_s${n}-cur`, v);
+  }
+
+  icon.className = 'fas fa-check';
+  setTimeout(() => { icon.className = 'fas fa-sync-alt'; }, 2500);
+  updateCacheStatus(n);
 }
 
 // ── Main calculation ─────────────────────────────────────────
