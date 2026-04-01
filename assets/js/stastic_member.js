@@ -94,10 +94,10 @@ function ensureSeed() {
     { id: 'Others',         label: 'Others' },
   ];
   const _s1_counts = {
-    'Backend Dev': 4, 'Frontend Dev': 2, 'Full Stack': 2,
-    'DevOps/SRE/Cloud': 2, 'Data/AI/ML': 10, 'Mobile': 1,
-    'QA/Test': 1, 'Security/Cybersec': 1, 'Architect/Tech Lead': 1,
-    'PM': 9, 'Designer': 1, 'Biz Manager': 4, 'Others': 10
+    'Backend Dev': 3, 'Frontend Dev': 2, 'Full Stack': 2,
+    'DevOps/SRE/Cloud': 2, 'Data/AI/ML': 11, 'Mobile': 1,
+    'QA/Test': 1, 'Security/Cybersec': 1, 'Architect/Tech Lead': 2,
+    'PM': 10, 'Designer': 1, 'Biz Manager': 4, 'Others': 14
   };
   if (!ids.includes('seed_s1_tech')) {
     state.surveys.push({
@@ -179,8 +179,8 @@ function ensureSeed() {
       ],
       votesByMember: {},
       legacyCounts: {
-        'Paris': 28, 'Lyon': 2, 'Toulouse': 0, 'Bordeaux': 0,
-        'Lille': 0, 'Strasbourg': 0, 'Nice': 3, 'Taiwan': 5, 'Autres': 7
+        'Paris': 38, 'Lyon': 5, 'Toulouse': 0, 'Bordeaux': 2,
+        'Lille': 0, 'Strasbourg': 0, 'Nice': 2, 'Taiwan': 8, 'Autres': 8
       }
     });
   }
@@ -206,8 +206,8 @@ function ensureSeed() {
       ],
       votesByMember: {},
       legacyCounts: {
-        'CDI': 20, 'Freelance': 4, 'Searching': 29,
-        'Stable': 7, 'Hiring': 2, 'NewArrival': 7
+        'CDI': 17, 'Freelance': 4, 'Searching': 37,
+        'Stable': 7, 'Hiring': 2, 'NewArrival': 10
       }
     });
   }
