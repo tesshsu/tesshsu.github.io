@@ -114,14 +114,22 @@ function ensureSeed() {
       legacyCounts: _s1_counts
     });
   } else {
-    // Migration: patch counts + add Designer/Business Manager if missing
+    // Always sync options + legacyCounts to canonical values
     const s1 = state.surveys.find(s => s.id === 'seed_s1_tech');
-    if (s1 && !s1.options.find(o => o.id === 'Others')) {
+    if (s1) {
       s1.options      = _s1_options;
       s1.legacyCounts = _s1_counts;
     }
   }
 
+  const _s2_counts = {
+    '不感興趣': 0,
+    '有興趣但無額外資金': 5,
+    '有興趣且已在投資': 4,
+    '很有興趣願增加': 0,
+    '有興趣但不方便GMeet': 0,
+    '有興趣可參加GMeet': 11
+  };
   if (!ids.includes('seed_s2_invest')) {
     state.surveys.push({
       id: 'seed_s2_invest',
@@ -144,18 +152,19 @@ function ensureSeed() {
         { id: '有興趣可參加GMeet',      label: '有興趣可參加GMeet (Intéressé et dispo GMeet)' }
       ],
       votesByMember: {},
-      legacyCounts: {
-        '不感興趣': 0,
-        '有興趣但無額外資金': 5,
-        '有興趣且已在投資': 4,
-        '很有興趣願增加': 0,
-        '有興趣但不方便GMeet': 0,
-        '有興趣可參加GMeet': 11
-      }
+      legacyCounts: _s2_counts
     });
+  } else {
+    // Always sync legacyCounts to canonical values
+    const s2 = state.surveys.find(s => s.id === 'seed_s2_invest');
+    if (s2) s2.legacyCounts = _s2_counts;
   }
 
   // ── Seed seed_s3_city (city/location — WhatsApp Jan 2026) ────────
+  const _s3_counts = {
+    'Paris': 38, 'Lyon': 5, 'Toulouse': 0, 'Bordeaux': 2,
+    'Lille': 0, 'Strasbourg': 0, 'Nice': 2, 'Taiwan': 8, 'Autres': 8
+  };
   if (!ids.includes('seed_s3_city')) {
     state.surveys.push({
       id: 'seed_s3_city',
@@ -178,14 +187,19 @@ function ensureSeed() {
         { id: 'Autres',      label: '其他城市（請留言 / Autre ville）' }
       ],
       votesByMember: {},
-      legacyCounts: {
-        'Paris': 38, 'Lyon': 5, 'Toulouse': 0, 'Bordeaux': 2,
-        'Lille': 0, 'Strasbourg': 0, 'Nice': 2, 'Taiwan': 8, 'Autres': 8
-      }
+      legacyCounts: _s3_counts
     });
+  } else {
+    // Always sync legacyCounts to the canonical values above
+    const s3 = state.surveys.find(s => s.id === 'seed_s3_city');
+    if (s3) s3.legacyCounts = _s3_counts;
   }
 
   // ── Seed seed_s4_status (job status — WhatsApp Jan 2026) ─────────
+  const _s4_counts = {
+    'CDI': 17, 'Freelance': 4, 'Searching': 37,
+    'Stable': 7, 'Hiring': 2, 'NewArrival': 10
+  };
   if (!ids.includes('seed_s4_status')) {
     state.surveys.push({
       id: 'seed_s4_status',
@@ -205,11 +219,12 @@ function ensureSeed() {
         { id: 'NewArrival', label: '剛到法國 / 準備來法國發展 (Nouvel arrivant / En préparation)' }
       ],
       votesByMember: {},
-      legacyCounts: {
-        'CDI': 17, 'Freelance': 4, 'Searching': 37,
-        'Stable': 7, 'Hiring': 2, 'NewArrival': 10
-      }
+      legacyCounts: _s4_counts
     });
+  } else {
+    // Always sync legacyCounts to the canonical values above
+    const s4 = state.surveys.find(s => s.id === 'seed_s4_status');
+    if (s4) s4.legacyCounts = _s4_counts;
   }
 
   // ── Seed members — Groupe Général (68 membres, snapshot Jan 2026) ─
@@ -326,6 +341,8 @@ function renderTechChart() {
   const labels = survey.options.map(o => o.label);
   const data   = survey.options.map(o => counts[o.id] || 0);
 
+  const total = data.reduce((a, b) => a + b, 0);
+
   _chartTech = new Chart(canvas, {
     type: 'bar',
     data: {
@@ -342,11 +359,15 @@ function renderTechChart() {
     options: {
       indexAxis: 'y',
       responsive: true,
+      layout: { padding: { right: 48 } },
       plugins: {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: ctx => ` ${ctx.parsed.x} réponse${ctx.parsed.x !== 1 ? 's' : ''}`
+            label: ctx => {
+              const pct = total > 0 ? ((ctx.parsed.x / total) * 100).toFixed(1) : 0;
+              return ` ${ctx.parsed.x} réponse${ctx.parsed.x !== 1 ? 's' : ''} (${pct}%)`;
+            }
           }
         }
       },
@@ -360,7 +381,28 @@ function renderTechChart() {
           ticks: { font: { size: 10 } }
         }
       }
-    }
+    },
+    plugins: [{
+      id: 'barPctLabels',
+      afterDatasetsDraw(chart) {
+        const { ctx, data: d, scales: { x } } = chart;
+        const tot = d.datasets[0].data.reduce((a, b) => a + b, 0);
+        if (!tot) return;
+        ctx.save();
+        ctx.font = 'bold 10px system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        chart.getDatasetMeta(0).data.forEach((bar, i) => {
+          const val = d.datasets[0].data[i];
+          if (!val) return;
+          const pct = ((val / tot) * 100).toFixed(1);
+          const xPos = x.getPixelForValue(val) + 5;
+          ctx.fillStyle = '#64748b';
+          ctx.fillText(`${pct}%`, xPos, bar.y);
+        });
+        ctx.restore();
+      }
+    }]
   });
 }
 
@@ -376,6 +418,8 @@ function renderInvestChart() {
   const counts = computeCounts(survey);
   const labels = survey.options.map(o => o.label);
   const data   = survey.options.map(o => counts[o.id] || 0);
+
+  const investTotal = data.reduce((a, b) => a + b, 0);
 
   _chartInvest = new Chart(canvas, {
     type: 'doughnut',
@@ -398,16 +442,61 @@ function renderInvestChart() {
           labels: {
             font: { size: 10 },
             padding: 10,
-            boxWidth: 12
+            boxWidth: 12,
+            generateLabels(chart) {
+              const ds = chart.data.datasets[0];
+              return chart.data.labels.map((lbl, i) => {
+                const val = ds.data[i];
+                const pct = investTotal > 0 ? ((val / investTotal) * 100).toFixed(1) : 0;
+                return {
+                  text: `${lbl}  ${pct}%`,
+                  fillStyle: ds.backgroundColor[i],
+                  strokeStyle: ds.borderColor[i] || '#fff',
+                  lineWidth: 1,
+                  index: i,
+                  hidden: false
+                };
+              });
+            }
           }
         },
         tooltip: {
           callbacks: {
-            label: ctx => ` ${ctx.parsed} réponse${ctx.parsed !== 1 ? 's' : ''}`
+            label: ctx => {
+              const pct = investTotal > 0 ? ((ctx.parsed / investTotal) * 100).toFixed(1) : 0;
+              return ` ${ctx.parsed} réponse${ctx.parsed !== 1 ? 's' : ''} — ${pct}%`;
+            }
           }
         }
       }
-    }
+    },
+    plugins: [{
+      id: 'doughnutPctLabels',
+      afterDatasetsDraw(chart) {
+        const { ctx, chartArea: { width, height, left, top } } = chart;
+        const tot = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+        if (!tot) return;
+        const cx = left + width / 2;
+        const cy = top  + height / 2;
+        ctx.save();
+        chart.getDatasetMeta(0).data.forEach((arc, i) => {
+          const val = chart.data.datasets[0].data[i];
+          if (!val) return;
+          const pct = ((val / tot) * 100).toFixed(1);
+          if (parseFloat(pct) < 4) return; // skip tiny slices
+          const angle  = (arc.startAngle + arc.endAngle) / 2;
+          const radius = (arc.innerRadius + arc.outerRadius) / 2;
+          const x = cx + Math.cos(angle) * radius;
+          const y = cy + Math.sin(angle) * radius;
+          ctx.font      = 'bold 11px system-ui, sans-serif';
+          ctx.fillStyle = '#fff';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(`${pct}%`, x, y);
+        });
+        ctx.restore();
+      }
+    }]
   });
 }
 
@@ -421,6 +510,8 @@ function renderCityChart() {
   const counts = computeCounts(survey);
   const labels = survey.options.map(o => o.label);
   const data   = survey.options.map(o => counts[o.id] || 0);
+
+  const cityTotal = data.reduce((a, b) => a + b, 0);
 
   _chartCity = new Chart(canvas, {
     type: 'bar',
@@ -438,15 +529,39 @@ function renderCityChart() {
     options: {
       indexAxis: 'y',
       responsive: true,
+      layout: { padding: { right: 48 } },
       plugins: {
         legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x} membre${ctx.parsed.x !== 1 ? 's' : ''}` } }
+        tooltip: { callbacks: { label: ctx => {
+          const pct = cityTotal > 0 ? ((ctx.parsed.x / cityTotal) * 100).toFixed(1) : 0;
+          return ` ${ctx.parsed.x} membre${ctx.parsed.x !== 1 ? 's' : ''} (${pct}%)`;
+        }}}
       },
       scales: {
         x: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f1f5f9' } },
         y: { ticks: { font: { size: 10 } } }
       }
-    }
+    },
+    plugins: [{
+      id: 'cityPctLabels',
+      afterDatasetsDraw(chart) {
+        const { ctx, data: d, scales: { x } } = chart;
+        const tot = d.datasets[0].data.reduce((a, b) => a + b, 0);
+        if (!tot) return;
+        ctx.save();
+        ctx.font = 'bold 10px system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        chart.getDatasetMeta(0).data.forEach((bar, i) => {
+          const val = d.datasets[0].data[i];
+          if (!val) return;
+          const pct = ((val / tot) * 100).toFixed(1);
+          ctx.fillStyle = '#64748b';
+          ctx.fillText(`${pct}%`, x.getPixelForValue(val) + 5, bar.y);
+        });
+        ctx.restore();
+      }
+    }]
   });
 }
 
@@ -460,6 +575,8 @@ function renderStatusChart() {
   const counts = computeCounts(survey);
   const labels = survey.options.map(o => o.label);
   const data   = survey.options.map(o => counts[o.id] || 0);
+
+  const statusTotal = data.reduce((a, b) => a + b, 0);
 
   _chartStatus = new Chart(canvas, {
     type: 'doughnut',
@@ -477,10 +594,60 @@ function renderStatusChart() {
       responsive: true,
       cutout: '55%',
       plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 10, boxWidth: 12 } },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.parsed} réponse${ctx.parsed !== 1 ? 's' : ''}` } }
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { size: 10 }, padding: 10, boxWidth: 12,
+            generateLabels(chart) {
+              const ds = chart.data.datasets[0];
+              return chart.data.labels.map((lbl, i) => {
+                const val = ds.data[i];
+                const pct = statusTotal > 0 ? ((val / statusTotal) * 100).toFixed(1) : 0;
+                return {
+                  text: `${lbl}  ${pct}%`,
+                  fillStyle: ds.backgroundColor[i],
+                  strokeStyle: '#fff',
+                  lineWidth: 1,
+                  index: i,
+                  hidden: false
+                };
+              });
+            }
+          }
+        },
+        tooltip: { callbacks: { label: ctx => {
+          const pct = statusTotal > 0 ? ((ctx.parsed / statusTotal) * 100).toFixed(1) : 0;
+          return ` ${ctx.parsed} réponse${ctx.parsed !== 1 ? 's' : ''} — ${pct}%`;
+        }}}
       }
-    }
+    },
+    plugins: [{
+      id: 'statusPctLabels',
+      afterDatasetsDraw(chart) {
+        const { ctx, chartArea: { width, height, left, top } } = chart;
+        const tot = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+        if (!tot) return;
+        const cx = left + width / 2;
+        const cy = top  + height / 2;
+        ctx.save();
+        chart.getDatasetMeta(0).data.forEach((arc, i) => {
+          const val = chart.data.datasets[0].data[i];
+          if (!val) return;
+          const pct = ((val / tot) * 100).toFixed(1);
+          if (parseFloat(pct) < 4) return;
+          const angle  = (arc.startAngle + arc.endAngle) / 2;
+          const radius = (arc.innerRadius + arc.outerRadius) / 2;
+          const x = cx + Math.cos(angle) * radius;
+          const y = cy + Math.sin(angle) * radius;
+          ctx.font      = 'bold 11px system-ui, sans-serif';
+          ctx.fillStyle = '#fff';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(`${pct}%`, x, y);
+        });
+        ctx.restore();
+      }
+    }]
   });
 }
 
@@ -757,6 +924,8 @@ function openVoteModal(sid) {
   }
 
   if (nameEl) nameEl.value = '';
+  const errEl2 = document.getElementById('vote-name-error');
+  if (errEl2) errEl2.style.display = 'none';
 
   // Build option inputs
   if (opts) {
@@ -787,8 +956,25 @@ function submitVote() {
   }
 
   const nameEl = document.getElementById('vote-member-name');
-  const name = nameEl?.value.trim();
+  const errEl  = document.getElementById('vote-name-error');
+  const name   = nameEl?.value.trim();
+
+  if (errEl) errEl.style.display = 'none';
+
   if (!name) { showToast('Veuillez saisir votre nom.'); return; }
+
+  const isMember = state.members.some(m => m.name.trim().toLowerCase() === name.toLowerCase());
+  if (!isMember) {
+    if (errEl) {
+      errEl.innerHTML =
+        '<i class="fas fa-exclamation-triangle" style="margin-right:0.35rem;"></i>' +
+        'Votre nom n\'est pas dans la liste des membres. Rendez-vous dans l\'onglet <strong>Membres</strong> pour créer votre profil.' +
+        '<br><span style="opacity:0.8;">您的名字不在成員名單中，請先前往「<strong>成員</strong>」分頁建立您的成員資料後再投票。</span>';
+      errEl.style.display = 'block';
+    }
+    if (nameEl) nameEl.focus();
+    return;
+  }
 
   const checked = Array.from(document.querySelectorAll('#vote-modal-options input:checked'))
     .map(el => el.value);
