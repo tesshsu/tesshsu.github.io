@@ -102,9 +102,11 @@ function loadState() {
 function saveState() {
   // Always keep a local cache so the page isn't blank on slow connections
   localStorage.setItem(STORE_KEY, JSON.stringify(state));
-  // Push to Firebase so all users see the change in real-time
+  // Push to Firebase as a JSON string to avoid key-character restrictions
+  // (Firebase forbids ".", "#", "$", "/", "[", "]" in keys)
   if (_fbRef) {
-    _fbRef.set(state).catch(e => console.warn('[Firebase] save error', e));
+    _fbRef.set({ data: JSON.stringify(state) })
+          .catch(e => console.warn('[Firebase] save error', e));
   }
 }
 
@@ -1869,7 +1871,13 @@ function initFirebase() {
   if (!_fbRef) return; // not configured → localStorage only
 
   _fbRef.on('value', snapshot => {
-    const remote = snapshot.val();
+    const raw = snapshot.val();
+
+    // Parse remote JSON string (stored as { data: "..." } to avoid Firebase key restrictions)
+    let remote = null;
+    if (raw && typeof raw.data === 'string') {
+      try { remote = JSON.parse(raw.data); } catch (_) {}
+    }
 
     if (!remote) {
       // Firebase is empty: migrate existing localStorage data (first-time setup)
@@ -1878,7 +1886,8 @@ function initFirebase() {
                       local.jobs.length    || local.sharings.length || local.surveys.length;
       if (hasData) {
         Object.assign(state, local);
-        _fbRef.set(state).catch(e => console.warn('[Firebase] migration error', e));
+        _fbRef.set({ data: JSON.stringify(state) })
+              .catch(e => console.warn('[Firebase] migration error', e));
         showToast('Données locales migrées vers Firebase ✓');
       }
     } else {
