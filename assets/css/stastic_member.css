@@ -733,6 +733,189 @@ select.sm-input { cursor: pointer; }
   .sm-annc-actions { flex-direction: row; }
 }
 
+/* ── Job sharing block (dashboard) ──────────────────────────── */
+.sm-job-wrap {
+  max-width: 1280px;
+  margin: 1.25rem auto 0;
+  padding: 0 1.5rem;
+}
+.sm-job-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #0a2d42 0%, #1a4a6e 100%);
+  border-radius: 12px 12px 0 0;
+  padding: 0.9rem 1.1rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.sm-job-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.sm-job-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fbbf24;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.sm-job-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+.sm-job-sub {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.5);
+  margin-top: 0.1rem;
+}
+.sm-job-list {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+}
+.sm-job-empty {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  color: #94a3b8;
+  font-size: 0.82rem;
+}
+.sm-job-empty i { display: block; font-size: 1.8rem; opacity: 0.25; margin-bottom: 0.5rem; }
+
+/* ── Job card ────────────────────────────────────────────────── */
+.sm-job-card {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid #f1f5f9;
+  align-items: flex-start;
+  transition: background 0.12s;
+}
+.sm-job-card:last-child { border-bottom: none; }
+.sm-job-card:hover { background: #f8fafc; }
+
+.sm-job-left { flex: 1; min-width: 0; }
+.sm-job-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+.sm-job-contract-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.18rem 0.55rem;
+  border-radius: 99px;
+  background: #dbeafe;
+  color: #1e40af;
+}
+.sm-job-location-tag {
+  font-size: 0.7rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.sm-job-poster-tag {
+  font-size: 0.7rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: auto;
+}
+.sm-job-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+.sm-job-salary {
+  font-size: 0.72rem;
+  color: #059669;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.sm-job-card-desc {
+  font-size: 0.78rem;
+  color: #475569;
+  line-height: 1.55;
+  white-space: pre-line;
+  word-break: break-word;
+  margin-bottom: 0.35rem;
+}
+.sm-job-card-reqs {
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.5;
+  white-space: pre-line;
+  word-break: break-word;
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 0.3rem;
+  margin-top: 0.3rem;
+}
+.sm-job-card-reqs-label {
+  font-weight: 700;
+  color: #475569;
+  font-size: 0.7rem;
+  margin-bottom: 0.15rem;
+}
+.sm-job-cv-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 99px;
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.12s;
+}
+.sm-job-cv-btn:hover { background: #d1fae5; }
+
+.sm-job-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+.sm-job-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s;
+}
+.sm-job-edit-btn:hover { background: #f1f5f9; }
+
+@media (max-width: 600px) {
+  .sm-job-card { flex-wrap: wrap; }
+  .sm-job-actions { flex-direction: row; }
+}
+
 /* ── Sharing tab ─────────────────────────────────────────────── */
 .sm-sharing-toolbar {
   display: flex;

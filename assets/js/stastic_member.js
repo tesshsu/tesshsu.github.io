@@ -54,17 +54,18 @@ function showToast(msg, ms = 2800) {
 function loadState() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return { members: [], surveys: [], sharings: [], announcements: [] };
+    if (!raw) return { members: [], surveys: [], sharings: [], announcements: [], jobs: [] };
     const p = JSON.parse(raw);
-    if (!p || typeof p !== 'object') return { members: [], surveys: [], sharings: [], announcements: [] };
+    if (!p || typeof p !== 'object') return { members: [], surveys: [], sharings: [], announcements: [], jobs: [] };
     return {
       members:       Array.isArray(p.members)       ? p.members       : [],
       surveys:       Array.isArray(p.surveys)       ? p.surveys       : [],
       sharings:      Array.isArray(p.sharings)      ? p.sharings      : [],
-      announcements: Array.isArray(p.announcements) ? p.announcements : []
+      announcements: Array.isArray(p.announcements) ? p.announcements : [],
+      jobs:          Array.isArray(p.jobs)          ? p.jobs          : []
     };
   } catch (_) {
-    return { members: [], surveys: [], sharings: [], announcements: [] };
+    return { members: [], surveys: [], sharings: [], announcements: [], jobs: [] };
   }
 }
 
@@ -324,6 +325,7 @@ function setTab(name) {
 function renderDashboard() {
   renderKPIs();
   renderAnnouncements();
+  renderJobs();
   renderTechChart();
   renderInvestChart();
   renderCityChart();
@@ -1285,6 +1287,219 @@ function deleteAnnc() {
   showToast('Annonce supprimée · 公告已刪除');
 }
 
+// ── Job sharing block ──────────────────────────────────────────
+const JOB_CONTRACT_COLORS = {
+  'CDI':        { bg: '#dbeafe', color: '#1e40af' },
+  'CDD':        { bg: '#fef3c7', color: '#92400e' },
+  'Stage':      { bg: '#ede9fe', color: '#5b21b6' },
+  'Alternance': { bg: '#fce7f3', color: '#9d174d' },
+  'Freelance':  { bg: '#d1fae5', color: '#065f46' },
+  'Autre':      { bg: '#f1f5f9', color: '#475569' }
+};
+
+function renderJobs() {
+  const container = document.getElementById('job-list');
+  if (!container) return;
+
+  const list = [...(state.jobs || [])].reverse();
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div class="sm-job-empty">
+        <i class="fas fa-briefcase"></i>
+        Aucune offre pour le moment · 目前沒有職缺分享
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(j => {
+    const contractStyle = JOB_CONTRACT_COLORS[j.contract] || JOB_CONTRACT_COLORS['Autre'];
+    const cvBtn = j.email
+      ? `<a class="sm-job-cv-btn" href="mailto:${escHtml(j.email)}?subject=${encodeURIComponent('Candidature – ' + j.title)}">
+           <i class="fas fa-paper-plane"></i> Envoyer CV · 投遞履歷
+         </a>`
+      : '';
+    const reqsBlock = j.requirements
+      ? `<div class="sm-job-card-reqs">
+           <div class="sm-job-card-reqs-label">【條件 / Conditions】</div>
+           ${escHtml(j.requirements)}
+         </div>`
+      : '';
+    const salaryBlock = j.salary
+      ? `<div class="sm-job-salary"><i class="fas fa-coins" style="margin-right:0.25rem;"></i>${escHtml(j.salary)}</div>`
+      : '';
+
+    return `
+      <div class="sm-job-card">
+        <div class="sm-job-left">
+          <div class="sm-job-card-meta">
+            <span class="sm-job-contract-badge" style="background:${contractStyle.bg};color:${contractStyle.color};">${escHtml(j.contract)}</span>
+            <span class="sm-job-location-tag"><i class="fas fa-map-marker-alt"></i>${escHtml(j.location)}</span>
+            <span class="sm-job-poster-tag"><i class="fas fa-user"></i>${escHtml(j.poster)}</span>
+          </div>
+          <div class="sm-job-card-title">${escHtml(j.title)}</div>
+          ${salaryBlock}
+          <div class="sm-job-card-desc">${escHtml(j.description)}</div>
+          ${reqsBlock}
+          ${cvBtn}
+        </div>
+        <div class="sm-job-actions">
+          <button class="sm-job-edit-btn" data-action="edit-job" data-jid="${j.id}">
+            <i class="fas fa-edit"></i> Modifier
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+
+  container.querySelectorAll('[data-action="edit-job"]').forEach(btn => {
+    btn.addEventListener('click', () => openJobModal(btn.dataset.jid));
+  });
+}
+
+let _jobModalId = null;
+
+function openJobModal(id = null) {
+  _jobModalId = id;
+  const overlay  = document.getElementById('job-modal');
+  const titleEl  = document.getElementById('job-modal-title');
+  const delBtn   = document.getElementById('job-modal-delete');
+  const posterEl = document.getElementById('job-poster');
+  const errEl    = document.getElementById('job-poster-error');
+  const dl       = document.getElementById('job-poster-datalist');
+
+  const opts = state.members.map(m => `<option value="${escHtml(m.name)}">`).join('');
+  if (dl) dl.innerHTML = opts;
+  if (errEl) errEl.style.display = 'none';
+
+  if (id) {
+    const j = (state.jobs || []).find(x => x.id === id);
+    if (!j) return;
+    if (titleEl) titleEl.textContent = 'Modifier l\'offre · 修改職缺';
+    if (delBtn)  delBtn.classList.remove('hidden');
+    if (posterEl) posterEl.value = j.poster || '';
+    _fillJobForm(j);
+  } else {
+    if (titleEl) titleEl.textContent = 'Nouvelle offre · 新增職缺';
+    if (delBtn)  delBtn.classList.add('hidden');
+    if (posterEl) posterEl.value = '';
+    _clearJobForm();
+  }
+
+  if (overlay) overlay.classList.remove('hidden');
+}
+
+function _fillJobForm(j) {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  set('job-title',    j.title);
+  set('job-location', j.location);
+  set('job-contract', j.contract || 'CDI');
+  set('job-salary',   j.salary || '');
+  set('job-desc',     j.description);
+  set('job-reqs',     j.requirements || '');
+  set('job-email',    j.email || '');
+}
+
+function _clearJobForm() {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+  set('job-title',    '');
+  set('job-location', '');
+  set('job-contract', 'CDI');
+  set('job-salary',   '');
+  set('job-desc',     '');
+  set('job-reqs',     '');
+  set('job-email',    '');
+}
+
+function closeJobModal() {
+  _jobModalId = null;
+  const overlay = document.getElementById('job-modal');
+  if (overlay) overlay.classList.add('hidden');
+}
+
+function saveJob() {
+  const get    = id => document.getElementById(id)?.value.trim() || '';
+  const poster = get('job-poster');
+  const title  = get('job-title');
+  const loc    = get('job-location');
+  const email  = get('job-email');
+  const errEl  = document.getElementById('job-poster-error');
+
+  if (errEl) errEl.style.display = 'none';
+
+  if (!poster) {
+    if (errEl) {
+      errEl.innerHTML = 'Veuillez indiquer votre nom de membre · 請輸入您的成員名稱。' +
+        '<br><span style="opacity:0.8;">您必須是成員才能新增職缺，請先前往「<strong>成員</strong>」分頁建立您的成員資料。</span>';
+      errEl.style.display = 'block';
+    }
+    document.getElementById('job-poster')?.focus();
+    return;
+  }
+  const isMember = state.members.some(m => m.name.trim().toLowerCase() === poster.toLowerCase());
+  if (!isMember) {
+    if (errEl) {
+      errEl.innerHTML = `« ${escHtml(poster)} » n'est pas reconnu comme membre · 此名稱非成員名單中的成員。` +
+        '<br><span style="opacity:0.8;">請確認名稱與成員名單中一致，或先前往「<strong>成員</strong>」分頁新增您的資料。</span>';
+      errEl.style.display = 'block';
+    }
+    document.getElementById('job-poster')?.focus();
+    return;
+  }
+
+  if (!title)  { showToast('Veuillez saisir un titre de poste.'); return; }
+  if (!loc)    { showToast('Veuillez saisir un lieu.'); return; }
+
+  const contract = get('job-contract') || 'CDI';
+  const salary   = get('job-salary');
+  const desc     = get('job-desc');
+  const reqs     = get('job-reqs');
+
+  if (!state.jobs) state.jobs = [];
+
+  if (_jobModalId) {
+    const j = state.jobs.find(x => x.id === _jobModalId);
+    if (j) {
+      j.poster       = poster;
+      j.title        = title;
+      j.location     = loc;
+      j.contract     = contract;
+      j.salary       = salary;
+      j.description  = desc;
+      j.requirements = reqs;
+      j.email        = email;
+    }
+    showToast('Offre mise à jour · 職缺已更新');
+  } else {
+    state.jobs.unshift({
+      id: uid(),
+      poster,
+      title,
+      location:     loc,
+      contract,
+      salary,
+      description:  desc,
+      requirements: reqs,
+      email
+    });
+    showToast('Offre ajoutée · 職缺已新增');
+  }
+
+  saveState();
+  closeJobModal();
+  renderJobs();
+}
+
+function deleteJob() {
+  if (!_jobModalId) return;
+  if (!confirm('Supprimer cette offre ? · 確定刪除此職缺？')) return;
+  const idx = (state.jobs || []).findIndex(x => x.id === _jobModalId);
+  if (idx >= 0) state.jobs.splice(idx, 1);
+  saveState();
+  closeJobModal();
+  renderJobs();
+  showToast('Offre supprimée · 職缺已刪除');
+}
+
 // ── Sharing tab ────────────────────────────────────────────────
 const TAG_COLORS = {
   'Finance':  { bg: '#d1fae5', color: '#065f46' },
@@ -1596,6 +1811,7 @@ function handleImport(evt) {
       if (Array.isArray(data.surveys))       state.surveys       = data.surveys;
       if (Array.isArray(data.sharings))      state.sharings      = data.sharings;
       if (Array.isArray(data.announcements)) state.announcements = data.announcements;
+      if (Array.isArray(data.jobs))          state.jobs          = data.jobs;
       saveState();
       setTab('dashboard');
       renderKPIs();
@@ -1694,6 +1910,26 @@ function init() {
     });
   }
 
+  // Job buttons
+  const addJobBtn = document.getElementById('add-job-btn');
+  if (addJobBtn) addJobBtn.addEventListener('click', () => openJobModal());
+
+  const jobClose  = document.getElementById('job-modal-close');
+  const jobCancel = document.getElementById('job-modal-cancel');
+  const jobSave   = document.getElementById('job-modal-save');
+  const jobDelete = document.getElementById('job-modal-delete');
+  if (jobClose)  jobClose.addEventListener('click', closeJobModal);
+  if (jobCancel) jobCancel.addEventListener('click', closeJobModal);
+  if (jobSave)   jobSave.addEventListener('click', saveJob);
+  if (jobDelete) jobDelete.addEventListener('click', deleteJob);
+
+  const jobOverlay = document.getElementById('job-modal');
+  if (jobOverlay) {
+    jobOverlay.addEventListener('click', e => {
+      if (e.target === jobOverlay) closeJobModal();
+    });
+  }
+
   // Add sharing button
   const addSharingBtn = document.getElementById('add-sharing-btn');
   if (addSharingBtn) addSharingBtn.addEventListener('click', () => openSharingModal());
@@ -1723,6 +1959,7 @@ function init() {
       closeMemberModal();
       closeSharingModal();
       closeAnncModal();
+      closeJobModal();
     }
   });
 

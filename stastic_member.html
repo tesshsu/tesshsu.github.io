@@ -253,6 +253,26 @@
       </div>
       <!-- /ANNOUNCEMENTS -->
 
+      <!-- ── JOB SHARING BLOCK ──────────────────────────────────── -->
+      <div class="sm-job-wrap">
+        <div class="sm-job-header">
+          <div class="sm-job-header-left">
+            <span class="sm-job-icon"><i class="fas fa-briefcase"></i></span>
+            <div>
+              <div class="sm-job-title">Offres &amp; Missions · 職缺分享</div>
+              <div class="sm-job-sub">Partagez des opportunités · 分享職缺，成員可直接投遞 CV</div>
+            </div>
+          </div>
+          <button id="add-job-btn" class="sm-btn sm-btn-emerald" style="flex-shrink:0;">
+            <i class="fas fa-plus"></i>+ Ajouter
+          </button>
+        </div>
+        <div class="sm-job-list" id="job-list">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+      <!-- /JOB SHARING -->
+
       <div class="sm-dashboard-grid">
 
         <!-- Tech domains chart -->
@@ -734,6 +754,107 @@
     </div>
   </div>
   <!-- /SHARING MODAL -->
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- JOB MODAL                                                   -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="job-modal" class="sm-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="job-modal-title">
+    <div class="sm-modal-box" style="max-width:580px;">
+      <div class="sm-modal-header">
+        <span class="sm-modal-title" id="job-modal-title">Nouvelle offre · 新增職缺</span>
+        <button id="job-modal-close" class="sm-modal-close" type="button" aria-label="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="sm-modal-body">
+
+        <!-- Who posted -->
+        <div class="sm-form-group">
+          <label class="sm-label" for="job-poster">Votre nom (membre) · 您的名字（成員）*</label>
+          <input id="job-poster" class="sm-input" type="text"
+                 list="job-poster-datalist"
+                 placeholder="Entrez votre nom de membre…"
+                 autocomplete="off">
+          <datalist id="job-poster-datalist"></datalist>
+          <div id="job-poster-error" style="display:none;margin-top:0.4rem;padding:0.55rem 0.75rem;background:#fff1f2;border:1px solid #fecdd3;border-radius:8px;font-size:0.73rem;color:#be123c;line-height:1.55;"></div>
+        </div>
+
+        <!-- Job title -->
+        <div class="sm-form-group">
+          <label class="sm-label" for="job-title">Titre du poste · 職位名稱 *</label>
+          <input id="job-title" class="sm-input" type="text"
+                 placeholder="ex: Software Tester (H/F)">
+        </div>
+
+        <div class="sm-input-grid">
+          <!-- Location -->
+          <div class="sm-form-group">
+            <label class="sm-label" for="job-location">Lieu · 地點 *</label>
+            <input id="job-location" class="sm-input" type="text"
+                   placeholder="ex: Strasbourg, Paris, Remote…">
+          </div>
+          <!-- Contract -->
+          <div class="sm-form-group">
+            <label class="sm-label" for="job-contract">Contrat · 合約類型 *</label>
+            <select id="job-contract" class="sm-input">
+              <option value="CDI">CDI（長期合約）</option>
+              <option value="CDD">CDD（定期合約）</option>
+              <option value="Stage">Stage / 實習</option>
+              <option value="Alternance">Alternance / 交替實習</option>
+              <option value="Freelance">Freelance / 自由接案</option>
+              <option value="Autre">Autre / 其他</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Salary (optional) -->
+        <div class="sm-form-group">
+          <label class="sm-label" for="job-salary">Salaire · 薪資範圍（選填）</label>
+          <input id="job-salary" class="sm-input" type="text"
+                 placeholder="ex: 40 000 € – 45 000 € / an">
+        </div>
+
+        <!-- Job description -->
+        <div class="sm-form-group">
+          <label class="sm-label" for="job-desc">Contenu du poste · 工作內容 *</label>
+          <textarea id="job-desc" class="sm-input" rows="4"
+                    placeholder="• 主要職責與工作內容…&#10;• 使用的技術工具…"
+                    style="resize:vertical;"></textarea>
+        </div>
+
+        <!-- Requirements -->
+        <div class="sm-form-group">
+          <label class="sm-label" for="job-reqs">Conditions · 應徵條件（選填）</label>
+          <textarea id="job-reqs" class="sm-input" rows="3"
+                    placeholder="• 學歷、經驗要求…&#10;• 技能、語言要求…"
+                    style="resize:vertical;"></textarea>
+        </div>
+
+        <!-- CV email -->
+        <div class="sm-form-group">
+          <label class="sm-label" for="job-email">Email pour envoyer CV · 投遞 CV 信箱（選填）</label>
+          <input id="job-email" class="sm-input" type="email"
+                 placeholder="ex: recrutement@entreprise.fr">
+        </div>
+
+      </div>
+      <div class="sm-modal-footer">
+        <button id="job-modal-delete" type="button" class="hidden"
+                style="padding:0.5rem 1.1rem;border-radius:7px;border:1px solid #fecdd3;background:#fff1f2;color:#be123c;font-size:0.82rem;font-weight:600;cursor:pointer;margin-right:auto;">
+          <i class="fas fa-trash" style="margin-right:0.3rem;"></i>Supprimer
+        </button>
+        <button id="job-modal-cancel" type="button"
+                style="padding:0.5rem 1.1rem;border-radius:7px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:0.82rem;font-weight:600;cursor:pointer;">
+          Annuler
+        </button>
+        <button id="job-modal-save" type="button"
+                style="padding:0.5rem 1.25rem;border-radius:7px;border:none;background:#0a2d42;color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:0.4rem;">
+          <i class="fas fa-save"></i>Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- /JOB MODAL -->
 
   <!-- Toast (injected by JS if needed) -->
 
