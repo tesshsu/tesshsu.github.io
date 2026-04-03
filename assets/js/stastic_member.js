@@ -1899,8 +1899,13 @@ function initFirebase() {
       state.jobs          = Array.isArray(remote.jobs)          ? remote.jobs          : [];
     }
 
-    // Re-render whatever is currently visible
+    // Patch seed surveys in memory; only write back if data actually changed
+    const _beforePatch = JSON.stringify(state.surveys);
     ensureSeed();
+    if (JSON.stringify(state.surveys) !== _beforePatch) {
+      _fbRef.set({ data: JSON.stringify(state) })
+            .catch(e => console.warn('[Firebase] patch-seed save error', e));
+    }
     renderKPIs();
     renderAnnouncements();
     renderJobs();
@@ -1914,7 +1919,8 @@ function initFirebase() {
 // ── Init ───────────────────────────────────────────────────────
 function init() {
   initFirebase(); // connects Firebase listener if configured; no-op otherwise
-  ensureSeed();
+  // Only seed locally when NOT using Firebase — Firebase listener handles seeding
+  if (!_fbRef) ensureSeed();
   renderKPIs();
 
   // Tab buttons
