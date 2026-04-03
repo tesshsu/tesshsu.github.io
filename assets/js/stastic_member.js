@@ -3,6 +3,36 @@
 
 const STORE_KEY = 'grp_hub_v2';
 
+// ── Firebase shared persistence ────────────────────────────────
+// SETUP (one-time, 5 min):
+//   1. Go to https://console.firebase.google.com → Add project
+//   2. Build → Realtime Database → Create database → Start in test mode
+//   3. Project Settings → Your apps → </> Web → Register → copy config
+//   4. Replace the YOUR_* values below
+// ───────────────────────────────────────────────────────────────
+const _FB_CONFIG = {
+  apiKey:            'AIzaSyCSfJ6-F9OEdmXQvwVHX9hpYvkp57mpeO8',
+  authDomain:        'groupe-tech-fr.firebaseapp.com',
+  databaseURL:       'https://groupe-tech-fr-default-rtdb.europe-west1.firebasedatabase.app',
+  projectId:         'groupe-tech-fr',
+  storageBucket:     'groupe-tech-fr.firebasestorage.app',
+  messagingSenderId: '461066170665',
+  appId:             '1:461066170665:web:1b090d8e383404c4320738'
+};
+
+// Auto-detects whether config has been filled in
+const _FB_READY = typeof firebase !== 'undefined' &&
+                  !_FB_CONFIG.apiKey.startsWith('YOUR_');
+let _fbRef = null;
+if (_FB_READY) {
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(_FB_CONFIG);
+    _fbRef = firebase.database().ref(STORE_KEY);
+  } catch (e) {
+    console.warn('[Firebase] init failed, falling back to localStorage', e);
+  }
+}
+
 // ── Chart instances (tracked for destroy-before-rerender) ──────
 let _chartTech   = null;
 let _chartInvest = null;
@@ -70,10 +100,19 @@ function loadState() {
 }
 
 function saveState() {
+  // Always keep a local cache so the page isn't blank on slow connections
   localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  // Push to Firebase so all users see the change in real-time
+  if (_fbRef) {
+    _fbRef.set(state).catch(e => console.warn('[Firebase] save error', e));
+  }
 }
 
-const state = loadState();
+// When Firebase is configured: state starts empty, populated by _fbRef listener.
+// When not configured: state is loaded immediately from localStorage (old behaviour).
+let state = _fbRef
+  ? { members: [], surveys: [], sharings: [], announcements: [], jobs: [] }
+  : loadState();
 
 // ── Seed surveys (WhatsApp legacy data) ───────────────────────
 function ensureSeed() {
@@ -1825,8 +1864,47 @@ function handleImport(evt) {
   reader.readAsText(file);
 }
 
+// ── Firebase real-time listener ────────────────────────────────
+function initFirebase() {
+  if (!_fbRef) return; // not configured → localStorage only
+
+  _fbRef.on('value', snapshot => {
+    const remote = snapshot.val();
+
+    if (!remote) {
+      // Firebase is empty: migrate existing localStorage data (first-time setup)
+      const local = loadState();
+      const hasData = local.members.length || local.announcements.length ||
+                      local.jobs.length    || local.sharings.length || local.surveys.length;
+      if (hasData) {
+        Object.assign(state, local);
+        _fbRef.set(state).catch(e => console.warn('[Firebase] migration error', e));
+        showToast('Données locales migrées vers Firebase ✓');
+      }
+    } else {
+      // Apply remote state (real-time update from any user)
+      state.members       = Array.isArray(remote.members)       ? remote.members       : [];
+      state.surveys       = Array.isArray(remote.surveys)       ? remote.surveys       : [];
+      state.sharings      = Array.isArray(remote.sharings)      ? remote.sharings      : [];
+      state.announcements = Array.isArray(remote.announcements) ? remote.announcements : [];
+      state.jobs          = Array.isArray(remote.jobs)          ? remote.jobs          : [];
+    }
+
+    // Re-render whatever is currently visible
+    ensureSeed();
+    renderKPIs();
+    renderAnnouncements();
+    renderJobs();
+    const activePane = document.querySelector('.tab-pane.active')?.dataset?.tab;
+    if (activePane === 'members')  renderMembers();
+    if (activePane === 'surveys')  renderSurveys();
+    if (activePane === 'sharing')  renderSharings();
+  });
+}
+
 // ── Init ───────────────────────────────────────────────────────
 function init() {
+  initFirebase(); // connects Firebase listener if configured; no-op otherwise
   ensureSeed();
   renderKPIs();
 
