@@ -232,6 +232,27 @@
     <!-- TAB PANE: DASHBOARD                                      -->
     <!-- ════════════════════════════════════════════════════════ -->
     <div class="tab-pane active" data-tab="dashboard">
+
+      <!-- ── ANNOUNCEMENTS BLOCK ─────────────────────────────── -->
+      <div class="sm-annc-wrap">
+        <div class="sm-annc-header">
+          <div class="sm-annc-header-left">
+            <span class="sm-annc-icon"><i class="fas fa-bullhorn"></i></span>
+            <div>
+              <div class="sm-annc-title">Actualités &amp; Activités · 最新消息 &amp; 活動</div>
+              <div class="sm-annc-sub">Prochains webinaires, coffee chats, événements · 即將到來的活動與分享</div>
+            </div>
+          </div>
+          <button id="add-annc-btn" class="sm-btn sm-btn-emerald" style="flex-shrink:0;">
+            <i class="fas fa-plus"></i>+ Ajouter
+          </button>
+        </div>
+        <div class="sm-annc-list" id="annc-list">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+      <!-- /ANNOUNCEMENTS -->
+
       <div class="sm-dashboard-grid">
 
         <!-- Tech domains chart -->
@@ -543,6 +564,94 @@
     </div>
   </div>
   <!-- /MEMBER MODAL -->
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- ANNOUNCEMENT MODAL                                         -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="annc-modal" class="sm-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="annc-modal-title">
+    <div class="sm-modal-box" style="max-width:540px;">
+      <div class="sm-modal-header">
+        <span class="sm-modal-title" id="annc-modal-title">Nouvelle annonce · 新增公告</span>
+        <button id="annc-modal-close" class="sm-modal-close" type="button" aria-label="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="sm-modal-body">
+
+        <!-- Author identity gate -->
+        <div class="sm-form-group">
+          <label class="sm-label" for="annc-author">Votre nom (membre) · 您的名字（成員）*</label>
+          <input id="annc-author" class="sm-input" type="text"
+                 list="annc-author-datalist"
+                 placeholder="Entrez votre nom de membre…"
+                 autocomplete="off">
+          <datalist id="annc-author-datalist"></datalist>
+          <div id="annc-author-error" style="display:none;margin-top:0.4rem;padding:0.55rem 0.75rem;background:#fff1f2;border:1px solid #fecdd3;border-radius:8px;font-size:0.73rem;color:#be123c;line-height:1.55;"></div>
+        </div>
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="annc-title">Titre · 標題 *</label>
+          <input id="annc-title" class="sm-input" type="text"
+                 placeholder="ex: Webinaire — France 15 ans d'expérience">
+        </div>
+
+        <div class="sm-input-grid">
+          <div class="sm-form-group">
+            <label class="sm-label" for="annc-date">Date &amp; heure · 日期時間 *</label>
+            <input id="annc-date" class="sm-input" type="datetime-local">
+          </div>
+          <div class="sm-form-group">
+            <label class="sm-label" for="annc-host">Hôte / Présentateur · 主講人 *</label>
+            <input id="annc-host" class="sm-input" type="text"
+                   list="annc-host-datalist"
+                   placeholder="ex: Terry TAN"
+                   autocomplete="off">
+            <datalist id="annc-host-datalist"></datalist>
+          </div>
+        </div>
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="annc-type">Type d'événement · 活動類型</label>
+          <select id="annc-type" class="sm-input">
+            <option value="Webinaire">Webinaire / 網路研討會</option>
+            <option value="Coffee Chat">Coffee Chat</option>
+            <option value="Partage">Partage de connaissances / 知識分享</option>
+            <option value="Networking">Networking / 交流</option>
+            <option value="Autre">Autre / 其他</option>
+          </select>
+        </div>
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="annc-desc">Description · 說明內容 *</label>
+          <textarea id="annc-desc" class="sm-input" rows="3"
+                    placeholder="Sujet, programme, informations pratiques… · 主題、議程、注意事項…"
+                    style="resize:vertical;"></textarea>
+        </div>
+
+        <div class="sm-form-group">
+          <label class="sm-label" for="annc-link">Lien Google Meet / URL · 會議連結（選填）</label>
+          <input id="annc-link" class="sm-input" type="url"
+                 placeholder="https://meet.google.com/…">
+        </div>
+
+      </div>
+      <div class="sm-modal-footer">
+        <button id="annc-modal-delete" type="button" class="hidden"
+                style="padding:0.5rem 1.1rem;border-radius:7px;border:1px solid #fecdd3;background:#fff1f2;color:#be123c;font-size:0.82rem;font-weight:600;cursor:pointer;margin-right:auto;">
+          <i class="fas fa-trash" style="margin-right:0.3rem;"></i>Supprimer
+        </button>
+        <button id="annc-modal-cancel" type="button"
+                style="padding:0.5rem 1.1rem;border-radius:7px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:0.82rem;font-weight:600;cursor:pointer;">
+          Annuler
+        </button>
+        <button id="annc-modal-save" type="button"
+                style="padding:0.5rem 1.25rem;border-radius:7px;border:none;background:#0a2d42;color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:0.4rem;">
+          <i class="fas fa-save"></i>Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- /ANNOUNCEMENT MODAL -->
 
   <!-- ══════════════════════════════════════════════════════════ -->
   <!-- SHARING MODAL                                              -->

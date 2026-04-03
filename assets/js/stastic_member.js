@@ -54,16 +54,17 @@ function showToast(msg, ms = 2800) {
 function loadState() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return { members: [], surveys: [], sharings: [] };
+    if (!raw) return { members: [], surveys: [], sharings: [], announcements: [] };
     const p = JSON.parse(raw);
-    if (!p || typeof p !== 'object') return { members: [], surveys: [], sharings: [] };
+    if (!p || typeof p !== 'object') return { members: [], surveys: [], sharings: [], announcements: [] };
     return {
-      members:  Array.isArray(p.members)  ? p.members  : [],
-      surveys:  Array.isArray(p.surveys)  ? p.surveys  : [],
-      sharings: Array.isArray(p.sharings) ? p.sharings : []
+      members:       Array.isArray(p.members)       ? p.members       : [],
+      surveys:       Array.isArray(p.surveys)       ? p.surveys       : [],
+      sharings:      Array.isArray(p.sharings)      ? p.sharings      : [],
+      announcements: Array.isArray(p.announcements) ? p.announcements : []
     };
   } catch (_) {
-    return { members: [], surveys: [], sharings: [] };
+    return { members: [], surveys: [], sharings: [], announcements: [] };
   }
 }
 
@@ -322,6 +323,7 @@ function setTab(name) {
 // ── Dashboard ─────────────────────────────────────────────────
 function renderDashboard() {
   renderKPIs();
+  renderAnnouncements();
   renderTechChart();
   renderInvestChart();
   renderCityChart();
@@ -1073,6 +1075,216 @@ function deleteMember() {
   showToast('Membre supprimé.');
 }
 
+// ── Announcements ──────────────────────────────────────────────
+const ANNC_TYPE_COLORS = {
+  'Webinaire':  { bg: '#dbeafe', color: '#1d4ed8' },
+  'Coffee Chat':{ bg: '#fce7f3', color: '#9d174d' },
+  'Partage':    { bg: '#d1fae5', color: '#065f46' },
+  'Networking': { bg: '#ede9fe', color: '#5b21b6' },
+  'Autre':      { bg: '#f1f5f9', color: '#475569' }
+};
+
+const MONTH_FR = ['jan.','fév.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+
+function renderAnnouncements() {
+  const container = document.getElementById('annc-list');
+  if (!container) return;
+
+  const upcoming = [...state.announcements]
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  if (upcoming.length === 0) {
+    container.innerHTML = `
+      <div class="sm-annc-empty">
+        <i class="fas fa-bullhorn"></i>
+        Aucune annonce pour le moment · 目前沒有公告
+      </div>`;
+    return;
+  }
+
+  const now = new Date();
+  container.innerHTML = upcoming.map(a => {
+    const d = new Date(a.date);
+    const isPast = d < now;
+    const day   = d.getDate();
+    const month = MONTH_FR[d.getMonth()];
+    const time  = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    const typeStyle = ANNC_TYPE_COLORS[a.type] || ANNC_TYPE_COLORS['Autre'];
+
+    const meetBtn = a.link
+      ? `<a class="sm-annc-meet-btn" href="${escHtml(a.link)}" target="_blank" rel="noopener">
+           <i class="fas fa-video"></i> Rejoindre · 加入會議
+         </a>`
+      : '';
+
+    return `
+      <div class="sm-annc-card" ${isPast ? 'style="opacity:0.65;"' : ''}>
+        <div class="sm-annc-date-col">
+          <div class="sm-annc-day">${day}</div>
+          <div class="sm-annc-month">${month}</div>
+          <div class="sm-annc-time-badge">${time}</div>
+        </div>
+        <div class="sm-annc-body">
+          <div class="sm-annc-card-meta">
+            <span class="sm-annc-type-badge" style="background:${typeStyle.bg};color:${typeStyle.color};">${escHtml(a.type)}</span>
+            <span class="sm-annc-host-tag"><i class="fas fa-user"></i>${escHtml(a.host)}</span>
+          </div>
+          <div class="sm-annc-card-title">${escHtml(a.title)}</div>
+          ${a.description ? `<div class="sm-annc-card-desc">${escHtml(a.description)}</div>` : ''}
+          ${meetBtn}
+        </div>
+        <div class="sm-annc-actions">
+          <button class="sm-annc-edit-btn" data-action="edit-annc" data-aid="${a.id}">
+            <i class="fas fa-edit"></i> Modifier
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+
+  container.querySelectorAll('[data-action="edit-annc"]').forEach(btn => {
+    btn.addEventListener('click', () => openAnncModal(btn.dataset.aid));
+  });
+}
+
+// ── Announcement modal ─────────────────────────────────────────
+let _anncModalId = null;
+
+function openAnncModal(id = null) {
+  _anncModalId = id;
+  const overlay  = document.getElementById('annc-modal');
+  const titleEl  = document.getElementById('annc-modal-title');
+  const delBtn   = document.getElementById('annc-modal-delete');
+  const authorEl = document.getElementById('annc-author');
+  const errEl    = document.getElementById('annc-author-error');
+  const dl1      = document.getElementById('annc-author-datalist');
+  const dl2      = document.getElementById('annc-host-datalist');
+
+  // Populate member datalists
+  const opts = state.members.map(m => `<option value="${escHtml(m.name)}">`).join('');
+  if (dl1) dl1.innerHTML = opts;
+  if (dl2) dl2.innerHTML = opts;
+  if (errEl) errEl.style.display = 'none';
+
+  if (id) {
+    const a = state.announcements.find(x => x.id === id);
+    if (!a) return;
+    if (titleEl) titleEl.textContent = 'Modifier l\'annonce · 修改公告';
+    if (delBtn)  delBtn.classList.remove('hidden');
+    if (authorEl) authorEl.value = a.author || '';
+    _fillAnncForm(a);
+  } else {
+    if (titleEl) titleEl.textContent = 'Nouvelle annonce · 新增公告';
+    if (delBtn)  delBtn.classList.add('hidden');
+    if (authorEl) authorEl.value = '';
+    _clearAnncForm();
+  }
+
+  if (overlay) overlay.classList.remove('hidden');
+}
+
+function _fillAnncForm(a) {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  set('annc-title', a.title);
+  set('annc-date',  a.date ? a.date.slice(0, 16) : '');
+  set('annc-host',  a.host);
+  set('annc-type',  a.type || 'Webinaire');
+  set('annc-desc',  a.description || '');
+  set('annc-link',  a.link || '');
+}
+
+function _clearAnncForm() {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+  set('annc-title', '');
+  const now = new Date();
+  set('annc-date', new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16));
+  set('annc-host', '');
+  set('annc-type', 'Webinaire');
+  set('annc-desc', '');
+  set('annc-link', '');
+}
+
+function closeAnncModal() {
+  _anncModalId = null;
+  const overlay = document.getElementById('annc-modal');
+  if (overlay) overlay.classList.add('hidden');
+}
+
+function saveAnnc() {
+  const get    = id => document.getElementById(id)?.value.trim() || '';
+  const author = get('annc-author');
+  const title  = get('annc-title');
+  const date   = get('annc-date');
+  const host   = get('annc-host');
+  const errEl  = document.getElementById('annc-author-error');
+
+  if (errEl) errEl.style.display = 'none';
+
+  // Member gate
+  if (!author) { showToast('Veuillez saisir votre nom.'); return; }
+  const isMember = state.members.some(m => m.name.trim().toLowerCase() === author.toLowerCase());
+  if (!isMember) {
+    if (errEl) {
+      errEl.innerHTML =
+        '<i class="fas fa-exclamation-triangle" style="margin-right:0.35rem;"></i>' +
+        'Vous devez être membre pour ajouter une annonce. Allez dans l\'onglet <strong>Membres</strong> pour créer votre profil.' +
+        '<br><span style="opacity:0.8;">您必須是成員才能新增公告，請先前往「<strong>成員</strong>」分頁建立您的成員資料。</span>';
+      errEl.style.display = 'block';
+    }
+    document.getElementById('annc-author')?.focus();
+    return;
+  }
+
+  if (!title) { showToast('Veuillez saisir un titre.'); return; }
+  if (!date)  { showToast('Veuillez saisir une date.'); return; }
+  if (!host)  { showToast('Veuillez saisir un hôte.'); return; }
+
+  const desc = get('annc-desc');
+  const type = get('annc-type');
+  const link = get('annc-link');
+
+  if (_anncModalId) {
+    const a = state.announcements.find(x => x.id === _anncModalId);
+    if (a) {
+      a.title       = title;
+      a.date        = new Date(date).toISOString();
+      a.host        = host;
+      a.type        = type;
+      a.description = desc;
+      a.link        = link;
+      a.author      = author;
+    }
+    showToast('Annonce mise à jour · 公告已更新');
+  } else {
+    state.announcements.unshift({
+      id:          uid(),
+      title,
+      date:        new Date(date).toISOString(),
+      host,
+      type,
+      description: desc,
+      link,
+      author,
+      createdAt:   new Date().toISOString()
+    });
+    showToast('Annonce ajoutée ! · 公告已新增！');
+  }
+
+  saveState();
+  closeAnncModal();
+  renderAnnouncements();
+}
+
+function deleteAnnc() {
+  if (!_anncModalId) return;
+  if (!confirm('Supprimer cette annonce ? · 確定刪除此公告？')) return;
+  const idx = state.announcements.findIndex(x => x.id === _anncModalId);
+  if (idx >= 0) state.announcements.splice(idx, 1);
+  saveState();
+  closeAnncModal();
+  renderAnnouncements();
+  showToast('Annonce supprimée · 公告已刪除');
+}
+
 // ── Sharing tab ────────────────────────────────────────────────
 const TAG_COLORS = {
   'Finance':  { bg: '#d1fae5', color: '#065f46' },
@@ -1380,9 +1592,10 @@ function handleImport(evt) {
     try {
       const data = JSON.parse(reader.result);
       if (!data || typeof data !== 'object') throw new Error('Format invalide');
-      if (Array.isArray(data.members))  state.members  = data.members;
-      if (Array.isArray(data.surveys))  state.surveys  = data.surveys;
-      if (Array.isArray(data.sharings)) state.sharings = data.sharings;
+      if (Array.isArray(data.members))       state.members       = data.members;
+      if (Array.isArray(data.surveys))       state.surveys       = data.surveys;
+      if (Array.isArray(data.sharings))      state.sharings      = data.sharings;
+      if (Array.isArray(data.announcements)) state.announcements = data.announcements;
       saveState();
       setTab('dashboard');
       renderKPIs();
@@ -1461,6 +1674,26 @@ function init() {
     });
   }
 
+  // Announcement buttons
+  const addAnncBtn = document.getElementById('add-annc-btn');
+  if (addAnncBtn) addAnncBtn.addEventListener('click', () => openAnncModal());
+
+  const anncClose  = document.getElementById('annc-modal-close');
+  const anncCancel = document.getElementById('annc-modal-cancel');
+  const anncSave   = document.getElementById('annc-modal-save');
+  const anncDelete = document.getElementById('annc-modal-delete');
+  if (anncClose)  anncClose.addEventListener('click', closeAnncModal);
+  if (anncCancel) anncCancel.addEventListener('click', closeAnncModal);
+  if (anncSave)   anncSave.addEventListener('click', saveAnnc);
+  if (anncDelete) anncDelete.addEventListener('click', deleteAnnc);
+
+  const anncOverlay = document.getElementById('annc-modal');
+  if (anncOverlay) {
+    anncOverlay.addEventListener('click', e => {
+      if (e.target === anncOverlay) closeAnncModal();
+    });
+  }
+
   // Add sharing button
   const addSharingBtn = document.getElementById('add-sharing-btn');
   if (addSharingBtn) addSharingBtn.addEventListener('click', () => openSharingModal());
@@ -1489,6 +1722,7 @@ function init() {
       closeVoteModal();
       closeMemberModal();
       closeSharingModal();
+      closeAnncModal();
     }
   });
 
