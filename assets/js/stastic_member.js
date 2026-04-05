@@ -91,9 +91,9 @@ const SEED_SURVEYS = [
     title: '你的主要技術領域是？（可複選）',
     titleFr: 'Quel est votre domaine technique principal ? (choix multiple)',
     description: '來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
-    type: 'multi', privacy: 'count_only', status: 'closed',
+    type: 'multi', privacy: 'count_only', status: 'open',
     isLegacy: true, source: 'WhatsApp',
-    createdAt: '2026-01-15T13:44:00.000Z', closedAt: '2026-01-20T10:00:00.000Z',
+    createdAt: '2026-01-15T13:44:00.000Z',
     options: [
       { id: 'Backend Dev',         label: 'Backend Developer' },
       { id: 'Frontend Dev',        label: 'Frontend Developer' },
@@ -121,9 +121,9 @@ const SEED_SURVEYS = [
     title: '是否有興趣交流「在法國投資/長期發展」？',
     titleFr: 'Êtes-vous intéressé(e) par les échanges sur l\'investissement / développement long terme en France ?',
     description: '來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
-    type: 'multi', privacy: 'count_only', status: 'closed',
+    type: 'multi', privacy: 'count_only', status: 'open',
     isLegacy: true, source: 'WhatsApp',
-    createdAt: '2024-10-01T10:00:00.000Z', closedAt: '2024-10-20T10:00:00.000Z',
+    createdAt: '2024-10-01T10:00:00.000Z',
     options: [
       { id: '不感興趣',          label: '不感興趣 (Pas intéressé(e))' },
       { id: '有興趣但無額外資金',  label: '有興趣但無額外資金 (Intéressé mais sans fonds)' },
@@ -142,9 +142,9 @@ const SEED_SURVEYS = [
     title: '你目前主要所在城市是？（可複選）',
     titleFr: 'Dans quelle ville êtes-vous principalement basé(e) ?',
     description: '來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
-    type: 'single', privacy: 'count_only', status: 'closed',
+    type: 'single', privacy: 'count_only', status: 'open',
     isLegacy: true, source: 'WhatsApp',
-    createdAt: '2026-01-15T13:42:00.000Z', closedAt: '2026-01-20T10:00:00.000Z',
+    createdAt: '2026-01-15T13:42:00.000Z',
     options: [
       { id: 'Paris',      label: 'Paris / Île-de-France' },
       { id: 'Lyon',       label: 'Lyon' },
@@ -166,9 +166,9 @@ const SEED_SURVEYS = [
     title: '你目前的狀態是？',
     titleFr: 'Quel est votre statut professionnel actuel ?',
     description: '想了解大家目前的狀態，方便未來分享 job / mission 或協助媒合。來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
-    type: 'multi', privacy: 'count_only', status: 'closed',
+    type: 'multi', privacy: 'count_only', status: 'open',
     isLegacy: true, source: 'WhatsApp',
-    createdAt: '2026-01-15T13:35:00.000Z', closedAt: '2026-01-20T10:00:00.000Z',
+    createdAt: '2026-01-15T13:35:00.000Z',
     options: [
       { id: 'CDI',        label: '已在法國工作（CDI）' },
       { id: 'Freelance',  label: 'Freelance / Consultant' },
@@ -814,9 +814,9 @@ function buildSurveyCard(survey) {
       <div class="sm-options-list">${optBars}</div>
       <div class="sm-survey-footer">
         ${footerInfo}
-        ${isOpen ? `<button class="sm-btn-sm vote" data-action="vote" data-sid="${survey.id}"><i class="fas fa-vote-yea"></i> Voter</button>` : ''}
-        <button class="sm-btn-sm" data-action="toggle" data-sid="${survey.id}"><i class="fas ${toggleIcon}"></i> ${escHtml(toggleLabel)}</button>
-        <button class="sm-btn-sm danger" data-action="delete" data-sid="${survey.id}"><i class="fas fa-trash"></i> Supprimer</button>
+        <button class="sm-btn-sm vote" data-action="vote" data-sid="${survey.id}"><i class="fas fa-vote-yea"></i> Voter</button>
+        ${!survey.isLegacy ? `<button class="sm-btn-sm" data-action="toggle" data-sid="${survey.id}"><i class="fas ${toggleIcon}"></i> ${escHtml(toggleLabel)}</button>` : ''}
+        ${!survey.isLegacy ? `<button class="sm-btn-sm danger" data-action="delete" data-sid="${survey.id}"><i class="fas fa-trash"></i> Supprimer</button>` : ''}
       </div>
     </div>`;
 }
