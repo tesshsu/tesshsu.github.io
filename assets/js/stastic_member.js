@@ -80,222 +80,198 @@ function showToast(msg, ms = 2800) {
   el._t = setTimeout(() => el.classList.remove('show'), ms);
 }
 
-// ── State persistence ─────────────────────────────────────────
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return { members: [], surveys: [], sharings: [], announcements: [], jobs: [] };
-    const p = JSON.parse(raw);
-    if (!p || typeof p !== 'object') return { members: [], surveys: [], sharings: [], announcements: [], jobs: [] };
-    return {
-      members:       Array.isArray(p.members)       ? p.members       : [],
-      surveys:       Array.isArray(p.surveys)       ? p.surveys       : [],
-      sharings:      Array.isArray(p.sharings)      ? p.sharings      : [],
-      announcements: Array.isArray(p.announcements) ? p.announcements : [],
-      jobs:          Array.isArray(p.jobs)          ? p.jobs          : []
-    };
-  } catch (_) {
-    return { members: [], surveys: [], sharings: [], announcements: [], jobs: [] };
+// ══════════════════════════════════════════════════════════════
+// STATIC SEED DATA — never stored in Firebase, always from code
+// Charts render instantly without waiting for Firebase.
+// ══════════════════════════════════════════════════════════════
+
+const SEED_SURVEYS = [
+  {
+    id: 'seed_s1_tech',
+    title: '你的主要技術領域是？（可複選）',
+    titleFr: 'Quel est votre domaine technique principal ? (choix multiple)',
+    description: '來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
+    type: 'multi', privacy: 'count_only', status: 'closed',
+    isLegacy: true, source: 'WhatsApp',
+    createdAt: '2026-01-15T13:44:00.000Z', closedAt: '2026-01-20T10:00:00.000Z',
+    options: [
+      { id: 'Backend Dev',         label: 'Backend Developer' },
+      { id: 'Frontend Dev',        label: 'Frontend Developer' },
+      { id: 'Full Stack',          label: 'Full Stack Developer' },
+      { id: 'DevOps/SRE/Cloud',    label: 'DevOps / SRE / Cloud' },
+      { id: 'Data/AI/ML',          label: 'Data / AI / ML' },
+      { id: 'Mobile',              label: 'Mobile (iOS / Android)' },
+      { id: 'QA/Test',             label: 'QA / Test / Automation' },
+      { id: 'Security/Cybersec',   label: 'Security / Cybersecurity' },
+      { id: 'Architect/Tech Lead', label: 'Architect / Tech Lead' },
+      { id: 'PM',                  label: 'PM (Product / Project)' },
+      { id: 'Designer',            label: 'Designer' },
+      { id: 'Biz Manager',         label: 'Business Manager' },
+      { id: 'Others',              label: 'Others' }
+    ],
+    legacyCounts: {
+      'Backend Dev': 3, 'Frontend Dev': 2, 'Full Stack': 2,
+      'DevOps/SRE/Cloud': 2, 'Data/AI/ML': 11, 'Mobile': 1,
+      'QA/Test': 1, 'Security/Cybersec': 1, 'Architect/Tech Lead': 2,
+      'PM': 10, 'Designer': 1, 'Biz Manager': 4, 'Others': 14
+    }
+  },
+  {
+    id: 'seed_s2_invest',
+    title: '是否有興趣交流「在法國投資/長期發展」？',
+    titleFr: 'Êtes-vous intéressé(e) par les échanges sur l\'investissement / développement long terme en France ?',
+    description: '來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
+    type: 'multi', privacy: 'count_only', status: 'closed',
+    isLegacy: true, source: 'WhatsApp',
+    createdAt: '2024-10-01T10:00:00.000Z', closedAt: '2024-10-20T10:00:00.000Z',
+    options: [
+      { id: '不感興趣',          label: '不感興趣 (Pas intéressé(e))' },
+      { id: '有興趣但無額外資金',  label: '有興趣但無額外資金 (Intéressé mais sans fonds)' },
+      { id: '有興趣且已在投資',    label: '有興趣且已在投資 (Intéressé et déjà investi)' },
+      { id: '很有興趣願增加',      label: '很有興趣願增加 (Très intéressé, prêt à augmenter)' },
+      { id: '有興趣但不方便GMeet', label: '有興趣但不方便GMeet (Intéressé mais pas dispo GMeet)' },
+      { id: '有興趣可參加GMeet',   label: '有興趣可參加GMeet (Intéressé et dispo GMeet)' }
+    ],
+    legacyCounts: {
+      '不感興趣': 0, '有興趣但無額外資金': 5, '有興趣且已在投資': 4,
+      '很有興趣願增加': 0, '有興趣但不方便GMeet': 0, '有興趣可參加GMeet': 11
+    }
+  },
+  {
+    id: 'seed_s3_city',
+    title: '你目前主要所在城市是？（可複選）',
+    titleFr: 'Dans quelle ville êtes-vous principalement basé(e) ?',
+    description: '來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
+    type: 'single', privacy: 'count_only', status: 'closed',
+    isLegacy: true, source: 'WhatsApp',
+    createdAt: '2026-01-15T13:42:00.000Z', closedAt: '2026-01-20T10:00:00.000Z',
+    options: [
+      { id: 'Paris',      label: 'Paris / Île-de-France' },
+      { id: 'Lyon',       label: 'Lyon' },
+      { id: 'Toulouse',   label: 'Toulouse' },
+      { id: 'Bordeaux',   label: 'Bordeaux' },
+      { id: 'Lille',      label: 'Lille' },
+      { id: 'Strasbourg', label: 'Strasbourg' },
+      { id: 'Nice',       label: 'Nice / Sophia Antipolis' },
+      { id: 'Taiwan',     label: '台灣（計畫來法國 / Prévu de venir en France）' },
+      { id: 'Autres',     label: '其他城市（請留言 / Autre ville）' }
+    ],
+    legacyCounts: {
+      'Paris': 38, 'Lyon': 5, 'Toulouse': 0, 'Bordeaux': 2,
+      'Lille': 0, 'Strasbourg': 0, 'Nice': 2, 'Taiwan': 8, 'Autres': 8
+    }
+  },
+  {
+    id: 'seed_s4_status',
+    title: '你目前的狀態是？',
+    titleFr: 'Quel est votre statut professionnel actuel ?',
+    description: '想了解大家目前的狀態，方便未來分享 job / mission 或協助媒合。來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
+    type: 'multi', privacy: 'count_only', status: 'closed',
+    isLegacy: true, source: 'WhatsApp',
+    createdAt: '2026-01-15T13:35:00.000Z', closedAt: '2026-01-20T10:00:00.000Z',
+    options: [
+      { id: 'CDI',        label: '已在法國工作（CDI）' },
+      { id: 'Freelance',  label: 'Freelance / Consultant' },
+      { id: 'Searching',  label: '正在找新機會 (En recherche active)' },
+      { id: 'Stable',     label: '目前穩定，但願意了解機會 (Stable, ouvert aux opportunités)' },
+      { id: 'Hiring',     label: '公司有職缺，可分享資訊 (Mon entreprise recrute)' },
+      { id: 'NewArrival', label: '剛到法國 / 準備來法國發展 (Nouvel arrivant / En préparation)' }
+    ],
+    legacyCounts: {
+      'CDI': 17, 'Freelance': 4, 'Searching': 37,
+      'Stable': 7, 'Hiring': 2, 'NewArrival': 10
+    }
   }
+];
+
+const SEED_MEMBERS = (() => {
+  const joined = '2026-01-15T00:00:00.000Z';
+  return [
+    'Chia-Hsin', 'Yu-Peng', 'Sabrina C.', 'Ashley', 'Paul',
+    'Amber', 'Catherine', 'Chen-Yu', 'Chi', 'Chi Yun',
+    'Chi-Wei', 'Chia Lun', 'Chiawei', 'Chieh Yang', 'Chieh Yu Chen',
+    'Chiung-Yueh', 'Chris', 'CJ Eileen', 'EJ', 'Ella Chenyu Chen',
+    'Enli Jen', 'Fay', 'Fuwei', 'Houwen', 'HWC',
+    'I-Chun', 'IChing (Yi-Jin) Chen', 'James', 'Jenny Yen', 'Johnny',
+    'Karen', 'Kevin', 'Kevin (2)', 'Linghan Liao', 'Lu',
+    'Manping', 'Miriam C.', 'Miya Lee', 'Nai Chieh Lin', 'Nancy',
+    'Peggy Liao', 'Pz', 'S-P', 'Sanny', 'Sheepo',
+    'Shuhan Chang (Shelly)', 'Sun', 'Sylvia', 'Tachun Lin', 'Terry TAN',
+    'Tina', 'Vivi N', 'W', 'Wallace', 'Wan-Erh (Annie)',
+    'Wen', 'Wen (2)', 'Wentzu 文慈', 'Yih-Dar', 'Yochen Shih',
+    'Yu Ting Chao', 'Yu-Chuan Cheng', 'Yuhsin', 'Yun-Hsuan',
+    'ZHANG ZUO AN (Joanne)', 'Zoe (lo-yi) Wu', 'Zoe T', 'Brett'
+  ].map((name, i) => ({ id: 'seed_m_' + i, name, joinedAt: joined, note: '' }));
+})();
+
+// ══════════════════════════════════════════════════════════════
+// DYNAMIC STATE — only user-created content (Firebase + cache)
+// ══════════════════════════════════════════════════════════════
+
+const _DYN_KEY = STORE_KEY + '_dyn';
+
+function _emptyDynamic() {
+  return { addedMembers: [], announcements: [], jobs: [], sharings: [], surveyVotes: {}, userSurveys: [] };
 }
 
+// Load dynamic data from localStorage cache (fast, instant)
+function loadDynamic() {
+  try {
+    const raw = localStorage.getItem(_DYN_KEY);
+    if (!raw) return _emptyDynamic();
+    const p = JSON.parse(raw);
+    return {
+      addedMembers:  Array.isArray(p.addedMembers)  ? p.addedMembers  : [],
+      announcements: Array.isArray(p.announcements) ? p.announcements : [],
+      jobs:          Array.isArray(p.jobs)           ? p.jobs          : [],
+      sharings:      Array.isArray(p.sharings)       ? p.sharings      : [],
+      surveyVotes:   (p.surveyVotes && typeof p.surveyVotes === 'object') ? p.surveyVotes : {},
+      userSurveys:   Array.isArray(p.userSurveys)   ? p.userSurveys   : []
+    };
+  } catch (_) { return _emptyDynamic(); }
+}
+
+// Merge static seeds + dynamic user data into the shared `state` object
+function rebuildState(dyn) {
+  const votes = dyn.surveyVotes || {};
+  state.surveys      = SEED_SURVEYS.map(s => ({ ...s, votesByMember: votes[s.id] || {} }))
+                         .concat(dyn.userSurveys || []);
+  state.members      = [...SEED_MEMBERS, ...(dyn.addedMembers || [])];
+  state.announcements = dyn.announcements || [];
+  state.jobs          = dyn.jobs          || [];
+  state.sharings      = dyn.sharings      || [];
+}
+
+// Extract only dynamic user data from state (what gets saved to Firebase)
+function extractDynamic() {
+  return {
+    addedMembers:  state.members.filter(m => !m.id.startsWith('seed_m_')),
+    announcements: state.announcements,
+    jobs:          state.jobs,
+    sharings:      state.sharings,
+    surveyVotes:   Object.fromEntries(
+                     state.surveys.map(s => [s.id, s.votesByMember || {}])
+                   ),
+    userSurveys:   state.surveys.filter(s => !s.isLegacy)
+  };
+}
+
+// Save dynamic data to localStorage + Firebase
 function saveState() {
-  // Always keep a local cache so the page isn't blank on slow connections
-  localStorage.setItem(STORE_KEY, JSON.stringify(state));
-  // Push to Firebase as a JSON string to avoid key-character restrictions
-  // (Firebase forbids ".", "#", "$", "/", "[", "]" in keys)
+  const dyn = extractDynamic();
+  localStorage.setItem(_DYN_KEY, JSON.stringify(dyn));
   if (_fbRef) {
-    _fbRef.set({ data: JSON.stringify(state) })
+    _fbRef.set({ data: JSON.stringify(dyn) })
           .catch(e => console.warn('[Firebase] save error', e));
   }
 }
 
-// When Firebase is configured: state starts empty, populated by _fbRef listener.
-// When not configured: state is loaded immediately from localStorage (old behaviour).
-let state = _fbRef
-  ? { members: [], surveys: [], sharings: [], announcements: [], jobs: [] }
-  : loadState();
+// ── Shared state object (always has seeds, dynamic parts filled immediately from cache)
+const state = { members: [], surveys: [], sharings: [], announcements: [], jobs: [] };
+rebuildState(loadDynamic()); // instant render from localStorage cache
 
-// ── Seed surveys (WhatsApp legacy data) ───────────────────────
-function ensureSeed() {
-  const ids = state.surveys.map(s => s.id);
-
-  // ── Seed or patch seed_s1_tech (tech domain — WhatsApp Jan 2026) ──
-  const _s1_options = [
-    { id: 'Backend Dev',         label: 'Backend Developer' },
-    { id: 'Frontend Dev',        label: 'Frontend Developer' },
-    { id: 'Full Stack',          label: 'Full Stack Developer' },
-    { id: 'DevOps/SRE/Cloud',    label: 'DevOps / SRE / Cloud' },
-    { id: 'Data/AI/ML',          label: 'Data / AI / ML' },
-    { id: 'Mobile',              label: 'Mobile (iOS / Android)' },
-    { id: 'QA/Test',             label: 'QA / Test / Automation' },
-    { id: 'Security/Cybersec',   label: 'Security / Cybersecurity' },
-    { id: 'Architect/Tech Lead', label: 'Architect / Tech Lead' },
-    { id: 'PM',                  label: 'PM (Product / Project)' },
-    { id: 'Designer',            label: 'Designer' },
-    { id: 'Biz Manager',         label: 'Business Manager' },
-    { id: 'Others',         label: 'Others' },
-  ];
-  const _s1_counts = {
-    'Backend Dev': 3, 'Frontend Dev': 2, 'Full Stack': 2,
-    'DevOps/SRE/Cloud': 2, 'Data/AI/ML': 11, 'Mobile': 1,
-    'QA/Test': 1, 'Security/Cybersec': 1, 'Architect/Tech Lead': 2,
-    'PM': 10, 'Designer': 1, 'Biz Manager': 4, 'Others': 14
-  };
-  if (!ids.includes('seed_s1_tech')) {
-    state.surveys.push({
-      id: 'seed_s1_tech',
-      title: '你的主要技術領域是？（可複選）',
-      titleFr: 'Quel est votre domaine technique principal ? (choix multiple)',
-      description: '來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
-      type: 'multi', privacy: 'count_only', status: 'closed',
-      isLegacy: true, source: 'WhatsApp',
-      createdAt: '2026-01-15T13:44:00.000Z',
-      closedAt:  '2026-01-20T10:00:00.000Z',
-      options: _s1_options,
-      votesByMember: {},
-      legacyCounts: _s1_counts
-    });
-  } else {
-    // Always sync options + legacyCounts to canonical values
-    const s1 = state.surveys.find(s => s.id === 'seed_s1_tech');
-    if (s1) {
-      s1.options      = _s1_options;
-      s1.legacyCounts = _s1_counts;
-    }
-  }
-
-  const _s2_counts = {
-    '不感興趣': 0,
-    '有興趣但無額外資金': 5,
-    '有興趣且已在投資': 4,
-    '很有興趣願增加': 0,
-    '有興趣但不方便GMeet': 0,
-    '有興趣可參加GMeet': 11
-  };
-  if (!ids.includes('seed_s2_invest')) {
-    state.surveys.push({
-      id: 'seed_s2_invest',
-      title: '是否有興趣交流「在法國投資/長期發展」？',
-      titleFr: 'Êtes-vous intéressé(e) par les échanges sur l\'investissement / développement long terme en France ?',
-      description: '來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
-      type: 'multi',
-      privacy: 'count_only',
-      status: 'closed',
-      isLegacy: true,
-      source: 'WhatsApp',
-      createdAt: '2024-10-01T10:00:00.000Z',
-      closedAt: '2024-10-20T10:00:00.000Z',
-      options: [
-        { id: '不感興趣',             label: '不感興趣 (Pas intéressé(e))' },
-        { id: '有興趣但無額外資金',     label: '有興趣但無額外資金 (Intéressé mais sans fonds)' },
-        { id: '有興趣且已在投資',       label: '有興趣且已在投資 (Intéressé et déjà investi)' },
-        { id: '很有興趣願增加',         label: '很有興趣願增加 (Très intéressé, prêt à augmenter)' },
-        { id: '有興趣但不方便GMeet',    label: '有興趣但不方便GMeet (Intéressé mais pas dispo GMeet)' },
-        { id: '有興趣可參加GMeet',      label: '有興趣可參加GMeet (Intéressé et dispo GMeet)' }
-      ],
-      votesByMember: {},
-      legacyCounts: _s2_counts
-    });
-  } else {
-    // Always sync legacyCounts to canonical values
-    const s2 = state.surveys.find(s => s.id === 'seed_s2_invest');
-    if (s2) s2.legacyCounts = _s2_counts;
-  }
-
-  // ── Seed seed_s3_city (city/location — WhatsApp Jan 2026) ────────
-  const _s3_counts = {
-    'Paris': 38, 'Lyon': 5, 'Toulouse': 0, 'Bordeaux': 2,
-    'Lille': 0, 'Strasbourg': 0, 'Nice': 2, 'Taiwan': 8, 'Autres': 8
-  };
-  if (!ids.includes('seed_s3_city')) {
-    state.surveys.push({
-      id: 'seed_s3_city',
-      title: '你目前主要所在城市是？（可複選）',
-      titleFr: 'Dans quelle ville êtes-vous principalement basé(e) ?',
-      description: '來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
-      type: 'single', privacy: 'count_only', status: 'closed',
-      isLegacy: true, source: 'WhatsApp',
-      createdAt: '2026-01-15T13:42:00.000Z',
-      closedAt:  '2026-01-20T10:00:00.000Z',
-      options: [
-        { id: 'Paris',       label: 'Paris / Île-de-France' },
-        { id: 'Lyon',        label: 'Lyon' },
-        { id: 'Toulouse',    label: 'Toulouse' },
-        { id: 'Bordeaux',    label: 'Bordeaux' },
-        { id: 'Lille',       label: 'Lille' },
-        { id: 'Strasbourg',  label: 'Strasbourg' },
-        { id: 'Nice',        label: 'Nice / Sophia Antipolis' },
-        { id: 'Taiwan',      label: '台灣（計畫來法國 / Prévu de venir en France）' },
-        { id: 'Autres',      label: '其他城市（請留言 / Autre ville）' }
-      ],
-      votesByMember: {},
-      legacyCounts: _s3_counts
-    });
-  } else {
-    // Always sync legacyCounts to the canonical values above
-    const s3 = state.surveys.find(s => s.id === 'seed_s3_city');
-    if (s3) s3.legacyCounts = _s3_counts;
-  }
-
-  // ── Seed seed_s4_status (job status — WhatsApp Jan 2026) ─────────
-  const _s4_counts = {
-    'CDI': 17, 'Freelance': 4, 'Searching': 37,
-    'Stable': 7, 'Hiring': 2, 'NewArrival': 10
-  };
-  if (!ids.includes('seed_s4_status')) {
-    state.surveys.push({
-      id: 'seed_s4_status',
-      title: '你目前的狀態是？',
-      titleFr: 'Quel est votre statut professionnel actuel ?',
-      description: '想了解大家目前的狀態，方便未來分享 job / mission 或協助媒合。來自 WhatsApp 社群調查 / Sondage WhatsApp communautaire',
-      type: 'multi', privacy: 'count_only', status: 'closed',
-      isLegacy: true, source: 'WhatsApp',
-      createdAt: '2026-01-15T13:35:00.000Z',
-      closedAt:  '2026-01-20T10:00:00.000Z',
-      options: [
-        { id: 'CDI',        label: '已在法國工作（CDI）' },
-        { id: 'Freelance',  label: 'Freelance / Consultant' },
-        { id: 'Searching',  label: '正在找新機會 (En recherche active)' },
-        { id: 'Stable',     label: '目前穩定，但願意了解機會 (Stable, ouvert aux opportunités)' },
-        { id: 'Hiring',     label: '公司有職缺，可分享資訊 (Mon entreprise recrute)' },
-        { id: 'NewArrival', label: '剛到法國 / 準備來法國發展 (Nouvel arrivant / En préparation)' }
-      ],
-      votesByMember: {},
-      legacyCounts: _s4_counts
-    });
-  } else {
-    // Always sync legacyCounts to the canonical values above
-    const s4 = state.surveys.find(s => s.id === 'seed_s4_status');
-    if (s4) s4.legacyCounts = _s4_counts;
-  }
-
-  // ── Seed members — Groupe Général (68 membres, snapshot Jan 2026) ─
-  if (state.members.length === 0) {
-    const joined = '2026-01-15T00:00:00.000Z';
-    const _names = [
-      'Chia-Hsin', 'Yu-Peng', 'Sabrina C.', 'Ashley', 'Paul',
-      'Amber', 'Catherine', 'Chen-Yu', 'Chi', 'Chi Yun',
-      'Chi-Wei', 'Chia Lun', 'Chiawei', 'Chieh Yang', 'Chieh Yu Chen',
-      'Chiung-Yueh', 'Chris', 'CJ Eileen', 'EJ', 'Ella Chenyu Chen',
-      'Enli Jen', 'Fay', 'Fuwei', 'Houwen', 'HWC',
-      'I-Chun', 'IChing (Yi-Jin) Chen', 'James', 'Jenny Yen', 'Johnny',
-      'Karen', 'Kevin', 'Kevin (2)', 'Linghan Liao', 'Lu',
-      'Manping', 'Miriam C.', 'Miya Lee', 'Nai Chieh Lin', 'Nancy',
-      'Peggy Liao', 'Pz', 'S-P', 'Sanny', 'Sheepo',
-      'Shuhan Chang (Shelly)', 'Sun', 'Sylvia', 'Tachun Lin', 'Terry TAN',
-      'Tina', 'Vivi N', 'W', 'Wallace', 'Wan-Erh (Annie)',
-      'Wen', 'Wen (2)', 'Wentzu 文慈', 'Yih-Dar', 'Yochen Shih',
-      'Yu Ting Chao', 'Yu-Chuan Cheng', 'Yuhsin', 'Yun-Hsuan',
-      'ZHANG ZUO AN (Joanne)', 'Zoe (lo-yi) Wu', 'Zoe T', 'Brett'
-    ];
-    _names.forEach((name, i) => {
-      state.members.push({ id: 'seed_m_' + i, name, joinedAt: joined, note: '' });
-    });
-  }
-
-  saveState();
-}
+// ensureSeed is now a no-op — seeds are always applied via rebuildState()
+function ensureSeed() {}
 
 // ── Compute merged vote counts for a survey ────────────────────
 function computeCounts(survey) {
@@ -1848,11 +1824,16 @@ function handleImport(evt) {
     try {
       const data = JSON.parse(reader.result);
       if (!data || typeof data !== 'object') throw new Error('Format invalide');
-      if (Array.isArray(data.members))       state.members       = data.members;
-      if (Array.isArray(data.surveys))       state.surveys       = data.surveys;
-      if (Array.isArray(data.sharings))      state.sharings      = data.sharings;
-      if (Array.isArray(data.announcements)) state.announcements = data.announcements;
-      if (Array.isArray(data.jobs))          state.jobs          = data.jobs;
+      // Support both old full-state JSON exports and new dynamic-only exports
+      const dyn = _emptyDynamic();
+      if (Array.isArray(data.addedMembers))  dyn.addedMembers  = data.addedMembers;
+      else if (Array.isArray(data.members))  dyn.addedMembers  = data.members.filter(m => !m.id.startsWith('seed_m_'));
+      if (Array.isArray(data.announcements)) dyn.announcements = data.announcements;
+      if (Array.isArray(data.jobs))          dyn.jobs          = data.jobs;
+      if (Array.isArray(data.sharings))      dyn.sharings      = data.sharings;
+      if (data.surveyVotes)                  dyn.surveyVotes   = data.surveyVotes;
+      if (Array.isArray(data.userSurveys))   dyn.userSurveys   = data.userSurveys;
+      rebuildState(dyn);
       saveState();
       setTab('dashboard');
       renderKPIs();
@@ -1868,59 +1849,51 @@ function handleImport(evt) {
 
 // ── Firebase real-time listener ────────────────────────────────
 function initFirebase() {
-  if (!_fbRef) return; // not configured → localStorage only
+  if (!_fbRef) return;
 
   _fbRef.on('value', snapshot => {
     const raw = snapshot.val();
+    let dyn = null;
 
-    // Parse remote JSON string (stored as { data: "..." } to avoid Firebase key restrictions)
-    let remote = null;
     if (raw && typeof raw.data === 'string') {
-      try { remote = JSON.parse(raw.data); } catch (_) {}
+      // New format: { data: "JSON string of dynamic-only data" }
+      try { dyn = JSON.parse(raw.data); } catch (_) {}
+    } else if (raw && typeof raw === 'object' && Array.isArray(raw.members)) {
+      // Old format (full state object): migrate to new dynamic-only format
+      dyn = {
+        addedMembers:  (raw.members  || []).filter(m => !m.id.startsWith('seed_m_')),
+        announcements: raw.announcements || [],
+        jobs:          raw.jobs          || [],
+        sharings:      raw.sharings      || [],
+        surveyVotes:   Object.fromEntries(
+                         (raw.surveys || []).map(s => [s.id, s.votesByMember || {}])
+                       ),
+        userSurveys:   (raw.surveys || []).filter(s => !s.isLegacy)
+      };
+      // Overwrite Firebase with clean new format (runs once)
+      _fbRef.set({ data: JSON.stringify(dyn) })
+            .catch(e => console.warn('[Firebase] migration error', e));
+      showToast('Données migrées ✓');
     }
 
-    if (!remote) {
-      // Firebase is empty: migrate existing localStorage data (first-time setup)
-      const local = loadState();
-      const hasData = local.members.length || local.announcements.length ||
-                      local.jobs.length    || local.sharings.length || local.surveys.length;
-      if (hasData) {
-        Object.assign(state, local);
-        _fbRef.set({ data: JSON.stringify(state) })
-              .catch(e => console.warn('[Firebase] migration error', e));
-        showToast('Données locales migrées vers Firebase ✓');
-      }
-    } else {
-      // Apply remote state (real-time update from any user)
-      state.members       = Array.isArray(remote.members)       ? remote.members       : [];
-      state.surveys       = Array.isArray(remote.surveys)       ? remote.surveys       : [];
-      state.sharings      = Array.isArray(remote.sharings)      ? remote.sharings      : [];
-      state.announcements = Array.isArray(remote.announcements) ? remote.announcements : [];
-      state.jobs          = Array.isArray(remote.jobs)          ? remote.jobs          : [];
+    if (dyn) {
+      rebuildState(dyn);
+      localStorage.setItem(_DYN_KEY, JSON.stringify(dyn)); // update local cache
     }
 
-    // Patch seed surveys in memory; only write back if data actually changed
-    const _beforePatch = JSON.stringify(state.surveys);
-    ensureSeed();
-    if (JSON.stringify(state.surveys) !== _beforePatch) {
-      _fbRef.set({ data: JSON.stringify(state) })
-            .catch(e => console.warn('[Firebase] patch-seed save error', e));
-    }
     renderKPIs();
     renderAnnouncements();
     renderJobs();
     const activePane = document.querySelector('.tab-pane.active')?.dataset?.tab;
-    if (activePane === 'members')  renderMembers();
-    if (activePane === 'surveys')  renderSurveys();
-    if (activePane === 'sharing')  renderSharings();
+    if (activePane === 'members') renderMembers();
+    if (activePane === 'surveys') renderSurveys();
+    if (activePane === 'sharing') renderSharings();
   });
 }
 
 // ── Init ───────────────────────────────────────────────────────
 function init() {
   initFirebase(); // connects Firebase listener if configured; no-op otherwise
-  // Only seed locally when NOT using Firebase — Firebase listener handles seeding
-  if (!_fbRef) ensureSeed();
   renderKPIs();
 
   // Tab buttons
