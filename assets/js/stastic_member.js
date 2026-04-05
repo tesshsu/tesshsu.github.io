@@ -260,10 +260,7 @@ function extractDynamic() {
 function saveState() {
   const dyn = extractDynamic();
   localStorage.setItem(_DYN_KEY, JSON.stringify(dyn));
-  if (_fbRef) {
-    _fbRef.set({ data: JSON.stringify(dyn) })
-          .catch(e => console.warn('[Firebase] save error', e));
-  }
+  _fbWrite(dyn);
 }
 
 // ── Shared state object (always has seeds, dynamic parts filled immediately from cache)
@@ -1083,10 +1080,7 @@ function saveMember() {
 
   rebuildState(dyn);
   localStorage.setItem(_DYN_KEY, JSON.stringify(dyn));
-  if (_fbRef) {
-    _fbRef.set({ data: JSON.stringify(dyn) })
-          .catch(e => console.warn('[Firebase] save error', e));
-  }
+  _fbWrite(dyn);
   closeMemberModal();
   renderMembers();
   renderKPIs();
@@ -1103,10 +1097,7 @@ function deleteMember() {
 
   rebuildState(dyn);
   localStorage.setItem(_DYN_KEY, JSON.stringify(dyn));
-  if (_fbRef) {
-    _fbRef.set({ data: JSON.stringify(dyn) })
-          .catch(e => console.warn('[Firebase] save error', e));
-  }
+  _fbWrite(dyn);
   closeMemberModal();
   renderMembers();
   renderKPIs();
@@ -1867,18 +1858,33 @@ function handleImport(evt) {
 }
 
 // ── Firebase real-time listener ────────────────────────────────
+// Guard: when WE write to Firebase, skip the echo so we don't overwrite our own local data
+let _fbOwnWritePending = false;
+
+function _fbWrite(dyn) {
+  if (!_fbRef) return;
+  _fbOwnWritePending = true;
+  _fbRef.set({ data: JSON.stringify(dyn) })
+        .catch(e => { _fbOwnWritePending = false; console.warn('[Firebase] save error', e); });
+}
+
 function initFirebase() {
   if (!_fbRef) return;
 
   _fbRef.on('value', snapshot => {
+    // Skip echoes of our own writes — localStorage already has the correct data
+    if (_fbOwnWritePending) {
+      _fbOwnWritePending = false;
+      return;
+    }
+
     const raw = snapshot.val();
     let dyn = null;
 
     if (raw && typeof raw.data === 'string') {
-      // New format: { data: "JSON string of dynamic-only data" }
       try { dyn = JSON.parse(raw.data); } catch (_) {}
     } else if (raw && typeof raw === 'object' && Array.isArray(raw.members)) {
-      // Old format (full state object): migrate to new dynamic-only format
+      // Old format: migrate once
       dyn = {
         addedMembers:  (raw.members  || []).filter(m => !m.id.startsWith('seed_m_')),
         announcements: raw.announcements || [],
@@ -1889,15 +1895,13 @@ function initFirebase() {
                        ),
         userSurveys:   (raw.surveys || []).filter(s => !s.isLegacy)
       };
-      // Overwrite Firebase with clean new format (runs once)
-      _fbRef.set({ data: JSON.stringify(dyn) })
-            .catch(e => console.warn('[Firebase] migration error', e));
+      _fbWrite(dyn);
       showToast('Données migrées ✓');
     }
 
     if (dyn) {
       rebuildState(dyn);
-      localStorage.setItem(_DYN_KEY, JSON.stringify(dyn)); // update local cache
+      localStorage.setItem(_DYN_KEY, JSON.stringify(dyn));
     }
 
     renderKPIs();
