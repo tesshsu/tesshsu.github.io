@@ -1893,7 +1893,7 @@ function initFirebase() {
       // Only apply if Firebase data is strictly newer than our local save
       // (raw.ts missing = old format without ts = treat as 0 = always older)
       const fbTs = raw.ts || 0;
-      if (fbTs <= localSavedAt) return; // our local data is same or newer, skip
+      if (localSavedAt > 0 && fbTs <= localSavedAt) return; // our local data is same or newer, skip (fresh browsers always apply Firebase data)
       try { dyn = JSON.parse(raw.data); } catch (_) {}
     } else if (raw && typeof raw === 'object' && Array.isArray(raw.members)) {
       // Old full-state format: migrate once to new dynamic-only format
