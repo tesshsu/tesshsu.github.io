@@ -1058,16 +1058,21 @@ function saveMember() {
 
   if (!name) { showToast('Le nom est obligatoire.'); return; }
 
+  // Work directly on addedMembers (non-seed) — never mutate SEED_MEMBERS
+  const dyn = extractDynamic();
+
   if (_memberModalId) {
-    const m = state.members.find(x => x.id === _memberModalId);
-    if (m) {
-      m.name = name;
-      m.joinedAt = joined ? new Date(joined).toISOString() : m.joinedAt;
-      m.note = note;
+    // Could be editing a seed member (read-only) or an added member
+    const added = dyn.addedMembers.find(x => x.id === _memberModalId);
+    if (added) {
+      added.name     = name;
+      added.joinedAt = joined ? new Date(joined).toISOString() : added.joinedAt;
+      added.note     = note;
     }
+    // Seed members cannot be edited (their data is hardcoded)
     showToast('Membre mis à jour.');
   } else {
-    state.members.push({
+    dyn.addedMembers.push({
       id: uid(),
       name,
       joinedAt: joined ? new Date(joined).toISOString() : new Date().toISOString(),
@@ -1076,7 +1081,12 @@ function saveMember() {
     showToast('Membre ajouté.');
   }
 
-  saveState();
+  rebuildState(dyn);
+  localStorage.setItem(_DYN_KEY, JSON.stringify(dyn));
+  if (_fbRef) {
+    _fbRef.set({ data: JSON.stringify(dyn) })
+          .catch(e => console.warn('[Firebase] save error', e));
+  }
   closeMemberModal();
   renderMembers();
   renderKPIs();
@@ -1085,9 +1095,18 @@ function saveMember() {
 function deleteMember() {
   if (!_memberModalId) return;
   if (!confirm('Supprimer ce membre ?')) return;
-  const idx = state.members.findIndex(x => x.id === _memberModalId);
-  if (idx >= 0) state.members.splice(idx, 1);
-  saveState();
+
+  const dyn = extractDynamic();
+  const idx = dyn.addedMembers.findIndex(x => x.id === _memberModalId);
+  if (idx < 0) { showToast('Les membres initiaux ne peuvent pas être supprimés.'); return; }
+  dyn.addedMembers.splice(idx, 1);
+
+  rebuildState(dyn);
+  localStorage.setItem(_DYN_KEY, JSON.stringify(dyn));
+  if (_fbRef) {
+    _fbRef.set({ data: JSON.stringify(dyn) })
+          .catch(e => console.warn('[Firebase] save error', e));
+  }
   closeMemberModal();
   renderMembers();
   renderKPIs();
