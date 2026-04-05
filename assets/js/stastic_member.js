@@ -215,20 +215,30 @@ function _emptyDynamic() {
 }
 
 // Load dynamic data from localStorage cache (fast, instant)
+// Returns { dyn, savedAt } where savedAt is the timestamp of the last local save
 function loadDynamic() {
   try {
     const raw = localStorage.getItem(_DYN_KEY);
-    if (!raw) return _emptyDynamic();
+    if (!raw) return { dyn: _emptyDynamic(), savedAt: 0 };
     const p = JSON.parse(raw);
     return {
-      addedMembers:  Array.isArray(p.addedMembers)  ? p.addedMembers  : [],
-      announcements: Array.isArray(p.announcements) ? p.announcements : [],
-      jobs:          Array.isArray(p.jobs)           ? p.jobs          : [],
-      sharings:      Array.isArray(p.sharings)       ? p.sharings      : [],
-      surveyVotes:   (p.surveyVotes && typeof p.surveyVotes === 'object') ? p.surveyVotes : {},
-      userSurveys:   Array.isArray(p.userSurveys)   ? p.userSurveys   : []
+      savedAt: p.savedAt || 0,
+      dyn: {
+        addedMembers:  Array.isArray(p.addedMembers)  ? p.addedMembers  : [],
+        announcements: Array.isArray(p.announcements) ? p.announcements : [],
+        jobs:          Array.isArray(p.jobs)           ? p.jobs          : [],
+        sharings:      Array.isArray(p.sharings)       ? p.sharings      : [],
+        surveyVotes:   (p.surveyVotes && typeof p.surveyVotes === 'object') ? p.surveyVotes : {},
+        userSurveys:   Array.isArray(p.userSurveys)   ? p.userSurveys   : []
+      }
     };
-  } catch (_) { return _emptyDynamic(); }
+  } catch (_) { return { dyn: _emptyDynamic(), savedAt: 0 }; }
+}
+
+function _saveDynLocal(dyn) {
+  const savedAt = Date.now();
+  localStorage.setItem(_DYN_KEY, JSON.stringify({ ...dyn, savedAt }));
+  return savedAt;
 }
 
 // Merge static seeds + dynamic user data into the shared `state` object
@@ -259,13 +269,13 @@ function extractDynamic() {
 // Save dynamic data to localStorage + Firebase
 function saveState() {
   const dyn = extractDynamic();
-  localStorage.setItem(_DYN_KEY, JSON.stringify(dyn));
+  _saveDynLocal(dyn);
   _fbWrite(dyn);
 }
 
 // ── Shared state object (always has seeds, dynamic parts filled immediately from cache)
 const state = { members: [], surveys: [], sharings: [], announcements: [], jobs: [] };
-rebuildState(loadDynamic()); // instant render from localStorage cache
+rebuildState(loadDynamic().dyn); // instant render from localStorage cache
 
 // ensureSeed is now a no-op — seeds are always applied via rebuildState()
 function ensureSeed() {}
@@ -1079,7 +1089,7 @@ function saveMember() {
   }
 
   rebuildState(dyn);
-  localStorage.setItem(_DYN_KEY, JSON.stringify(dyn));
+  _saveDynLocal(dyn);
   _fbWrite(dyn);
   closeMemberModal();
   renderMembers();
@@ -1096,7 +1106,7 @@ function deleteMember() {
   dyn.addedMembers.splice(idx, 1);
 
   rebuildState(dyn);
-  localStorage.setItem(_DYN_KEY, JSON.stringify(dyn));
+  _saveDynLocal(dyn);
   _fbWrite(dyn);
   closeMemberModal();
   renderMembers();
@@ -1858,14 +1868,15 @@ function handleImport(evt) {
 }
 
 // ── Firebase real-time listener ────────────────────────────────
-// We embed a write-timestamp in Firebase so the listener can tell whether
-// the incoming snapshot is ours (same or newer ts) or a stale echo.
-let _lastLocalSaveTs = 0;
+// Strategy: every local save stamps a `savedAt` ms timestamp into localStorage
+// and into Firebase ({ ts, data }). The listener only applies remote data when
+// Firebase ts > local savedAt — i.e. genuinely newer data from another user.
+// This correctly handles: own-write echoes, stale old data without ts, and
+// real updates from other users.
 
 function _fbWrite(dyn) {
   if (!_fbRef) return;
-  const ts = Date.now();
-  _lastLocalSaveTs = ts;
+  const ts = loadDynamic().savedAt; // read the ts we just stamped in localStorage
   _fbRef.set({ ts, data: JSON.stringify(dyn) })
         .catch(e => console.warn('[Firebase] save error', e));
 }
@@ -1878,11 +1889,14 @@ function initFirebase() {
     let dyn = null;
 
     if (raw && typeof raw.data === 'string') {
-      // Skip if this snapshot is from our own write (same or older timestamp)
-      if (raw.ts && raw.ts <= _lastLocalSaveTs) return;
+      const localSavedAt = loadDynamic().savedAt;
+      // Only apply if Firebase data is strictly newer than our local save
+      // (raw.ts missing = old format without ts = treat as 0 = always older)
+      const fbTs = raw.ts || 0;
+      if (fbTs <= localSavedAt) return; // our local data is same or newer, skip
       try { dyn = JSON.parse(raw.data); } catch (_) {}
     } else if (raw && typeof raw === 'object' && Array.isArray(raw.members)) {
-      // Old format: migrate once
+      // Old full-state format: migrate once to new dynamic-only format
       dyn = {
         addedMembers:  (raw.members  || []).filter(m => !m.id.startsWith('seed_m_')),
         announcements: raw.announcements || [],
@@ -1893,13 +1907,14 @@ function initFirebase() {
                        ),
         userSurveys:   (raw.surveys || []).filter(s => !s.isLegacy)
       };
+      _saveDynLocal(dyn);
       _fbWrite(dyn);
       showToast('Données migrées ✓');
     }
 
     if (dyn) {
       rebuildState(dyn);
-      localStorage.setItem(_DYN_KEY, JSON.stringify(dyn));
+      _saveDynLocal(dyn); // update local cache with the newer remote data
     }
 
     renderKPIs();
