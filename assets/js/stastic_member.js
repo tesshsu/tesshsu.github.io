@@ -1858,30 +1858,28 @@ function handleImport(evt) {
 }
 
 // ── Firebase real-time listener ────────────────────────────────
-// Guard: when WE write to Firebase, skip the echo so we don't overwrite our own local data
-let _fbOwnWritePending = false;
+// We embed a write-timestamp in Firebase so the listener can tell whether
+// the incoming snapshot is ours (same or newer ts) or a stale echo.
+let _lastLocalSaveTs = 0;
 
 function _fbWrite(dyn) {
   if (!_fbRef) return;
-  _fbOwnWritePending = true;
-  _fbRef.set({ data: JSON.stringify(dyn) })
-        .catch(e => { _fbOwnWritePending = false; console.warn('[Firebase] save error', e); });
+  const ts = Date.now();
+  _lastLocalSaveTs = ts;
+  _fbRef.set({ ts, data: JSON.stringify(dyn) })
+        .catch(e => console.warn('[Firebase] save error', e));
 }
 
 function initFirebase() {
   if (!_fbRef) return;
 
   _fbRef.on('value', snapshot => {
-    // Skip echoes of our own writes — localStorage already has the correct data
-    if (_fbOwnWritePending) {
-      _fbOwnWritePending = false;
-      return;
-    }
-
     const raw = snapshot.val();
     let dyn = null;
 
     if (raw && typeof raw.data === 'string') {
+      // Skip if this snapshot is from our own write (same or older timestamp)
+      if (raw.ts && raw.ts <= _lastLocalSaveTs) return;
       try { dyn = JSON.parse(raw.data); } catch (_) {}
     } else if (raw && typeof raw === 'object' && Array.isArray(raw.members)) {
       // Old format: migrate once
