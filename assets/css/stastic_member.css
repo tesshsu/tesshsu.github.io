@@ -688,6 +688,18 @@ select.sm-input { cursor: pointer; }
   font-weight: 700;
   color: #6ee7b7;
 }
+.sm-about-whatsapp {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.7);
+}
+.sm-about-whatsapp i { color: #25d366; margin-right: 0.3rem; }
+.sm-about-whatsapp a {
+  color: #86efac;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.sm-about-whatsapp a:hover { color: #fff; }
 
 @media (max-width: 700px) {
   .sm-about-card { padding: 1.25rem; gap: 1.25rem; }
