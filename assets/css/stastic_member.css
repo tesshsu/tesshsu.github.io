@@ -702,6 +702,11 @@ select.sm-input { cursor: pointer; }
 .sm-about-whatsapp a:hover { color: #fff; }
 
 /* ── Survey info banner ──────────────────────────────────────── */
+.sm-survey-banner-wrap {
+  max-width: 1280px;
+  margin: 1.5rem auto 0;
+  padding: 0 1.5rem;
+}
 .sm-survey-banner {
   background: linear-gradient(135deg, #0a2d42 0%, #0f3d5c 60%, #1a5276 100%);
   border-radius: 16px;
