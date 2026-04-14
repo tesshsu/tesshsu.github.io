@@ -82,6 +82,7 @@ const SEED_RESULT = {
   policyReturn:    1.69,           // rendement total contrat OneLife (formule 2) au 13/04/2026
   yearly2026:      6.75,           // performance annuelle 2026 (OneLife)
   valueEnd:        254236.82,      // valeur portefeuille au 13/04/2026 (OneLife)
+  units:           248.858,        // N° parts FAS1_E+FR1008128 au 13/04/2026 (OneLife)
   notes:           'Produit rappelé par anticipation à T1 (6 mois). Barrière autocall 100% atteinte sur les 3 sous-jacents (SAN.PA, MC.PA, STMPA.PA). Coupon mémoire unique de 3,675% payé sur le nominal de EUR 248 000. Prime versée : EUR 250 000.',
   createdAt:       '2026-03-27T00:00:00.000Z',
 };
@@ -91,9 +92,9 @@ function ensureSeed() {
   const idx = results.findIndex(r => r.id === SEED_RESULT.id);
   if (idx === -1) {
     results.unshift(SEED_RESULT);
-  } else if (!results[idx].startDate) {
-    // Patch existing seed with startDate (migration)
-    results[idx] = { ...results[idx], startDate: SEED_RESULT.startDate };
+  } else {
+    // Always sync seed fields so corrections in code propagate to cached localStorage
+    results[idx] = { ...results[idx], ...SEED_RESULT };
   }
   saveResults(results);
   return loadResults();
@@ -101,24 +102,37 @@ function ensureSeed() {
 
 // ── KPI Summary ───────────────────────────────────────────────
 function computeKPIs(results) {
-  const totalCapital  = results.reduce((s, r) => s + (r.capital || 0), 0);
-  const totalGain     = results.reduce((s, r) => {
-    const gross = r.capital * (r.totalPct / 100);
-    return s + (gross - r.capital);
+  const totalCapital = results.reduce((s, r) => s + (r.capital || 0), 0);
+  const totalGain    = results.reduce((s, r) => {
+    const nominal = r.nominalCapital || r.capital;
+    const gross   = nominal * (r.totalPct / 100);
+    return s + (gross - r.capital);           // net vs premium invested
   }, 0);
-  const avgReturn     = results.length
+  const avgReturn  = results.length
     ? results.reduce((s, r) => s + r.couponPct, 0) / results.length
     : 0;
-  return { totalCapital, totalGain, avgReturn, count: results.length };
+  // Latest valueEnd and units across all results (most recent non-null)
+  const latest = [...results].reverse().find(r => r.valueEnd != null);
+  const totalValueEnd = latest ? latest.valueEnd : null;
+  const totalUnits    = latest ? (latest.units || null) : null;
+  return { totalCapital, totalGain, avgReturn, count: results.length, totalValueEnd, totalUnits };
 }
 
 // ── Render KPI bar ────────────────────────────────────────────
 function renderKPIs(results) {
   const kpi = computeKPIs(results);
-  document.getElementById('kpi-count').textContent    = kpi.count;
-  document.getElementById('kpi-capital').textContent  = fmtEur(kpi.totalCapital);
-  document.getElementById('kpi-gain').textContent     = (kpi.totalGain >= 0 ? '+' : '') + fmtEur(kpi.totalGain);
-  document.getElementById('kpi-avgret').textContent   = fmtPct(kpi.avgReturn);
+  document.getElementById('kpi-count').textContent   = kpi.count;
+  document.getElementById('kpi-capital').textContent = fmtEur(kpi.totalCapital);
+  document.getElementById('kpi-gain').textContent    = (kpi.totalGain >= 0 ? '+' : '') + fmtEur(kpi.totalGain);
+  document.getElementById('kpi-avgret').textContent  = fmtPct(kpi.avgReturn);
+
+  const veEl = document.getElementById('kpi-value-end');
+  if (veEl) veEl.textContent = kpi.totalValueEnd != null ? fmtEur(kpi.totalValueEnd) : '—';
+
+  const unEl = document.getElementById('kpi-units');
+  if (unEl) unEl.textContent = kpi.totalUnits != null
+    ? new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 3 }).format(kpi.totalUnits)
+    : '248 858';   // OneLife confirmed value for seed
 
   const gainEl = document.getElementById('kpi-gain');
   gainEl.className = 'kpi-value ' + (kpi.totalGain >= 0 ? 'green' : 'kpi-value');
