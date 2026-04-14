@@ -59,20 +59,30 @@ function saveResults(results) {
 }
 
 // ── Seed data — first confirmed result from Barclays / Athena ─
+// Source: OneLife platform — Policy U22274 / Wealth France (E+FR1008128)
+// Premium invested (capital versé) : EUR 250 000
+// Structured note nominal (valeur nominale) : EUR 248 000
+// Rappel T1 at 103.675% on nominal → gross received : EUR 257 114
+// Net gain vs premium : +7 114 € (+2.845 %)
+// OneLife total policy return (formula 2) : +1.69 % (incl. fees/admin)
 const SEED_RESULT = {
   id:              'seed_athena_barclays_2026',
   type:            'rappel_anticipe',
   productName:     'Athena on SAN FP, MC FP and STMPA FP',
   isin:            'XS3111146380',
   issuer:          'Barclays Bank PLC',
-  startDate:       '2025-10-14',   // date d'émission du produit
+  startDate:       '2025-10-14',   // date d'émission du produit structuré
   observationDate: '2026-03-23',
   paymentDate:     '2026-04-08',
-  totalPct:        103.675,
-  couponPct:       3.675,
-  capital:         248000,
+  totalPct:        103.675,        // % payé sur la valeur nominale (Barclays)
+  couponPct:       3.675,          // coupon sur nominale
+  capital:         250000,         // prime réellement investie (versement OneLife)
+  nominalCapital:  248000,         // valeur nominale du produit structuré
   currency:        'EUR',
-  notes:           'Produit rappelé par anticipation à T1 (6 mois). Barrière autocall 100% atteinte sur les 3 sous-jacents (SAN.PA, MC.PA, STMPA.PA). Coupon mémoire unique de 3,675% payé.',
+  policyReturn:    1.69,           // rendement total contrat OneLife (formule 2) au 13/04/2026
+  yearly2026:      6.75,           // performance annuelle 2026 (OneLife)
+  valueEnd:        254236.82,      // valeur portefeuille au 13/04/2026 (OneLife)
+  notes:           'Produit rappelé par anticipation à T1 (6 mois). Barrière autocall 100% atteinte sur les 3 sous-jacents (SAN.PA, MC.PA, STMPA.PA). Coupon mémoire unique de 3,675% payé sur le nominal de EUR 248 000. Prime versée : EUR 250 000.',
   createdAt:       '2026-03-27T00:00:00.000Z',
 };
 
@@ -136,12 +146,33 @@ function renderBoard(filter = 'all') {
 
 // ── Build single card HTML ─────────────────────────────────────
 function buildCard(r) {
-  const typeMeta  = RESULT_TYPES[r.type] || RESULT_TYPES.rappel_anticipe;
-  const grossAmt  = r.capital * (r.totalPct / 100);
-  const gain      = grossAmt - r.capital;
-  const isNeg     = gain < 0;
-  const dur           = computeDuration(r.startDate, r.observationDate);
-  const gainPerMonth  = (dur && dur.totalMonths > 0) ? gain / dur.totalMonths : null;
+  const typeMeta     = RESULT_TYPES[r.type] || RESULT_TYPES.rappel_anticipe;
+  const nominal      = r.nominalCapital || r.capital;   // face value of product
+  const grossAmt     = nominal * (r.totalPct / 100);    // gross received from product (on nominal)
+  const gain         = grossAmt - r.capital;            // net vs actual premium invested
+  const gainPct      = r.capital > 0 ? (gain / r.capital) * 100 : 0;
+  const isNeg        = gain < 0;
+  const dur          = computeDuration(r.startDate, r.observationDate);
+  const gainPerMonth = (dur && dur.totalMonths > 0) ? gain / dur.totalMonths : null;
+  const hasNominal   = r.nominalCapital && r.nominalCapital !== r.capital;
+
+  // OneLife policy-level rows (only if data provided)
+  const policyRows = (r.policyReturn != null) ? `
+        <div class="card-meta-item" style="grid-column:1/-1;border-top:1px dashed #e2e8f0;padding-top:0.5rem;margin-top:0.25rem;">
+          <span class="card-meta-label" style="font-size:0.62rem;color:#94a3b8;letter-spacing:0.04em;">RENDEMENT CONTRAT · ONELIFE</span>
+        </div>
+        <div class="card-meta-item">
+          <span class="card-meta-label">Rendement total contrat <sup>(2)</sup></span>
+          <span class="card-meta-value" style="color:#0284c7;">${r.policyReturn >= 0 ? '+' : ''}${r.policyReturn.toFixed(2)} %</span>
+        </div>
+        ${r.yearly2026 != null ? `<div class="card-meta-item">
+          <span class="card-meta-label">Performance 2026 <sup>(1)</sup></span>
+          <span class="card-meta-value" style="color:#0284c7;">${r.yearly2026 >= 0 ? '+' : ''}${r.yearly2026.toFixed(2)} %</span>
+        </div>` : ''}
+        ${r.valueEnd != null ? `<div class="card-meta-item">
+          <span class="card-meta-label">Valeur portefeuille <sup>(*)</sup></span>
+          <span class="card-meta-value">${fmtEur(r.valueEnd)}</span>
+        </div>` : ''}` : '';
 
   return `
   <div class="result-card" data-id="${r.id}">
@@ -154,7 +185,7 @@ function buildCard(r) {
         </div>
       </div>
       <div class="total-badge">
-        <div class="total-label">Total payé</div>
+        <div class="total-label">Total payé sur nominale</div>
         <div class="total-value">${r.totalPct.toFixed(3)}%*</div>
       </div>
     </div>
@@ -188,29 +219,38 @@ function buildCard(r) {
           <span class="card-meta-value" style="color:#d97706;">${gainPerMonth !== null ? (gainPerMonth >= 0 ? '+' : '') + fmtEur(gainPerMonth) + ' / ' + fmtDuration(dur) : '—'}</span>
         </div>
         <div class="card-meta-item">
-          <span class="card-meta-label">Coupon versé</span>
+          <span class="card-meta-label">Coupon versé (sur nominale)</span>
           <span class="card-meta-value" style="color:#059669;">${fmtPct(r.couponPct)}</span>
         </div>
         <div class="card-meta-item">
-          <span class="card-meta-label">Rendement brut</span>
+          <span class="card-meta-label">Rendement brut (nominale)</span>
           <span class="card-meta-value">${r.totalPct.toFixed(3)}%</span>
         </div>
+        ${policyRows}
       </div>
 
       <div class="card-allocation">
-        <span class="card-allocation-label">Allocation</span>
+        ${hasNominal ? `
+        <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:#64748b;margin-bottom:0.3rem;">
+          <span>Valeur nominale du produit</span>
+          <span>${r.currency || 'EUR'} ${new Intl.NumberFormat('fr-FR').format(r.nominalCapital)}</span>
+        </div>` : ''}
+        <span class="card-allocation-label">Prime investie</span>
         <span class="card-allocation-amount">${r.currency || 'EUR'} ${new Intl.NumberFormat('fr-FR').format(r.capital)}</span>
       </div>
 
       <div class="card-gain ${isNeg ? 'negative' : ''}">
-        <span class="card-gain-label">${isNeg ? 'Perte nette' : 'Gain net'}</span>
-        <span class="card-gain-amount">${isNeg ? '' : '+'}${fmtEur(gain)} (${r.couponPct.toFixed(3)}%)</span>
+        <span class="card-gain-label">${isNeg ? 'Perte nette' : 'Gain net'} (brut reçu − prime)</span>
+        <span class="card-gain-amount">${isNeg ? '' : '+'}${fmtEur(gain)} (${isNeg ? '' : '+'}${gainPct.toFixed(3)}%)</span>
       </div>
 
       ${r.notes ? `<div style="font-size:0.72rem;color:#475569;line-height:1.5;background:#f8fafc;border-radius:6px;padding:0.5rem 0.6rem;">${r.notes}</div>` : ''}
 
       <div class="card-footnote">
-        * Taux de Rendement bruts calculés sur la base de cette valeur nominale. Pour plus d'informations, veuillez vous référer à la documentation de ce produit.<br>
+        * Total payé calculé sur la <strong>valeur nominale</strong> du produit structuré. La prime investie peut différer.<br>
+        <sup>(1)</sup> La performance est calculée sur la base de la VNI du fonds en fin de période et du prix moyen d'acquisition des parts. Calculée dans la devise demandée.<br>
+        <sup>(2)</sup> Le rendement du contrat sur la période de référence est le rapport entre la valeur du contrat en fin de période (plus les rachats éventuels) et la valeur en début de période (plus les primes versées).<br>
+        <sup>(*)</sup> Le montant « Valorisation début » est au plus tôt au 31 décembre de l'année précédente, ou à la date d'effet si le contrat a été investi au cours de l'année. Le montant « Valorisation fin » est au plus tôt la date de la dernière valeur connue de l'année en cours.<br>
         Enregistré le ${new Date(r.createdAt).toLocaleDateString('fr-FR')}.
       </div>
     </div>
@@ -247,6 +287,8 @@ function openModal(result = null) {
     document.getElementById('form-total-pct').value       = result.totalPct;
     document.getElementById('form-coupon-pct').value      = result.couponPct;
     document.getElementById('form-capital').value         = result.capital;
+    const nomEl = document.getElementById('form-nominal');
+    if (nomEl) nomEl.value = result.nominalCapital || '';
     document.getElementById('form-currency').value        = result.currency || 'EUR';
     document.getElementById('form-notes').value           = result.notes || '';
   } else {
@@ -282,6 +324,7 @@ function handleFormSubmit(e) {
   const id      = document.getElementById('form-id').value;
   const results = loadResults();
 
+  const nominalRaw = parseFloat(document.getElementById('form-nominal')?.value);
   const entry = {
     id:              id || uid(),
     type:            document.getElementById('form-type').value,
@@ -294,6 +337,7 @@ function handleFormSubmit(e) {
     totalPct:        parseFloat(document.getElementById('form-total-pct').value),
     couponPct:       parseFloat(document.getElementById('form-coupon-pct').value),
     capital:         parseFloat(document.getElementById('form-capital').value),
+    nominalCapital:  (!isNaN(nominalRaw) && nominalRaw > 0) ? nominalRaw : null,
     currency:        document.getElementById('form-currency').value,
     notes:           document.getElementById('form-notes').value.trim(),
     createdAt:       id ? (results.find(r => r.id === id)?.createdAt || new Date().toISOString()) : new Date().toISOString(),

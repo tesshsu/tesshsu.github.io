@@ -335,9 +335,14 @@
 
             <!-- Capital & currency -->
             <div class="form-group">
-              <label class="form-label" for="form-capital">Capital (montant)</label>
+              <label class="form-label" for="form-capital">Prime investie / Capital versé (€)</label>
               <input type="number" id="form-capital" class="form-input"
-                     step="1000" placeholder="ex: 248000" required>
+                     step="1000" placeholder="ex: 250000 (montant réellement versé)" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-nominal">Valeur nominale du produit (€) <span style="font-weight:400;opacity:0.6;">optionnel si ≠ capital</span></label>
+              <input type="number" id="form-nominal" class="form-input"
+                     step="1000" placeholder="ex: 248000 (si différent de la prime)">
             </div>
             <div class="form-group">
               <label class="form-label" for="form-currency">Devise</label>
