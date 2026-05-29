@@ -23,7 +23,6 @@ Static HTML/CSS/JavaScript personal portfolio site for Yating Chatiron, hosted o
 | `blog.html` | Blog listing with search and category filtering |
 | `blogs/blog-N.html` | Individual blog posts (currently 24) |
 | `invest.html` / `result-invest.html` | Luxembourg investment calculator tool |
-| `stastic_member.html` | Member statistics page |
 
 ### Component Loading Pattern
 
