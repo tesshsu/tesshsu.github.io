@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculateur Rendement - Assurance Vie Luxembourg</title>
+  <title>Calculateur Athena - Assurance Vie Luxembourg</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/styles.css">
@@ -25,13 +25,18 @@
             <i class="fas fa-wallet text-xl"></i>
             <div>
               <div class="text-xs text-gray-300">Investissement total</div>
-              <div class="font-bold text-lg" id="display-capital">— €</div>
+              <div class="flex items-baseline gap-1">
+                <input type="number" id="display-capital" step="1000" min="0"
+                  class="bg-transparent border-b border-white/40 focus:border-white outline-none text-white font-bold text-lg w-32 [appearance:textfield]"
+                  placeholder="337000">
+                <span class="text-white font-bold text-lg">€</span>
+              </div>
             </div>
           </div>
           <div class="text-center">
             <p class="text-xs text-gray-400 mb-1">Amélioration du rendement</p>
             <p class="text-xs text-gray-400 mb-1"> Un outil pour simuler la performance de votre contrat d’assurance vie au Luxembourg </p>
-            <p class="font-bold text-xl" id="display-product-name">Athena sur vos sous-jacents</p>
+            <p class="font-bold text-xl" id="display-product-name">BBVA Athena Worst-of — XS3317204454</p>
             <p class="text-sm text-gray-300">EUR</p>
           </div>
           <div class="flex flex-col gap-1.5 text-sm text-gray-300">
@@ -62,8 +67,8 @@
               <!-- Stock 1 -->
               <div class="grid grid-cols-12 gap-2 items-center">
                 <input type="text"   id="s1-name" value="LVMH"  class="col-span-6 sm:col-span-4 input-dark">
-                <input type="number" id="s1-init" value="492"   step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
-                <input type="number" id="s1-cur"  placeholder="— fetch →" step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="number" id="s1-init" value="483.31"   step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="number" id="s1-cur"  value="488.00" placeholder="— fetch →" step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
                 <input type="text"   id="s1-tick" value="MC.PA" class="col-span-9 sm:col-span-3 input-dark">
                 <button onclick="fetchPrice(1)" class="col-span-3 sm:col-span-1 bg-blue-500 hover:bg-blue-600 active:scale-95 rounded p-3 sm:p-1.5 text-base sm:text-xs transition flex items-center justify-center gap-1.5" title="Charger tout l'historique (1 appel API)">
                   <i class="fas fa-sync-alt" id="s1-icon"></i>
@@ -73,10 +78,10 @@
               </div>
               <!-- Stock 2 -->
               <div class="grid grid-cols-12 gap-2 items-center">
-                <input type="text"   id="s2-name" value="STMicro"  class="col-span-6 sm:col-span-4 input-dark">
-                <input type="number" id="s2-init" value="22.26"    step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
-                <input type="number" id="s2-cur"  placeholder="— fetch →" step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
-                <input type="text"   id="s2-tick" value="STMPA.PA" class="col-span-9 sm:col-span-3 input-dark">
+                <input type="text"   id="s2-name" value="Renault"  class="col-span-6 sm:col-span-4 input-dark">
+                <input type="number" id="s2-init" value="30.98"    step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="number" id="s2-cur"  value="30.10" placeholder="— fetch →" step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="text"   id="s2-tick" value="RNO.PA" class="col-span-9 sm:col-span-3 input-dark">
                 <button onclick="fetchPrice(2)" class="col-span-3 sm:col-span-1 bg-blue-500 hover:bg-blue-600 active:scale-95 rounded p-3 sm:p-1.5 text-base sm:text-xs transition flex items-center justify-center gap-1.5" title="Charger tout l'historique (1 appel API)">
                   <i class="fas fa-sync-alt" id="s2-icon"></i>
                   <span class="sm:hidden text-xs font-semibold">Sync</span>
@@ -85,10 +90,10 @@
               </div>
               <!-- Stock 3 -->
               <div class="grid grid-cols-12 gap-2 items-center">
-                <input type="text"   id="s3-name" value="Sanofi" class="col-span-6 sm:col-span-4 input-dark">
-                <input type="number" id="s3-init" value="79.26"  step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
-                <input type="number" id="s3-cur"  placeholder="— fetch →" step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
-                <input type="text"   id="s3-tick" value="SAN.PA" class="col-span-9 sm:col-span-3 input-dark">
+                <input type="text"   id="s3-name" value="Nike" class="col-span-6 sm:col-span-4 input-dark">
+                <input type="number" id="s3-init" value="42.62"  step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="number" id="s3-cur"  value="47.37" placeholder="— fetch →" step="0.01" class="col-span-3 sm:col-span-2 input-dark text-right">
+                <input type="text"   id="s3-tick" value="NKE" class="col-span-9 sm:col-span-3 input-dark">
                 <button onclick="fetchPrice(3)" class="col-span-3 sm:col-span-1 bg-blue-500 hover:bg-blue-600 active:scale-95 rounded p-3 sm:p-1.5 text-base sm:text-xs transition flex items-center justify-center gap-1.5" title="Charger tout l'historique (1 appel API)">
                   <i class="fas fa-sync-alt" id="s3-icon"></i>
                   <span class="sm:hidden text-xs font-semibold">Sync</span>
@@ -107,16 +112,16 @@
               </h3>
               <div class="space-y-2">
                 <div>
-                  <label class="text-xs text-gray-400">Date d'émission</label>
-                  <input type="date" id="emission-date" value="2025-10-14" class="w-full input-dark mt-0.5">
+                  <label class="text-xs text-gray-400">Date de strike initial <span class="text-blue-300">(début de la période 5 ans)</span></label>
+                  <input type="date" id="emission-date" value="2026-04-10" class="w-full input-dark mt-0.5">
                 </div>
                 <div>
-                  <label class="text-xs text-gray-400">Date de 1ère observation <span class="text-blue-300">(ex: 23/12/2025)</span></label>
-                  <input type="date" id="obs-start-date" value="2025-12-23" class="w-full input-dark mt-0.5">
+                  <label class="text-xs text-gray-400">Date de 1ère observation <span class="text-blue-300">(ex: 10/07/2026)</span></label>
+                  <input type="date" id="obs-start-date" value="2026-07-10" class="w-full input-dark mt-0.5">
                 </div>
                 <div>
                   <label class="text-xs text-gray-400">Observation finale (maturité)</label>
-                  <input type="date" id="final-date" value="2030-09-23" class="w-full input-dark mt-0.5">
+                  <input type="date" id="final-date" value="2031-04-10" class="w-full input-dark mt-0.5">
                 </div>
                 <div>
                   <label class="text-xs text-gray-400">Date de simulation <span class="text-blue-300">(voir résultat à cette date)</span></label>
@@ -124,7 +129,7 @@
                 </div>
                 <div>
                   <label class="text-xs text-gray-400">Capital initial (€)</label>
-                  <input type="number" id="initial-capital" value="248000" step="1000" class="w-full input-dark mt-0.5">
+                  <input type="number" id="initial-capital" value="337000" step="1000" class="w-full input-dark mt-0.5">
                 </div>
               </div>
             </div>
@@ -138,7 +143,7 @@
                 <div class="grid grid-cols-2 gap-2">
                   <div>
                     <label class="text-xs text-gray-400">Coupon annuel (%)</label>
-                    <input type="number" id="annual-coupon" value="7.35" step="0.01" class="w-full input-dark mt-0.5">
+                    <input type="number" id="annual-coupon" value="18.36" step="0.01" class="w-full input-dark mt-0.5">
                   </div>
                   <div>
                     <label class="text-xs text-gray-400">Barrière capital (%)</label>
@@ -152,12 +157,12 @@
                   </div>
                   <div>
                     <label class="text-xs text-gray-400">Autocall T2+ (%)</label>
-                    <input type="number" id="autocall-t2" value="85" step="1" class="w-full input-dark mt-0.5">
+                    <input type="number" id="autocall-t2" value="80" step="1" class="w-full input-dark mt-0.5">
                   </div>
                 </div>
                 <div>
                   <label class="text-xs text-gray-400">Émetteur</label>
-                  <input type="text" id="issuer" value="Barclays Bank PLC" class="w-full input-dark mt-0.5">
+                  <input type="text" id="issuer" value="BBVA Global Markets B.V." class="w-full input-dark mt-0.5">
                 </div>
               </div>
             </div>
@@ -202,7 +207,7 @@
           <div class="px-3 py-3">
             <div class="text-lg font-bold text-center" id="r-maturity">—</div>
             <div class="grid grid-cols-3 gap-1 mt-2 text-xs text-gray-500">
-              <div><div class="font-medium text-gray-700">Émission</div><div id="r-emission">—</div></div>
+              <div><div class="font-medium text-gray-700">Strike init.</div><div id="r-emission">—</div></div>
               <div><div class="font-medium text-gray-700">Simulation</div><div id="r-simdate" class="text-blue-600 font-semibold">—</div></div>
               <div><div class="font-medium text-gray-700">Obs. finale</div><div id="r-final">—</div></div>
             </div>
@@ -224,7 +229,7 @@
             <div class="text-lg font-bold text-center" id="r-issuer">—</div>
             <div class="grid grid-cols-2 gap-1 mt-2 text-xs text-gray-500">
               <div><div class="font-medium text-gray-700">Règlement</div><div>Espèces</div></div>
-              <div><div class="font-medium text-gray-700">Protection</div><div>Européenne</div></div>
+              <div><div class="font-medium text-gray-700">Protection</div><div>Européenne à maturité</div></div>
             </div>
           </div>
         </div>
@@ -243,7 +248,7 @@
                 <th class="px-4 py-3 text-right">Dernier prix</th>
                 <th class="px-4 py-3 text-right">Barrière de Capital</th>
                 <th class="px-4 py-3 text-right">Distance à la barrière</th>
-                <th class="px-4 py-3 text-right">Barrière de coupon</th>
+                <th class="px-4 py-3 text-right">Seuil rappel T2+</th>
               </tr>
             </thead>
             <tbody id="stocks-tbody"></tbody>

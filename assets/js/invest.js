@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
 
   // Version bump clears stale form values (NOT price history cache)
-  const VERSION = '4';
+  const VERSION = '7';
   if (localStorage.getItem('invest_version') !== VERSION) {
     PERSIST_IDS.forEach(id => localStorage.removeItem('invest_' + id));
     localStorage.setItem('invest_version', VERSION);
@@ -35,6 +35,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById(`s${n}-tick`).addEventListener('input', () => updateCacheStatus(n));
     updateCacheStatus(n);
   });
+
+  // Sync "Investissement total" header input ↔ Capital initial field
+  const capDisplay = document.getElementById('display-capital');
+  const capInput   = document.getElementById('initial-capital');
+  capDisplay.value = capInput.value;
+  capDisplay.addEventListener('input', () => {
+    capInput.value = capDisplay.value;
+    localStorage.setItem('invest_initial-capital', capDisplay.value);
+  });
+  capDisplay.addEventListener('change', () => {
+    if (!document.getElementById('results').classList.contains('hidden')) calculate();
+  });
+  capInput.addEventListener('input', () => { capDisplay.value = capInput.value; });
 });
 
 let perfChart = null;
@@ -47,22 +60,35 @@ const toISO   = d => d.toISOString().split('T')[0];
 
 function paymentDate(obsDate) {
   const d = new Date(obsDate);
-  d.setDate(d.getDate() + 16);
+  let biz = 0;
+  while (biz < 5) {
+    d.setDate(d.getDate() + 1);
+    if (d.getDay() !== 0 && d.getDay() !== 6) biz++;
+  }
+  return d;
+}
+
+function nextBizDay(date) {
+  const d = new Date(date);
   while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
   return d;
 }
 
 function obsSchedule(firstObsDate, fnDate) {
-  // Starts FROM firstObsDate (inclusive), quarterly until fnDate.
-  // e.g. firstObs = 23/12/2025 → 23/12/2025, 23/03/2026, 23/06/2026, …, fnDate
+  // Quarterly from firstObsDate; each date is rolled to the next business day.
+  // The fnDate (maturity) is always appended if not already the last entry.
   const list = [];
   const cur  = new Date(firstObsDate);
   const end  = new Date(fnDate);
-  while (cur <= end) { list.push(new Date(cur)); cur.setMonth(cur.getMonth() + 3); }
+  while (cur <= end) {
+    list.push(nextBizDay(new Date(cur)));
+    cur.setMonth(cur.getMonth() + 3);
+  }
+  const adjEnd = nextBizDay(new Date(end));
   if (!list.length) {
-    list.push(new Date(end));
-  } else if (list[list.length - 1].getTime() !== end.getTime()) {
-    list.push(new Date(end));
+    list.push(adjEnd);
+  } else if (toISO(list[list.length - 1]) !== toISO(adjEnd)) {
+    list.push(adjEnd);
   }
   return list;
 }
@@ -264,13 +290,15 @@ function calculate() {
   stocks.forEach(s => {
     s.perf       = (s.current - s.initial) / s.initial;
     s.capBarrier = s.initial * capBarPct;
+    s.autocallT2 = s.initial * acT2;
     s.distBar    = (s.current - s.capBarrier) / s.capBarrier;
   });
   const worstPerf = Math.min(...stocks.map(s => s.perf));
+  const currentAutocallEligible = worstPerf >= (acT2 - 1);
 
   // ── Header ──
-  document.getElementById('display-capital').textContent      = fmtEur(capital);
-  document.getElementById('display-product-name').textContent = `Athena sur ${stocks.map(s => s.name).join(' / ')}`;
+  document.getElementById('display-capital').value            = capital;
+  document.getElementById('display-product-name').textContent = `${issuer} Athena sur ${stocks.map(s => s.name).join(' / ')} · XS3317204454`;
 
   // ── Metric cards ──
   document.getElementById('r-coupon-rate').textContent    = `${(annRate * 100).toFixed(2)}% p.a.`;
@@ -287,7 +315,7 @@ function calculate() {
 
   const breached = stocks.some(s => s.current < s.capBarrier);
   const bStatus  = document.getElementById('r-barrier-status');
-  bStatus.textContent = breached ? '⚠️ FRANCHIE' : '✓ Sécurisé';
+  bStatus.textContent = breached ? 'Sous 60% au spot' : 'Au-dessus au spot';
   bStatus.className   = breached ? 'font-semibold text-red-600' : 'font-semibold text-emerald-600';
 
   // ── Sous-jacents table ──
@@ -302,16 +330,17 @@ function calculate() {
       <td class="px-4 py-3 text-right">${s.current.toFixed(2)}</td>
       <td class="px-4 py-3 text-right">${s.capBarrier.toFixed(2)}</td>
       <td class="px-4 py-3 text-right font-semibold ${dC}">${fmtPct(s.distBar * 100)}</td>
-      <td class="px-4 py-3 text-right">${s.initial.toFixed(2)}</td>
+      <td class="px-4 py-3 text-right">${s.autocallT2.toFixed(2)}</td>
     </tr>`;
   }).join('');
 
   // ── Chronologie — real historical prices when available ──
   const obs = obsSchedule(firstObsDate, fnDate);
-  let memCoupons   = 0;
-  let simQtrs      = 0;
+  let accruedQtrs  = 0;
+  let paidQtrs     = 0;
   let lastObsDate  = null;
   let autocallIdx  = -1;   // first index at which an autocall was triggered
+  let maturityPayoffR = null;
   let chronoHTML   = '';
 
   obs.forEach((d, idx) => {
@@ -324,8 +353,8 @@ function calculate() {
     const payD      = paymentDate(d);
     const dateStr   = toISO(d);
 
-    memCoupons += qCoupon;
-    if (isReached) { simQtrs++; lastObsDate = d; }
+    accruedQtrs++;
+    if (isReached) lastObsDate = d;
 
     // ── Try real historical prices from localStorage cache ──
     // All 3 stocks must have data for the date to be considered "real"
@@ -334,14 +363,37 @@ function calculate() {
 
     let actualWorstPerf = null;
     let wasAutocalled   = false;
+    let conditionMet    = false;
 
     if (hasRealData) {
       const actualPerfs = stocks.map((s, i) => (actualPrices[i] - s.initial) / s.initial);
       actualWorstPerf   = Math.min(...actualPerfs);
       // Autocall: worst-of >= autocall level (expressed relative to initial = 1.0)
-      // acLevel=1.0 → all stocks at 100%+; acLevel=0.85 → all stocks at 85%+
-      wasAutocalled = !isFinal && (actualWorstPerf >= (acLevel - 1));
-      if (wasAutocalled) autocallIdx = idx;
+      // acLevel=1.0 means all stocks at 100%+; acLevel=0.80 means all stocks at 80%+.
+      conditionMet = actualWorstPerf >= (acLevel - 1);
+    } else if (isReached && idx === 0) {
+      conditionMet = worstPerf >= (acT1 - 1);
+      actualWorstPerf = worstPerf;
+    } else if (isReached) {
+      conditionMet = currentAutocallEligible;
+      actualWorstPerf = worstPerf;
+    }
+
+    wasAutocalled = !isFinal && isReached && conditionMet;
+    if (wasAutocalled) {
+      autocallIdx = idx;
+      paidQtrs = accruedQtrs;
+    }
+
+    if (isFinal && isReached) {
+      if (conditionMet) {
+        paidQtrs = accruedQtrs;
+        maturityPayoffR = 1 + paidQtrs * qCoupon;
+      } else if (actualWorstPerf >= (capBarPct - 1)) {
+        maturityPayoffR = 1;
+      } else {
+        maturityPayoffR = 1 + actualWorstPerf;
+      }
     }
 
     const isSimEdge = isReached && !wasAutocalled && (idx === obs.length - 1 || obs[idx + 1] > simDate);
@@ -352,19 +404,19 @@ function calculate() {
     if (wasAutocalled) {
       icon      = '<i class="fas fa-bolt text-blue-500 text-base"></i>';
       rowBg     = 'bg-blue-100 border-l-4 border-blue-600';
-      statut    = '🔔 Autocall';
+      statut    = 'Autocall';
       statColor = 'text-blue-700 font-bold';
     } else if (isReached && isFinal) {
       icon      = '<i class="fas fa-flag-checkered text-purple-500 text-base"></i>';
       rowBg     = 'bg-purple-50';
-      statut    = 'Maturité';
+      statut    = conditionMet ? 'Maturité + coupons' : 'Maturité';
       statColor = 'text-purple-700 font-semibold';
     } else if (isReached) {
       icon      = '<i class="fas fa-play-circle text-gray-400 text-base"></i>';
       rowBg     = isSimEdge ? 'bg-blue-50 border-l-4 border-blue-400' : 'bg-gray-50';
-      statut    = isSimEdge ? '◀ Simulation' : (hasRealData ? 'Payé ✓' : 'Mémoire');
+      statut    = isSimEdge ? 'Simulation' : (conditionMet ? 'Condition OK' : 'Non rappelé');
       statColor = isSimEdge ? 'text-blue-600 font-bold'
-                : hasRealData ? 'text-emerald-600 font-medium'
+                : conditionMet ? 'text-emerald-600 font-medium'
                 : 'text-orange-500 font-medium';
     } else if (isFinal) {
       icon      = '<i class="fas fa-flag-checkered text-purple-500 text-base"></i>';
@@ -381,11 +433,18 @@ function calculate() {
     // Worst-of column: real data badge or placeholder
     const worstCell = hasRealData
       ? `<span class="font-semibold ${actualWorstPerf >= 0 ? 'text-emerald-600' : 'text-red-500'}">${fmtPct(actualWorstPerf * 100)}</span>`
-      : `<span class="text-gray-300 text-xs italic">${isReached ? 'N/A' : '—'}</span>`;
+      : isReached
+        ? `<span class="font-semibold ${actualWorstPerf >= 0 ? 'text-emerald-600' : 'text-red-500'}">${fmtPct(actualWorstPerf * 100)}</span>`
+        : `<span class="text-gray-300 text-xs italic">—</span>`;
 
-    const amountLabel = wasAutocalled
-      ? `${(memCoupons * 100).toFixed(2)}% + capital`
-      : `${(memCoupons * 100).toFixed(2)}%`;
+    let amountLabel = `${(accruedQtrs * qCoupon * 100).toFixed(2)}% potentiel`;
+    if (wasAutocalled) {
+      amountLabel = `${(accruedQtrs * qCoupon * 100).toFixed(2)}% + capital`;
+    } else if (isFinal && isReached && maturityPayoffR !== null) {
+      amountLabel = maturityPayoffR >= 1
+        ? `${((maturityPayoffR - 1) * 100).toFixed(2)}% + capital`
+        : `${(maturityPayoffR * 100).toFixed(2)}% du capital`;
+    }
 
     chronoHTML += `<tr class="border-b border-gray-100 ${rowBg} hover:bg-gray-50">
       <td class="px-2 py-1.5 text-center">${icon}</td>
@@ -402,29 +461,32 @@ function calculate() {
   // ── Summary ──
   const totalQtrs    = obs.length;
   const totalCouponR = qCoupon * totalQtrs;
-  const simCouponR   = qCoupon * simQtrs;
+  const simCouponR   = qCoupon * paidQtrs;
   const totalCouponE = capital * totalCouponR;
   const simCouponE   = capital * simCouponR;
   const totalReturnE = capital + totalCouponE;
-  const simReturnE   = capital + simCouponE;
+  const simReturnE   = maturityPayoffR !== null ? capital * maturityPayoffR : capital + simCouponE;
   const lastObsYears = lastObsDate ? (lastObsDate - emDate) / (365.25 * 86400000) : simYears;
-  const annualReturn = simQtrs > 0 && lastObsYears > 0
+  const annualReturn = paidQtrs > 0 && lastObsYears > 0
     ? simCouponR / lastObsYears
     : totalCouponR / years;
 
-  const obsLabel = lastObsDate && simDate < fnDate
-    ? `obs. du ${fmt(lastObsDate)}`
-    : 'à maturité';
+  const obsLabel = autocallIdx >= 0
+    ? `autocall obs. ${fmt(obs[autocallIdx])}`
+    : lastObsDate && simDate < fnDate
+      ? `pas encore payé — prochaine condition à observer`
+      : 'à maturité';
   document.getElementById('sum-capital').textContent = fmtEur(capital);
   document.getElementById('sum-coupons').textContent = `${fmtEur(simCouponE)} (${(simCouponR * 100).toFixed(1)}%) — ${obsLabel}`;
-  document.getElementById('sum-total').textContent   = `${fmtEur(simReturnE)} (${fmtPct(simCouponR * 100)})`;
+  document.getElementById('sum-total').textContent   = `${fmtEur(simReturnE)} (${fmtPct((simReturnE / capital - 1) * 100)})`;
   document.getElementById('sum-annual').textContent  = `~${(annualReturn * 100).toFixed(2)}% / an`;
 
+  const fav1 = capital * (1 + qCoupon);
   const fav2 = capital * (1 + 2 * qCoupon);
   const wRet = capital * (1 + worstPerf);
-  document.getElementById('scen-fav').textContent = `${fmtEur(fav2)} (${fmtPct(2 * qCoupon * 100)} en 6 mois)`;
-  document.getElementById('scen-neu').textContent = `${fmtEur(totalReturnE)} (${fmtPct(totalCouponR * 100)} en ${years.toFixed(0)} ans)`;
-  document.getElementById('scen-def').textContent = `${fmtEur(wRet)} (${fmtPct(worstPerf * 100)} worst-of)`;
+  document.getElementById('scen-fav').textContent = `${fmtEur(fav2)} (${fmtPct(2 * qCoupon * 100)} en 6 mois · T1: ${fmtEur(fav1)})`;
+  document.getElementById('scen-neu').textContent = `${fmtEur(totalReturnE)} (${fmtPct(totalCouponR * 100)} si worst-of ≥ ${(acT2 * 100).toFixed(0)}% à maturité)`;
+  document.getElementById('scen-def').textContent = `${fmtEur(wRet)} (${fmtPct(worstPerf * 100)} si même worst-of à maturité)`;
 
   renderChart(stocks, emDate, fnDate, capBarPct, acT2, simDate);
 
