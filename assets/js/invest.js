@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
 
   // Version bump clears stale form values (NOT price history cache)
-  const VERSION = '7';
+  const VERSION = '8';
   if (localStorage.getItem('invest_version') !== VERSION) {
     PERSIST_IDS.forEach(id => localStorage.removeItem('invest_' + id));
     localStorage.setItem('invest_version', VERSION);
@@ -471,22 +471,60 @@ function calculate() {
     ? simCouponR / lastObsYears
     : totalCouponR / years;
 
-  const obsLabel = autocallIdx >= 0
-    ? `autocall obs. ${fmt(obs[autocallIdx])}`
-    : lastObsDate && simDate < fnDate
-      ? `pas encore payé — prochaine condition à observer`
-      : 'à maturité';
+  // ── Coupons encaissés ──
   document.getElementById('sum-capital').textContent = fmtEur(capital);
-  document.getElementById('sum-coupons').textContent = `${fmtEur(simCouponE)} (${(simCouponR * 100).toFixed(1)}%) — ${obsLabel}`;
-  document.getElementById('sum-total').textContent   = `${fmtEur(simReturnE)} (${fmtPct((simReturnE / capital - 1) * 100)})`;
-  document.getElementById('sum-annual').textContent  = `~${(annualReturn * 100).toFixed(2)}% / an`;
+  if (paidQtrs === 0) {
+    const firstObsStr = obs.length ? ` — 1ʳᵉ obs. le ${fmt(obs[0])}` : '';
+    document.getElementById('sum-coupons').textContent = `0 € — aucun coupon payé à ce jour${firstObsStr}`;
+  } else if (autocallIdx >= 0) {
+    document.getElementById('sum-coupons').textContent = `${fmtEur(simCouponE)} (${(simCouponR * 100).toFixed(1)}%) — autocall ${fmt(obs[autocallIdx])}`;
+  } else {
+    document.getElementById('sum-coupons').textContent = `${fmtEur(simCouponE)} (${(simCouponR * 100).toFixed(1)}%) — ${paidQtrs} trimestre(s)`;
+  }
 
+  // ── Capital + coupons ──
+  if (paidQtrs === 0 && maturityPayoffR === null) {
+    document.getElementById('sum-total').textContent = `${fmtEur(capital)} — produit actif, avant 1ʳᵉ observation`;
+  } else {
+    document.getElementById('sum-total').textContent = `${fmtEur(simReturnE)} (${fmtPct((simReturnE / capital - 1) * 100)})`;
+  }
+
+  // ── Taux : contractuel si rien payé, réalisé si coupons encaissés ──
+  if (paidQtrs === 0) {
+    document.getElementById('sum-annual-label').textContent = 'Taux contractuel (conditionnel)';
+    document.getElementById('sum-annual').textContent = `${(annRate * 100).toFixed(2)}% / an`;
+  } else {
+    document.getElementById('sum-annual-label').textContent = 'Rendement annualisé réalisé';
+    document.getElementById('sum-annual').textContent = `~${(annualReturn * 100).toFixed(2)}% / an`;
+  }
+
+  // ── Scénario favorable : T1 + T2 avec statut actuel ──
   const fav1 = capital * (1 + qCoupon);
   const fav2 = capital * (1 + 2 * qCoupon);
-  const wRet = capital * (1 + worstPerf);
-  document.getElementById('scen-fav').textContent = `${fmtEur(fav2)} (${fmtPct(2 * qCoupon * 100)} en 6 mois · T1: ${fmtEur(fav1)})`;
-  document.getElementById('scen-neu').textContent = `${fmtEur(totalReturnE)} (${fmtPct(totalCouponR * 100)} si worst-of ≥ ${(acT2 * 100).toFixed(0)}% à maturité)`;
-  document.getElementById('scen-def').textContent = `${fmtEur(wRet)} (${fmtPct(worstPerf * 100)} si même worst-of à maturité)`;
+  const t1Met  = worstPerf >= (acT1 - 1);   // worst-of ≥ 100% initial
+  const t2Met  = worstPerf >= (acT2 - 1);   // worst-of ≥ 80% initial
+  const t1Tag  = t1Met  ? '✓ cond. remplie' : `✗ worst-of à ${fmtPct(worstPerf * 100)} / seuil 0%`;
+  const t2Tag  = t2Met  ? '✓ cond. remplie' : `✗ worst-of à ${fmtPct(worstPerf * 100)} / seuil -20%`;
+  document.getElementById('scen-fav-desc').textContent =
+    `T1 (3m, 100%) : ${t1Tag} · T2 (6m, 80%) : ${t2Tag}`;
+  document.getElementById('scen-fav').textContent =
+    `T2: ${fmtEur(fav2)} (${fmtPct(2 * qCoupon * 100)}) · T1: ${fmtEur(fav1)} (${fmtPct(qCoupon * 100)})`;
+
+  // ── Scénario neutre : maturité complète ──
+  document.getElementById('scen-neu').textContent =
+    `${fmtEur(totalReturnE)} (+${(totalCouponR * 100).toFixed(2)}% total sur ${years.toFixed(0)} ans = ${(annRate * 100).toFixed(2)}%/an)`;
+
+  // ── Scénario défavorable : barrière 60% franchie à maturité ──
+  // La barrière européenne est observée UNIQUEMENT à maturité.
+  // Si worst-of < -40% (soit < 60% initial) → perte 1:1 sur worst-of.
+  // Si worst-of entre -40% et 0% → capital intégralement protégé (mais 0 coupon si < 80%).
+  const barrierBreachPerf  = capBarPct - 1;                   // -40% pour barrière 60%
+  const wRet = capital * capBarPct;                            // 337 000 × 60% = perte max à barrière
+  document.getElementById('scen-def-desc').textContent =
+    `Worst-of < ${(capBarPct * 100).toFixed(0)}% à maturité. Actuel : ${fmtPct(worstPerf * 100)} `
+    + (worstPerf >= barrierBreachPerf ? '→ capital protégé au spot' : '→ SOUS la barrière au spot');
+  document.getElementById('scen-def').textContent =
+    `${fmtEur(wRet)} (${fmtPct(barrierBreachPerf * 100)} si barrière exactement touchée)`;
 
   renderChart(stocks, emDate, fnDate, capBarPct, acT2, simDate);
 
