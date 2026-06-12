@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KCSA : 16 jours pour penser la sécurité Kubernetes comme un Tech Lead — méthode, outils et zéro trust</title>
+    <meta name="description" content="Retour d'expérience sur ma préparation à la certification KCSA (Kubernetes and Cloud Native Security Associate) — méthode, outils gratuits et architecture zero trust en 16 jours.">
+    <meta property="og:title" content="KCSA en 16 jours : méthode, outils et zéro trust">
+    <meta property="og:image" content="../img/blog/blog-25.jpeg">
+    <meta property="og:description" content="Retour d'expérience sur ma préparation à la certification KCSA — méthode, outils gratuits et architecture zero trust.">
+    <meta data-category="DevOps">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-shield-halved mr-2 text-sky-600"></i> KCSA en 16 jours : comment j'ai structuré mon apprentissage de la sécurité Kubernetes, en mode Tech Lead DevOps
+                </h1>
+                <p class="text-gray-600 mb-2">12 Juin 2026, 18:00 CEST</p>
+                <span class="category bg-sky-100 text-sky-800 text-sm font-medium px-2.5 py-0.5 rounded" data-category="DevOps">DevOps</span>
+                <p class="sub-title text-lg flex items-center mt-3">
+                    <i class="fas fa-graduation-cap mr-2 text-yellow-500"></i> Retour d'expérience sur ma préparation à la certification KCSA (Kubernetes and Cloud Native Security Associate) — méthode, outils gratuits et architecture "zero trust"
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-fire mr-2 text-sky-600"></i> Pourquoi se lancer dans la KCSA quand on est déjà Tech Lead DevOps ?
+                </h2>
+
+                <img src="../img/blog/blog-25-7.jpeg" alt="KCSA Kubernetes Security Associate certification" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <p class="mt-2">
+                    Après 17 ans dans l'IT — entre développement full-stack, plateforme et DevOps — j'ai passé ces derniers mois à industrialiser des clusters Kubernetes en environnement de santé (HDS, ISO 27001), avec ArgoCD, Helm, Vault et Harbor au quotidien.
+                    Mais opérer un cluster en production et <strong>auditer sa sécurité avec un référentiel structuré</strong>, ce sont deux compétences différentes. La certification <strong>KCSA</strong> (Kubernetes and Cloud Native Security Associate) m'a semblé être le bon cadre pour transformer mon expérience opérationnelle en grille de lecture transversale : RBAC, etcd, kubelet, supply chain, modèles de menaces, conformité.
+                </p>
+                <p class="mt-2">
+                    Ma motivation est simple : dans un monde où la sécurité n'est plus une option mais une exigence contractuelle (clients santé, audits, appels d'offres), je veux pouvoir <strong>concevoir une architecture Kubernetes en partant du principe "zero trust"</strong> — c'est-à-dire ne jamais faire confiance par défaut, à aucun composant, aucun pod, aucun token, et durcir chaque couche du modèle <strong>4C (Cloud, Cluster, Container, Code)</strong> de manière systématique plutôt qu'au cas par cas.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-briefcase mr-2 text-sky-600"></i> Mon terrain de jeu réel : l'automatisation maximale avec K8s
+                </h2>
+                <p class="mt-2">
+                    Mon parcours professionnel récent a été très pratique : déploiement d'une plateforme Kubernetes multi-labs (28+ laboratoires médicaux, SLA 99,95 %), pipelines GitOps avec ArgoCD, gestion des secrets via ExternalSecrets et Vault, et un travail récent de pivot architectural pour un produit utilisant un MVP basé sur LCM avec une API Partner en microservice sur AWS.
+                </p>
+                <p class="mt-2">
+                    Pourquoi Kubernetes est-il si <strong>utile pour l'automatisation maximale</strong> dans ce type de contexte ? Trois raisons concrètes que j'ai vérifiées sur le terrain :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><strong>Déclaratif et idempotent</strong> — un <code>kubectl apply -f</code> ou un sync ArgoCD reproduit l'état exact souhaité, sans script impératif fragile.</li>
+                    <li><strong>Auto-réparation native</strong> — les contrôleurs (Deployment, ReplicaSet) maintiennent l'état désiré en continu, ce qui réduit drastiquement les interventions manuelles d'astreinte.</li>
+                    <li><strong>Surface de sécurité unifiée</strong> — RBAC, NetworkPolicy, PSA et l'admission control donnent un seul point de contrôle pour appliquer une politique de sécurité cohérente sur des dizaines de microservices, plutôt que de sécuriser chaque VM individuellement.</li>
+                </ul>
+                <p class="mt-2">
+                    C'est précisément cette unification qui m'a poussé à vouloir structurer mes connaissances de sécurité de façon tout aussi systématique que mon infrastructure.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-robot mr-2 text-sky-600"></i> La méthode : un plan de 16 jours généré avec Claude (Anthropic)
+                </h2>
+
+                <img src="../img/blog/blog-25-1.jpeg" alt="Plan KCSA 4 semaines généré avec Claude" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <p class="mt-2">
+                    Plutôt que de foncer directement sur les questions du mock exam, j'ai demandé à <strong>Claude</strong> de me construire un plan d'apprentissage progressif, calibré pour mon niveau (senior DevOps) et mon temps disponible (40 minutes/jour). Le résultat : un plan sur 4 semaines, avec un rythme quotidien fixe et une progression par domaine d'examen pondérée selon le poids réel de chaque thème.
+                </p>
+                <p class="mt-2">Le rythme quotidien retenu :</p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><strong>20 minutes de théorie</strong> — un point précis, calibré "senior", sans rappel des bases déjà connues.</li>
+                    <li><strong>15 minutes de lab pratique</strong> sur <a href="https://killercoda.com/killer-shell-cka/scenario/playground" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">KillerCoda</a> — des commandes prêtes à copier-coller pour manipuler un vrai cluster.</li>
+                    <li><strong>5 minutes de flashcards Anki</strong> — génération automatique de cartes Q/R pour la répétition espacée.</li>
+                    <li><strong>Le week-end</strong> — mock exam filtré par domaine, puis correction ciblée des erreurs.</li>
+                </ul>
+                <p class="mt-2">
+                    Sur 16 jours, j'ai ainsi couvert dans l'ordre : RBAC, Pod Security Admission, gestion des secrets, NetworkPolicy, ServiceAccounts et tokens, durcissement de l'API server, sécurité d'etcd, durcissement du kubelet, sécurité du runtime conteneur (runc / gVisor / Kata), PKI et cycle de vie des certificats, sécurité de la supply chain (SLSA, Cosign, SBOM), durcissement des images, modélisation des menaces (4C + STRIDE), frameworks de conformité (CIS, NSA/CISA, NIST 800-190) et enfin la réponse à incident.
+                </p>
+                <p class="mt-2 italic">
+                    Le point le plus utile de cette méthode : chaque session théorique se termine par une liste de "pièges d'examen" — les confusions classiques (par exemple : <code>cordon</code> ne vide pas un nœud, seul un taint <code>NoExecute</code> le fait) — qui sont exactement le type de question piège posée à l'examen KCSA.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fab fa-trello mr-2 text-sky-600"></i> Trello : organiser la mémorisation par "carte de jour"
+                </h2>
+
+                <img src="../img/blog/blog-25-3.jpeg" alt="Tableau Trello pour la mémorisation KCSA" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <p class="mt-2">
+                    Pour renforcer la mémorisation, j'ai créé un tableau Trello avec une carte par jour de programme (K8 KCSA 2, K8 KCSA 3, etc.), chacune contenant un résumé visuel des points clés du jour : tableau des flags critiques de l'API server, schéma de topologie etcd externe en HA, ou encore comparaison Dockerfile vulnérable vs multi-stage sécurisé.
+                </p>
+                <p class="mt-2">
+                    L'avantage de Trello ici : chaque carte devient une fiche de révision visuelle autonome, que je peux parcourir en quelques minutes le matin avant de commencer le jour suivant — une forme de "rappel actif" qui complète très bien les flashcards Anki générées par Claude.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-table mr-2 text-sky-600"></i> Le mock exam gratuit + Google Sheets pour traquer mes erreurs
+                </h2>
+
+                <img src="../img/blog/blog-25-2.jpeg" alt="Mock exam KCSA et Google Sheets de suivi" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <p class="mt-2">
+                    Pour m'entraîner aux questions type examen, j'ai utilisé le simulateur gratuit et open source <a href="https://kubernetes-security-kcsa-mock.vercel.app/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">kubernetes-security-kcsa-mock.vercel.app</a> — plus de 290 questions, filtrables par domaine, avec explications détaillées et score par domaine.
+                </p>
+                <p class="mt-2">
+                    Mais l'outil seul ne suffit pas si on ne garde pas de trace de ses erreurs. J'ai donc créé une <strong>feuille Google Sheets</strong> dans laquelle je consigne systématiquement :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li>la question exacte qui m'a posé problème,</li>
+                    <li>ma réponse erronée vs la bonne réponse,</li>
+                    <li>une reformulation "piège vs idée correcte" pour graver la nuance,</li>
+                    <li>et un tableau récapitulatif par jour avec les mots-clés d'examen associés.</li>
+                </ul>
+                <p class="mt-2">
+                    👉 <a href="https://docs.google.com/spreadsheets/d/1rQu4GYpYPqefFokpzlUnGVS6chjsBftpaiyssImNTxA/edit?gid=0#gid=0" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Voir ma feuille de suivi KCSA (Google Sheets)</a>
+                </p>
+                <p class="mt-2 italic">
+                    Ce système "mock → erreur → reformulation → relecture" est, à mon sens, le levier le plus efficace de toute la préparation : on arrête de réviser ce qu'on sait déjà, et on concentre 100 % du temps sur les zones de friction réelles.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-image mr-2 text-sky-600"></i> Visualiser le modèle 4C avec l'IA générative (Gemini)
+                </h2>
+
+                <img src="../img/blog/blog-25.jpeg" alt="Modèle 4C de sécurité Kubernetes généré par IA" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+
+                <p class="mt-2">
+                    Le modèle <strong>4C</strong> (Cloud → Cluster → Container → Code) est la colonne vertébrale conceptuelle de toute la KCSA : chaque couche hérite des faiblesses de la couche qui l'englobe. Pour me l'ancrer visuellement, j'ai demandé à <strong>Gemini (Google AI)</strong> de générer une infographie reprenant les quatre couches, les menaces associées et les contrôles clés à chaque niveau.
+                </p>
+                <p class="mt-2">
+                    Ce type de visuel est particulièrement efficace pour retenir la logique de <strong>"risk inheritance"</strong> : une faiblesse au niveau Cloud (IAM mal configuré) ne peut jamais être corrigée par un contrôle au niveau Cluster (RBAC) — il faut intervenir à la bonne couche. À l'inverse, une attaque qui démarre au niveau Code (dépendance vulnérable) peut être détectée par des contrôles au niveau Cluster (Falco, audit logs), même si elle ne peut pas y être empêchée.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-sky-600"></i> Bilan : ce que cette méthode m'a apporté
+                </h2>
+
+                <img src="../img/blog/blog-25-5.jpeg" alt="Bilan et résultats de la méthode KCSA" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <img src="../img/blog/blog-25-6.jpeg" alt="Bilan et résultats de la méthode KCSA" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Au-delà de la certification elle-même, ce sprint de 16 jours m'a surtout permis de <strong>relier ma pratique quotidienne à un référentiel structuré</strong> : je sais désormais expliquer pourquoi je configure tel flag kubelet, à quelle couche du 4C il correspond, et quelle catégorie STRIDE il mitige — un langage commun extrêmement utile en entretien technique comme en revue d'architecture.
+                </p>
+                <p class="mt-2">
+                    La combinaison <strong>Claude (plan + théorie + labs + flashcards) + KillerCoda (pratique réelle) + mock exam gratuit + Google Sheets (traçabilité) + Trello (mémorisation visuelle) + Gemini (schémas)</strong> forme un kit 100 % gratuit, reproductible, et adaptable à n'importe quelle certification technique — pas seulement la KCSA. Et comme je suis aussi plutôt radin, cela m'a permis de préparer cet examen sans trop dépenser, tout en arrivant sereinement le jour J, bien préparé et l'esprit tranquille.
+                </p>
+
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><a href="https://kubernetes-security-kcsa-mock.vercel.app/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">KCSA Mock Exam Simulator (gratuit, open source)</a></li>
+                    <li><a href="https://killercoda.com/killer-shell-cka/scenario/playground" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">KillerCoda — Playground Kubernetes gratuit</a></li>
+                    <li><a href="https://docs.google.com/spreadsheets/d/1rQu4GYpYPqefFokpzlUnGVS6chjsBftpaiyssImNTxA/edit?gid=0#gid=0" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Ma feuille de suivi des erreurs KCSA (Google Sheets)</a></li>
+                    <li><a href="https://github.com/thiago4go/kubernetes-security-kcsa-mock" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Code source du simulateur KCSA (GitHub)</a></li>
+                    <li><a href="https://training.linuxfoundation.org/certification/kubernetes-and-cloud-native-security-associate-kcsa/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Linux Foundation — Page officielle KCSA</a></li>
+                    <li><a href="https://kubernetes.io/docs/concepts/security/" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Documentation officielle Kubernetes — Sécurité</a></li>
+                    <li><a href="https://github.com/aquasecurity/kube-bench" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">kube-bench — Audit CIS Benchmark</a></li>
+                </ul>
+            </section>
+        </article>
+    </main>
+
+<script src="../assets/js/script.js" defer></script>
+</body>
+</html>
