@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrammer une architecture AWS complexe : Pluralith (Terraform) vs Cloudcraft (scan IAM live)</title>
+    <meta name="description" content="Comparatif terrain de deux outils pour visualiser une architecture AWS complexe (EKS multi-tenant) : Pluralith en CLI locale à partir de Terraform, et Cloudcraft via scan live avec un rôle IAM — usage, FinOps et risques.">
+    <meta property="og:title" content="Pluralith vs Cloudcraft : diagrammer une architecture AWS complexe">
+    <meta property="og:image" content="../img/blog/blog-26.jpeg">
+    <meta property="og:description" content="Comparatif terrain de deux outils pour visualiser une architecture AWS complexe : Pluralith (CLI locale, Terraform) vs Cloudcraft (scan IAM live, FinOps).">
+    <meta data-category="DevOps">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/blog.js" defer></script>
+</head>
+<body class="bg-white text-black flex flex-col min-h-screen">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container" class="fixed top-0 left-0 h-full w-16 bg-gray-800 text-white z-20"></div>
+    <main role="main" class="flex-1 ml-16">
+        <article class="container mx-auto px-4 py-10">
+            <header class="border-b pb-6 mb-6">
+                <h1 class="blog-title text-2xl font-semibold mb-2 flex items-center">
+                    <i class="fas fa-diagram-project mr-2 text-sky-600"></i> Diagrammer une architecture AWS complexe : Pluralith (Terraform) vs Cloudcraft (scan IAM live)
+                </h1>
+                <p class="text-gray-600 mb-2">18 Août 2026, 15:30 CEST</p>
+                <span class="category bg-sky-100 text-sky-800 text-sm font-medium px-2.5 py-0.5 rounded" data-category="DevOps">DevOps</span>
+                <p class="sub-title text-lg flex items-center mt-3">
+                    <i class="fas fa-cloud mr-2 text-yellow-500"></i> Deux méthodes testées sur une vraie stack EKS multi-tenant : la CLI locale branchée sur Terraform, et le scan live via un rôle IAM — usage, FinOps et matrice de risque
+                </p>
+            </header>
+
+            <section class="space-y-4 text-lg">
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-question mr-2 text-sky-600"></i> Le problème : une architecture AWS devient vite illisible
+                </h2>
+                <p class="mt-2">
+                    Dès qu'un compte AWS dépasse quelques ressources — VPC multi-AZ, EKS multi-tenant, IAM à tiroirs, S3/RDS/Lambda éparpillés — les schémas dessinés à la main deviennent obsolètes en quelques semaines. J'ai voulu tester deux approches concrètes pour générer un diagramme d'architecture <strong>à jour et automatiquement</strong>, sur un cas réel : le pattern <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/patterns/multi-tenancy-with-teams" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer"><code>multi-tenancy-with-teams</code></a> du repo officiel <strong>aws-ia/terraform-aws-eks-blueprints</strong> — un cluster EKS avec une équipe admin et deux équipes dev isolées par namespace.
+                </p>
+                <p class="mt-2">
+                    Les deux outils testés partent d'une philosophie radicalement différente : <strong>Pluralith</strong> lit votre code Terraform en local et ne touche jamais votre compte AWS en direct, tandis que <strong>Cloudcraft</strong> se connecte à votre compte via un rôle IAM et scanne les ressources réellement déployées. Voici le déroulé complet, image par image.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-shield-halved mr-2 text-sky-600"></i> Méthode 1 — Pluralith : CLI locale, générée depuis Terraform, zéro accès direct au compte
+                </h2>
+
+                <img src="../img/blog/blog-26.jpeg" alt="Installation d'outils CLI de visualisation Terraform via Homebrew" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Premier réflexe : équiper le terminal. Avant de fixer mon choix sur Pluralith, j'ai regardé les alternatives CLI de visualisation Terraform disponibles via Homebrew (comme <code>rover</code>) — l'idée étant de trouver l'outil qui génère un diagramme sans jamais exposer les identifiants du compte AWS à un tiers.
+                </p>
+
+                <img src="../img/blog/blog-26-1.jpeg" alt="Onboarding Pluralith CLI : téléchargement, login avec clé API, commande pluralith graph" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    L'onboarding <strong>Pluralith</strong> tient en trois étapes : télécharger la CLI, s'authentifier avec une clé API personnelle (<code>pluralith login</code>), puis lancer <code>pluralith graph</code> dans n'importe quel projet Terraform. Aucun rôle IAM à créer côté AWS pour ce flux — Pluralith n'a besoin que de ce que Terraform lui-même peut lire.
+                </p>
+
+                <img src="../img/blog/blog-26-2.jpeg" alt="Repo GitHub aws-ia/terraform-aws-eks-blueprints, pattern multi-tenancy-with-teams" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Comme terrain de test, j'ai choisi un pattern public et représentatif d'une vraie plateforme d'entreprise : <strong>multi-tenancy-with-teams</strong>, qui provisionne un VPC, un cluster EKS et deux équipes dev isolées (<code>team-red</code>, <code>team-blue</code>) plus une équipe admin — largement assez complexe pour valider l'outil sur un cas réaliste plutôt qu'un "hello world".
+                </p>
+
+                <img src="../img/blog/blog-26-3.jpeg" alt="Commandes terminal : git clone, terraform init -backend=false, pluralith run --plan" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Le workflow complet tient en quatre commandes : <code>git clone</code> du repo, <code>cd</code> dans le pattern, <code>terraform init -backend=false</code>, puis <code>pluralith run --plan</code>. Tout le diagramme est reconstruit à partir du <strong>plan Terraform local</strong> — pas d'appel API de scan sur le compte, pas de rôle IAM permanent à maintenir.
+                </p>
+
+                <img src="../img/blog/blog-26-4.jpeg" alt="Diagramme Pluralith complet du cluster EKS multi-tenant, node groups, subnets, KMS, IAM" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Résultat : un diagramme interactif complet — cluster EKS, node group, security groups, subnets publics/privés, clé KMS de chiffrement du cluster, passerelles NAT/Internet, et un bloc IAM regroupant 31 ressources repliées par défaut pour ne pas noyer la vue d'ensemble. Un panneau <strong>Cost Settings</strong> est même disponible pour superposer une estimation de coût par ressource.
+                </p>
+
+                <img src="../img/blog/blog-26-5.jpeg" alt="Vue détaillée IAM dans Pluralith : rôles, policies et attachments" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    En cliquant sur le bloc IAM, on descend jusqu'au détail : chaque <code>aws_iam_role</code>, <code>aws_iam_policy</code> et <code>aws_iam_role_policy_attachment</code> apparaît, avec ses liens de dépendance. C'est le point fort de l'approche Terraform-first : on peut auditer visuellement toute la chaîne de permissions <strong>sans jamais interroger le compte AWS en direct</strong> — tout vient du plan local.
+                </p>
+                <p class="mt-2 italic">
+                    Limite honnête de cette approche : si votre organisation ne fait <strong>pas</strong> d'Infrastructure as Code (ressources créées à la main dans la console, ou via un autre outil non-Terraform), Pluralith n'a tout simplement rien à lire — l'outil perd son intérêt.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-satellite-dish mr-2 text-sky-600"></i> Méthode 2 — Cloudcraft : scan live via rôle IAM, UI très visuelle, fort en FinOps
+                </h2>
+
+                <img src="../img/blog/blog-26-6.jpeg" alt="Diagramme isométrique Cloudcraft généré par scan live du compte AWS eu-west-1" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Deuxième approche : <strong>Cloudcraft</strong>, qui demande cette fois un <strong>rôle IAM en lecture seule</strong> (<code>ReadOnlyAccess</code>) sur le compte pour scanner en direct les ressources réellement déployées. Le résultat est un diagramme isométrique très lisible de la région <code>eu-west-1</code> — ASG, EC2, S3, ECR, Internet Gateway, tout est découvert automatiquement, sans écrire une ligne de code. C'est nettement plus <strong>straightforward</strong> pour un projet interne de taille modeste où personne n'a le temps de maintenir un mapping Terraform-diagramme.
+                </p>
+
+                <img src="../img/blog/blog-26-7.jpeg" alt="Onglet Budget Cloudcraft, coût mensuel réel par service en tarification On-Demand" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    Là où Cloudcraft devient vraiment intéressant, c'est l'onglet <strong>Budget</strong> : le coût mensuel réel est ventilé par service (EC2, EBS, S3, SNS) directement sur le diagramme scanné, en tarification <strong>On-Demand</strong> — ici <strong>16,98 $/mois</strong> pour ce petit environnement.
+                </p>
+
+                <img src="../img/blog/blog-26-8.jpeg" alt="Simulation Reserved Instance 1 an sur Cloudcraft, 37% d'économie" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    En basculant l'option de facturation sur <strong>Reserved Instance, 1 an, No Upfront</strong>, le total tombe à <strong>12,00 $/mois</strong>, soit <strong>37 % d'économie</strong> affichée instantanément — sans toucher à la facturation réelle AWS. C'est une vraie simulation FinOps en quelques clics.
+                </p>
+
+                <img src="../img/blog/blog-26-9.jpeg" alt="Simulation Reserved Instance 3 ans sur Cloudcraft, 57% d'économie" class="w-full max-w-3xl mx-auto h-auto object-cover mb-6 rounded shadow" loading="lazy">
+                <p class="mt-2">
+                    En poussant sur un engagement <strong>3 ans, No Upfront</strong>, le total descend à <strong>9,30 $/mois</strong>, soit <strong>57 % d'économie</strong>. Pouvoir comparer On-Demand vs Reserved 1 an vs Reserved 3 ans en trois clics, directement sur le diagramme réel du compte, est à mon sens la fonctionnalité la plus utile de Cloudcraft pour de l'optimisation budgétaire (FinOps).
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-triangle-exclamation mr-2 text-sky-600"></i> Le vrai sujet : le risque du rôle IAM donné à un tiers
+                </h2>
+                <p class="mt-2">
+                    Cloudcraft ayant été racheté par <strong>Datadog</strong>, on peut raisonnablement estimer que la posture de sécurité de l'infrastructure est sérieuse. Mais le principe <strong>zero trust</strong> impose de raisonner indépendamment de la réputation du fournisseur : le rôle <code>ReadOnlyAccess</code> donné à Cloudcraft est un accès permanent, tiers, à mon compte AWS. Il faut évaluer ce que ce rôle permet réellement — et surtout ce qu'il ne permet pas.
+                </p>
+                <p class="mt-2">
+                    L'attaquant qui compromettrait ce rôle (ou Cloudcraft lui-même) <strong>ne pourrait pas</strong> modifier, créer ou supprimer la moindre ressource dans mon compte AWS. Mais si Cloudcraft (aujourd'hui propriété de Datadog) était lui-même compromis, l'attaquant pourrait consulter la topologie de mon architecture et les métadonnées de configuration.
+                </p>
+
+                <table class="min-w-full border-collapse border border-gray-300 mt-4">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border border-gray-300 px-4 py-2 text-left">Type d'opération</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Autorisé ?</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Impact / portée du risque</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">Destruction / modification de ressources</td>
+                            <td class="border border-gray-300 px-4 py-2">❌ Non</td>
+                            <td class="border border-gray-300 px-4 py-2">Impossible d'arrêter un EC2, de supprimer une base RDS, ou de modifier un Security Group.</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">Accès direct aux données sensibles</td>
+                            <td class="border border-gray-300 px-4 py-2">❌ Non</td>
+                            <td class="border border-gray-300 px-4 py-2">Impossible de requêter les données stockées dans RDS, ou de lire les fichiers d'un bucket S3 privé.</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">Extraction de clés / mots de passe</td>
+                            <td class="border border-gray-300 px-4 py-2">❌ Non</td>
+                            <td class="border border-gray-300 px-4 py-2">Impossible de lire un secret en clair dans AWS Secrets Manager ou une clé KMS.</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">Cartographie de l'architecture</td>
+                            <td class="border border-gray-300 px-4 py-2">⚠️ Oui</td>
+                            <td class="border border-gray-300 px-4 py-2">Peut consulter la topologie réseau VPC, les IP publiques/privées, les métadonnées Lambda, et les caractéristiques des instances EC2.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="mt-2 italic">
+                    En clair : un rôle <code>ReadOnlyAccess</code> compromis n'ouvre pas la porte à un incident de disponibilité ou d'exfiltration de données — mais il donne un plan détaillé de votre réseau à un attaquant, ce qui facilite grandement la reconnaissance pour une attaque ultérieure. Ce n'est pas un risque nul, c'est un risque de <strong>reconnaissance</strong>, à mettre en balance avec le confort d'usage.
+                </p>
+
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-scale-balanced mr-2 text-sky-600"></i> Alors, lequel choisir ?
+                </h2>
+                <p class="mt-2">
+                    Mon choix dépend entièrement du contexte :
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><strong>Mon préféré personnel : Cloudcraft</strong> — spécifiquement pour la <strong>simulation budgétaire</strong>. Pouvoir comparer On-Demand vs Reserved 1 an vs 3 ans en direct sur un diagramme réel est un vrai levier de FinOps, difficile à égaler.</li>
+                    <li><strong>Pour une grande institution : Pluralith</strong> — parce qu'il tourne directement sur le plan Terraform, sans jamais poser de rôle IAM permanent tiers dans le compte. C'est l'option cohérente avec une posture zero trust et une gouvernance IaC stricte.</li>
+                    <li><strong>Mais attention</strong> : si votre organisation ne pratique <strong>pas</strong> l'Infrastructure as Code (Terraform, CloudFormation, Pulumi...), Pluralith n'a rien à analyser — dans ce cas, un outil de scan live comme Cloudcraft reste la seule option réaliste, malgré le compromis de confiance qu'il implique.</li>
+                    <li><strong>Pour un petit projet interne</strong> sans exigence de conformité forte, l'UI directe de Cloudcraft (pas de CLI, pas de Terraform à connaître) reste la voie la plus <strong>straightforward</strong> pour obtenir un diagramme utilisable en quelques minutes.</li>
+                </ul>
+                <p class="mt-2">
+                    Les deux outils ne s'excluent d'ailleurs pas : Pluralith pour l'audit technique et la CI/CD, Cloudcraft pour les revues budgétaires avec des interlocuteurs non-techniques (finance, direction).
+                </p>
+
+            </section>
+
+            <!-- References -->
+            <section class="mt-8">
+                <h2 class="font-semibold mt-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-500"></i> Références
+                </h2>
+                <ul class="list-disc pl-6 mt-2">
+                    <li><a href="https://www.pluralith.com" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Pluralith — diagrammes générés depuis Terraform</a></li>
+                    <li><a href="https://www.cloudcraft.co" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Cloudcraft — diagrammes AWS/Azure par scan live</a></li>
+                    <li><a href="https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/patterns/multi-tenancy-with-teams" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Pattern multi-tenancy-with-teams (aws-ia/terraform-aws-eks-blueprints)</a></li>
+                    <li><a href="https://docs.aws.amazon.com/aws-managed-policy/latest/reference/ReadOnlyAccess.html" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AWS — Politique managée ReadOnlyAccess (référence officielle)</a></li>
+                </ul>
+            </section>
+        </article>
+    </main>
+
+<script src="../assets/js/script.js" defer></script>
+</body>
+</html>
