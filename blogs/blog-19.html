@@ -1,6 +1,9 @@
+---
+---
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    {% include ga-tag.html %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Les dangers cachés de la sur-automatisation en DevOps</title>
@@ -175,7 +178,7 @@ jobs:
                 <p class="mt-2">
                     Voici un pipeline plus sûr, avec tests, staging, validation manuelle et kill switch :
                 </p>
-                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code>name: deploy
+                <pre class="bg-gray-100 p-4 rounded-lg mt-2"><code>{% raw %}name: deploy
 
 on:
   push:
@@ -232,7 +235,7 @@ jobs:
         run: |
           kubectl -n production set image deployment/payments-api payments-api=${{ env.IMAGE }}
           kubectl -n production rollout status deployment/payments-api --timeout=300s
-</code></pre>
+{% endraw %}</code></pre>
                 <p class="mt-2">
                     <strong>Améliorations :</strong>
                 </p>
