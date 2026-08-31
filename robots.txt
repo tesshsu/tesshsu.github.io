@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /static.html
+Disallow: /result-invest.html
+Disallow: /blogs/blog-template.html
+Disallow: /scripts/
+
+Sitemap: https://tesshsu.github.io/sitemap.xml

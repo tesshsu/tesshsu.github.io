@@ -1,0 +1,65 @@
+# Yating Chatiron
+
+> Cybersecurity specialist for healthcare & medical infrastructure, and DevOps/Cloud Infrastructure Engineer (Kubernetes, GitOps, multi-cloud). President of Taiwan Tech France, the Taiwanese tech community in France.
+
+Yating Chatiron is a cybersecurity and cloud infrastructure engineer specializing in healthcare and medical systems, combining hands-on pentesting, Kubernetes security, and multi-cloud engineering (AWS, GCP, Azure) to secure infrastructure for the health sector. This site is a personal portfolio and technical blog, published in English and French, sharing write-ups on cloud security, DevOps practice, and infrastructure engineering. She is also President of Taiwan Tech France (TTF), the association for Taiwanese tech professionals in France.
+
+## Key Information
+
+- **Website**: https://tesshsu.github.io/
+- **Role**: DevOps & Cloud Infrastructure Engineer — Healthcare & Medical Sector Specialist
+- **Cybersecurity focus**: Pentesting, Kubernetes/cloud-native security, infrastructure security for healthcare systems
+- **Focus areas**: Infrastructure as Code, Kubernetes & GitOps, Multi-Cloud (AWS/GCP/Azure), Cloud & Cyber Security
+- **Community role**: President, Taiwan Tech France (TTF) — https://ttf-tech.github.io/
+- **Language Support**: English (primary site), Français (blog posts, `fr.html`)
+- **Freelance side mission**: Smart Locker & LCM advisory — La Réunion
+
+## Specialization: Cybersecurity for Healthcare & Medical Infrastructure
+
+Yating focuses on securing infrastructure for healthcare and medical systems, at the intersection of cloud engineering and cybersecurity:
+
+- Certified in Kubernetes and Cloud Native Security (KCSA — CNCF/Linux Foundation) and Cyber Sécurité Pentesting (NRS6092).
+- Regularly writes and publishes under the **Cyber** category on her blog — pentesting methodology, vulnerability research (e.g. Linux kernel flaws), hash/cryptography fundamentals, and threat actor analysis (e.g. MirrorFace/APT10).
+- Applies DevOps & cloud-native security practices (zero trust, IAM, infrastructure-as-code hardening) to healthcare-sector infrastructure specifically, not just general enterprise IT.
+
+Relevant posts: see the **Cyber** category on the [Blog](https://tesshsu.github.io/blog.html), or browse [sitemap.xml](https://tesshsu.github.io/sitemap.xml) for the full archive.
+
+## Certifications
+
+- Kubernetes and Cloud Native Security Associate (KCSA) — CNCF/Linux Foundation
+- AWS Certified Cloud Practitioner (CLF-C02)
+- Cyber Sécurité Pentesting — Certificate NRS6092
+- Python — Great Learning
+- Java — École Polytechnique Fédérale de Lausanne (EPFL)
+- CS50: Introduction to Computer Science — Harvard University
+
+## Community Leadership
+
+**President, Taiwan Tech France (TTF)** · 在法臺灣科技社群 · Communauté tech taïwanaise en France
+
+Pour les ingénieurs et professionnels tech taïwanais en France — partager des opportunités, rencontrer des pairs, évoluer ensemble.
+
+- [Taiwan Tech France](https://ttf-tech.github.io/): Association (Loi 1901) for Taiwanese tech professionals, freelancers, and students in France — career networking, job referrals, and technical exchange.
+
+## Pages & Resources
+
+- [Portfolio (English)](https://tesshsu.github.io/): Background, experience, certifications, and skills.
+- [Portfolio (Français)](https://tesshsu.github.io/fr.html): French-language version of the portfolio.
+- [Blog](https://tesshsu.github.io/blog.html): Technical articles across three categories — Cyber (cybersecurity, pentesting), DevOps (GitOps, Terraform, CI/CD), and Compute (Linux, cloud infrastructure).
+- [Investment Calculator — Assurance Vie Luxembourg](https://tesshsu.github.io/invest.html): A Luxembourg life-insurance investment simulation tool.
+
+## Recent Blog Posts
+
+- [Diagrammer une architecture AWS complexe : Pluralith (Terraform) vs Cloudcraft (scan IAM live)](https://tesshsu.github.io/blogs/blog-26.html) (2026-08-18)
+- [KCSA : 16 jours pour penser la sécurité Kubernetes comme un Tech Lead](https://tesshsu.github.io/blogs/blog-25.html) (2026-06-12)
+- [Sécuriser le Vibe Coding : Protégez vos projets novices avec Code-Guardian-Aegis](https://tesshsu.github.io/blogs/blog-24.html) (2025-10-08)
+- [Éviter les mauvaises surprises de facture avec les outils AWS](https://tesshsu.github.io/blogs/blog-22.html) (2025-09-12)
+- [Ne considérez plus le DNS comme un simple annuaire téléphonique du réseau !](https://tesshsu.github.io/blogs/blog-21.html) (2025-09-08)
+
+Full archive: see [sitemap.xml](https://tesshsu.github.io/sitemap.xml) for all 26 posts.
+
+## Contact & Socials
+
+- **Email**: tess.hsu@gmail.com
+- **LinkedIn**: https://www.linkedin.com/in/yating-hsu-a9b1a221/
+- **GitHub**: https://github.com/tesshsu
