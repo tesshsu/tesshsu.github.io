@@ -1,31 +1,30 @@
-Yating Chatiron Portfolio
-This is a simple portfolio site for Yating Chatiron, hosted on GitHub Pages at tesshsu.github.io.
-Site Structure
+# Yating Chatiron — Portfolio
 
-index.html: The main page with sections for About, Experience, Certificates, and Skills.
-img/: Folder for certificate images.
-cs50-certificate.jpg
-react-certificate.jpg
-node-certificate.jpg
+**Live site: [tesshsu.github.io](https://tesshsu.github.io/)**
 
+Personal portfolio and technical blog for Yating Chatiron — Cybersecurity & Cloud Infrastructure Engineer specializing in healthcare/medical systems. Static site, hosted on GitHub Pages, built with Jekyll.
 
-css/: (Optional) For additional custom styles if needed.
-js/: (Optional) For additional JavaScript files if needed.
+## Site Structure
 
-Setup
+- `index.html` / `fr.html` — Main portfolio (English / French), sections for About, Experience, Certificates, and Skills.
+- `blog.html` — Blog listing (search + category filtering: Cyber, DevOps, Compute).
+- `blogs/blog-N.html` — Individual blog posts, discovered dynamically at runtime.
+- `invest.html` / `result-invest.html` — Luxembourg life-insurance investment calculator.
+- `assets/partials/` — Shared sidebar/footer, loaded via `fetch()` into every page.
+- `_includes/ga-tag.html` — Shared Google Analytics tag, included via Jekyll (`{% include ga-tag.html %}`) on every page.
+- `sitemap.xml`, `robots.txt`, `llms.txt` — SEO / AI-crawler discovery files.
 
-Clone the repository: git clone https://github.com/tesshsu/tesshsu.github.io.git
-Ensure the gh-pages branch is set up for GitHub Pages (already enabled).
-Add certificate images to the img/ folder.
-Push changes to the gh-pages branch to deploy updates.
+## Setup
 
-Technologies Used
+1. Clone: `git clone https://github.com/tesshsu/tesshsu.github.io.git`
+2. Edit files directly — no build step required locally.
+3. Push to `master` → GitHub Actions builds with Jekyll → deploys to `gh-pages`.
 
-HTML
-Tailwind CSS (via CDN)
-Vanilla JavaScript
+To add a new blog post: create `blogs/blog-{N+1}.html` following the existing post structure (see `blogs/blog-template.html`), including `.blog-title`, date, `.category`, and `.sub-title` elements — `blog.js` parses these at runtime, no manifest needed.
 
-Future Plans
+## Technologies Used
 
-Add a blog section to index.html for articles.
-
+- HTML, Tailwind CSS (via CDN), Vanilla JavaScript
+- Jekyll (GitHub Pages default build)
+- Chart.js (investment calculator)
+- GoatCounter + Google Analytics (traffic)
