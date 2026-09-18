@@ -181,8 +181,10 @@
                         <h3 class="text-lg font-bold flex items-center gap-2">
                             <i class="fas fa-user-shield text-rose-600"></i> Freelance Mission
                         </h3>
-                        <span class="inline-flex items-center gap-1.5 bg-rose-100 text-rose-700 text-xs font-semibold px-3 py-1 rounded-full border border-rose-300">
-                            <i class="fas fa-circle-check text-[10px]"></i> Available
+                        <span class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-300">
+                            <span class="w-2 h-2 bg-green-500 rounded-full animate-ping absolute" style="display:inline-block;position:relative;"></span>
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full" style="display:inline-block;"></span>
+                            Now in Mission
                         </span>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-4 items-start">
@@ -228,18 +230,6 @@
                 <h2 class="text-3xl font-bold mb-4">Experience</h2>
                 <div class="space-y-6">
                     <div>
-                        <h3 class="text-xl font-semibold">Tech Lead &amp; DevOps Engineer – Fortil</h3>
-                        <p class="text-gray-600">October 2025 – April 2026</p>
-                        <ul class="list-disc ml-5">
-                            <li>Technical lead across dev, infra, and ops teams on a multi-application health platform (28+ sites); drove architecture decisions on GitOps strategy, secrets management, and deployment pipelines.</li>
-                            <li>Built a full GitOps CI/CD chain (GitHub Actions, Helm, ArgoCD, Vault, Harbor), replacing manual deployments and integrating shift-left security scanners (Prisma, Trivy, CVE).</li>
-                            <li>Debugged RabbitMQ deadlocks on a multi-component stack (Node-RED + Workers + Go connector); refactored the Go connector with a replay and business-comparison system over ~1M rows.</li>
-                            <li>Reduced Kubernetes Job migration time from several hours to under 10 minutes; refactored cron jobs across 5 microservices (TypeScript/Next.js), cutting processing time from 8h to 1h.</li>
-                            <li>Deployed Grafana/RabbitMQ dashboards and N1/N2/N3 alerting across 28+ sites, replacing PRTG with a more flexible open-source solution.</li>
-                            <li>Established coding standards, code review processes, and Blue/Green deployment with instant rollback and automated backups.</li>
-                        </ul>
-                    </div>
-                    <div>
                         <div class="flex flex-wrap items-center gap-3 mb-1">
                             <h3 class="text-xl font-semibold">Tech Lead Architecture Cloud – Panieer <span class="text-base font-normal text-gray-500">(Freelance)</span></h3>
                             <span class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-green-200">
@@ -253,6 +243,18 @@
                             <li>Bridging product vision and technical execution — translating business requirements into architecture decisions for smart locker workflows.</li>
                         </ul>
                         <p class="text-xs text-gray-400 mt-1 italic">Freelance side mission — not primary employment</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">Tech Lead &amp; DevOps Engineer – Fortil</h3>
+                        <p class="text-gray-600">October 2025 – April 2026</p>
+                        <ul class="list-disc ml-5">
+                            <li>Technical lead across dev, infra, and ops teams on a multi-application health platform (28+ sites); drove architecture decisions on GitOps strategy, secrets management, and deployment pipelines.</li>
+                            <li>Built a full GitOps CI/CD chain (GitHub Actions, Helm, ArgoCD, Vault, Harbor), replacing manual deployments and integrating shift-left security scanners (Prisma, Trivy, CVE).</li>
+                            <li>Debugged RabbitMQ deadlocks on a multi-component stack (Node-RED + Workers + Go connector); refactored the Go connector with a replay and business-comparison system over ~1M rows.</li>
+                            <li>Reduced Kubernetes Job migration time from several hours to under 10 minutes; refactored cron jobs across 5 microservices (TypeScript/Next.js), cutting processing time from 8h to 1h.</li>
+                            <li>Deployed Grafana/RabbitMQ dashboards and N1/N2/N3 alerting across 28+ sites, replacing PRTG with a more flexible open-source solution.</li>
+                            <li>Established coding standards, code review processes, and Blue/Green deployment with instant rollback and automated backups.</li>
+                        </ul>
                     </div>
                     <div>
                         <h3 class="text-xl font-semibold">Tech Lead DevOps - Budhapp</h3>
