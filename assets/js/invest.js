@@ -498,17 +498,35 @@ function calculate() {
     document.getElementById('sum-annual').textContent = `~${(annualReturn * 100).toFixed(2)}% / an`;
   }
 
-  // ── Scénario favorable : T1 + T2 avec statut actuel ──
-  const fav1 = capital * (1 + qCoupon);
-  const fav2 = capital * (1 + 2 * qCoupon);
-  const t1Met  = worstPerf >= (acT1 - 1);   // worst-of ≥ 100% initial
-  const t2Met  = worstPerf >= (acT2 - 1);   // worst-of ≥ 80% initial
-  const t1Tag  = t1Met  ? '✓ cond. remplie' : `✗ worst-of à ${fmtPct(worstPerf * 100)} / seuil 0%`;
-  const t2Tag  = t2Met  ? '✓ cond. remplie' : `✗ worst-of à ${fmtPct(worstPerf * 100)} / seuil -20%`;
-  document.getElementById('scen-fav-desc').textContent =
-    `T1 (3m, 100%) : ${t1Tag} · T2 (6m, 80%) : ${t2Tag}`;
-  document.getElementById('scen-fav').textContent =
-    `T2: ${fmtEur(fav2)} (${fmtPct(2 * qCoupon * 100)}) · T1: ${fmtEur(fav1)} (${fmtPct(qCoupon * 100)})`;
+  // ── Scénario favorable : prochaine observation NON ENCORE ATTEINTE ──
+  // T1 (idx 0, seuil 100%) a sa propre date ; une fois cette date passée, elle
+  // est un fait historique déjà visible (avec son vrai cours) dans la
+  // chronologie ci-dessus — on ne doit jamais la ré-évaluer avec le cours
+  // ACTUEL (worstPerf), sinon on obtient un résultat incohérent qui mélange
+  // deux dates différentes sous la même étiquette "T1". Seule la prochaine
+  // observation non atteinte doit être jugée sur le cours du jour.
+  const nextIdx = autocallIdx >= 0 ? -1 : obs.findIndex(d => d > simDate);
+  if (nextIdx === -1) {
+    document.getElementById('scen-fav-desc').textContent = autocallIdx >= 0
+      ? `Produit déjà rappelé le ${fmt(obs[autocallIdx])}.`
+      : 'Toutes les observations sont passées — produit arrivé à maturité.';
+    document.getElementById('scen-fav').textContent = '—';
+  } else {
+    const nextLevel  = nextIdx === 0 ? acT1 : acT2;
+    const nextLabel  = nextIdx === 0 ? 'T1' : 'T2+';
+    const nextMonths = ((obs[nextIdx] - emDate) / (365.25 * 86400000) * 12).toFixed(0);
+    const nextSeuil  = ((nextLevel - 1) * 100).toFixed(0);
+    const nextMet    = worstPerf >= (nextLevel - 1);
+    const nextTag    = nextMet
+      ? '✓ cond. remplie'
+      : `✗ worst-of à ${fmtPct(worstPerf * 100)} / seuil ${nextSeuil}%`;
+    document.getElementById('scen-fav-desc').textContent =
+      `Prochaine observation : ${fmt(obs[nextIdx])} (${nextLabel}, ${nextMonths}m, ${(nextLevel * 100).toFixed(0)}%) : ${nextTag}`;
+    const nextQtrs   = nextIdx + 1;
+    const favAmount  = capital * (1 + nextQtrs * qCoupon);
+    document.getElementById('scen-fav').textContent =
+      `${nextLabel}: ${fmtEur(favAmount)} (${fmtPct(nextQtrs * qCoupon * 100)})`;
+  }
 
   // ── Scénario neutre : maturité complète ──
   document.getElementById('scen-neu').textContent =
