@@ -61,5 +61,5 @@ Full archive: see [sitemap.xml](https://tesshsu.github.io/sitemap.xml) for all 2
 ## Contact & Socials
 
 - **Email**: tess.hsu@gmail.com
-- **LinkedIn**: https://www.linkedin.com/in/yating-hsu-a9b1a221/
+- **LinkedIn**: https://www.linkedin.com/in/yating-hsu-chatiron/
 - **GitHub**: https://github.com/tesshsu
